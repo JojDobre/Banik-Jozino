@@ -65,7 +65,7 @@ const WORLDS_CONFIG = [
         title: 'Svet písmena Z',
         description: 'Zvládni buzivé písmeno Z',
         color: '#96CEB4', 
-        icon: 'images/worlds/world_z.png',
+        icon: 'images/worlds/world_z.jpg',
         difficulty: 3,
         /*unlockRequirement: {
             worldId: 'world_s',

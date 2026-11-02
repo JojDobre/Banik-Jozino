@@ -14,11 +14,13 @@
     "build:words": "node scripts/build-words.mjs",
     "optimize:images": "node scripts/optimize-images.mjs",
     "android:sync": "vite build && cap sync android",
-    "android:open": "cap open android"
+    "android:open": "cap open android",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "devDependencies": {
     "@capacitor/android": "^8.6.0",
     "@capacitor/cli": "^8.6.0",
+    "playwright": "^1.63.0",
     "sharp": "^0.35.5",
     "vite": "^5.4.21"
   },

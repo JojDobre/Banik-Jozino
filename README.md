@@ -59,6 +59,7 @@ npm run dev
 ```
 
 Open the printed URL (e.g. `http://localhost:5173`) in Chrome or Edge.
+Every screen is designed for a 1920×1080 stage that scales to the device (`public/js/stage.js`).
 Speech recognition requires a secure context (`localhost` or HTTPS) and an internet connection.
 
 | Command | What it does |
@@ -67,6 +68,7 @@ Speech recognition requires a secure context (`localhost` or HTTPS) and an inter
 | `npm test` | Unit tests |
 | `npm run build` | Production build into `dist/` |
 | `npm run build:words` | Regenerate the word dictionary from levels, images and audio |
+| `npm run screenshots` | Screenshots of all screens on 7 device sizes + error check (after `npm run build`) |
 | `npm run optimize:images` | Shrink oversized images (keeps names and formats) |
 | `npm run android:sync` / `android:open` | Build and open the Android app – see [docs/ANDROID.md](docs/ANDROID.md) |
 

@@ -8,8 +8,12 @@
     <link rel="icon" type="image/png" href="images/icons/favicon.png">
     <!-- Spoločné služby (reč, zvuk, profily, karty) – window.BJ -->
     <script type="module" src="src/bridge.js"></script>
+    <!-- Herné plátno 1920×1080 – škálovanie na každú obrazovku -->
+    <link rel="stylesheet" type="text/css" href="css/stage.css" />
+    <script src="js/stage.js"></script>
 </head>
 <body>
+  <div id="bj-stage">
     <a href="index.html" class="back-button">←</a>
     <div class="game-container">
         <canvas id="gameCanvas" width="800" height="800"></canvas>
@@ -57,22 +61,22 @@
                 
                 <div class="sound-buttons-container">
                     <button class="sound-play-btn" id="playSound1">
-                        <img src="images/speaker-icon.png" alt="Zvuk 1">
+                        <span class="sound-icon" aria-hidden="true">🔊</span>
                         <span>Zvuk 1</span>
                     </button>
                     <button class="sound-play-btn" id="playSound2">
-                        <img src="images/speaker-icon.png" alt="Zvuk 2">
+                        <span class="sound-icon" aria-hidden="true">🔊</span>
                         <span>Zvuk 2</span>
                     </button>
                 </div>
                 
                 <div class="listening-buttons-container">
                     <button class="listening-btn listening-btn-same" id="sameButton">
-                        <img src="images/check-icon.png" alt="Rovnaké">
+                        <span class="answer-icon" aria-hidden="true">✔</span>
                         <span>Rovnaké</span>
                     </button>
                     <button class="listening-btn listening-btn-different" id="differentButton">
-                        <img src="images/cross-icon.png" alt="Rôzne">
+                        <span class="answer-icon" aria-hidden="true">✖</span>
                         <span>Rôzne</span>
                     </button>
                 </div>
@@ -85,6 +89,8 @@
     </div>
 
     <div id="blur-background" style="display: none;"></div>
+
+  </div><!-- /bj-stage -->
 
     <script src="js/superjozino/joystick.js"></script>
     <script src="js/superjozino/game.js"></script>

@@ -133,11 +133,24 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 - 🔄 Android projekt (Capacitor) pripravený – **čaká na test rozpoznávania reči na reálnom telefóne**
   (návod v `docs/ANDROID.md`)
 
-### Fáza 2 – Dizajn ⬜
-- ⬜ pevné plátno 1920×1080 škálované na obrazovku (vyzerá rovnako všade)
-- ⬜ oprava posunutých prvkov (logo, loading, čísla levelov, …) podľa referenčných screenshotov
-- ⬜ výzva „otoč telefón“, veľké dotykové tlačidlá
-- ⬜ automatické screenshoty v rôznych rozlíšeniach
+### Fáza 2 – Dizajn ✅
+- ✅ herné plátno 1920×1080 (`public/js/stage.js`, `css/stage.css`) – každá obrazovka sa
+  zmenší/zväčší podľa displeja a vyzerá všade rovnako; pri inom pomere strán sa plátno
+  rozšíri (bez čiernych pruhov)
+- ✅ odstránených ~2 500 riadkov media queries podľa šírky, ktoré posúvali prvky
+- ✅ výzva „otoč telefón“ na výšku; v appke je orientácia zamknutá na šírku
+- ✅ dotykové ovládanie (joystick, krompáč/skok) podľa dotykovej obrazovky, nie šírky okna;
+  zväčšené pre detský prst a presne sleduje prst aj na zmenšenom plátne
+- ✅ zväčšené tlačidlá späť / menu / šípky svetov na dotykových zariadeniach
+- ✅ automatické screenshoty 8 obrazoviek × 7 zariadení (`npm run screenshots`)
+- ✅ opravené chyby nájdené pri screenshotoch:
+  - Pexeso nezobrazovalo karty (chyba Chromia s `container-type` – týkala by sa aj appky)
+  - „duch“ pod zámkami levelov a zdvojené pozadie pod oknami (backdrop-filter pri škálovaní)
+  - okná Pexeso tréningu a výberu levelu sa vkladali mimo plátna (na telefóne obrovské)
+  - chýbajúce súbory: priečinok `Checkpoint` (veľké písmeno – na Androide by nefungoval),
+    ikona sveta Z, ikony v posluchovom cvičení Super Jožina, `banik.ico`
+  - Super Jožino už nepadá pri štarte
+- ⬜ vlastná ikona appky a úvodná obrazovka (presunuté do fázy 6)
 
 ### Fáza 3 – Nová štruktúra ⬜
 - ⬜ výber úrovne 1/2/3, cesta levelov (úroveň 1), svety písmen s generovanými levelmi (úroveň 3)
@@ -167,7 +180,7 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 ---
 
 ## Známe chyby (na opravu neskôr)
-- Super Jožino: netopier (`Bat`) nemá animáciu `walk` a hra padá na `drawImage` s chýbajúcim obrázkom.
+- Super Jožino: netopier (`Bat`) nemá animáciu `walk` (len varovanie v konzole). Pád hry na chýbajúcom obrázku je opravený.
 - Všetkých 260 levelov je typu `banik`; Pexeso a Super Jožino nie sú v postupe.
 - Posluchové cvičenie má len 15 dvojíc zvukov.
 - Opakujúce sa názvy levelov (napr. 24× „Prvé Ď-čka“).

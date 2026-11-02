@@ -19,9 +19,13 @@
     <script src="config/levels.js"></script>
     <!-- Spoločné služby (reč, zvuk, profily, karty) – window.BJ -->
     <script type="module" src="src/bridge.js"></script>
+    <!-- Herné plátno 1920×1080 – škálovanie na každú obrazovku -->
+    <link rel="stylesheet" type="text/css" href="css/stage.css" />
+    <script src="js/stage.js"></script>
 </head>
 
   <body>
+  <div id="bj-stage">
 
     <!-- LOADING -->
     <div id="loading-screen" class="loading-screen">
@@ -181,6 +185,8 @@
     </div>
 
   <div id="blur-background"></div>
+  </div><!-- /bj-stage -->
+
   <script src="js/managers/progressManager.js"></script>
 
   <script src="js/game.js"></script>

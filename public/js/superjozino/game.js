@@ -2142,7 +2142,7 @@ class Game {
             z-index: 1000;
         `;
         
-        document.body.appendChild(this.speechModal);
+        (document.getElementById('bj-stage') || document.body).appendChild(this.speechModal);
     }
 
     showSpeechResult(success) {

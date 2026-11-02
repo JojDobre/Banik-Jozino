@@ -132,7 +132,7 @@ function collectAllPexesoImages(levelConfig) {
         'images/menubutton.png',        // Menu tlačidlo
         'images/star_active.png',       // Aktívna hviezda
         'images/star_inactive.png',     // Neaktívna hviezda
-        'images/banik.ico'              // Ikona
+        'images/icons/favicon.png'              // Ikona
     );
     console.log('   ✅ Pridané UI elementy (menu button, hviezdy, ikona)');
     

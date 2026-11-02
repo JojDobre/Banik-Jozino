@@ -160,7 +160,7 @@ function collectAllImages(levelConfig) {
         'images/nespravne.png',
         'images/star_active.png',
         'images/star_inactive.png',
-        'images/banik.ico'
+        'images/icons/favicon.png'
     );
     
     // ==========================================
@@ -801,8 +801,10 @@ function handleTouchMove(e) {
     
     const touch = e.touches[0];
     const rect = joystickContainer.getBoundingClientRect();
-    const x = touch.clientX - rect.left - joystickCenter.x;
-    const y = touch.clientY - rect.top - joystickCenter.y;
+    // Prepočet z pixelov obrazovky na pixely joysticku (herné plátno je zmenšené)
+    const k = rect.width ? joystickContainer.offsetWidth / rect.width : 1;
+    const x = (touch.clientX - rect.left - rect.width / 2) * k;
+    const y = (touch.clientY - rect.top - rect.height / 2) * k;
     
     updateJoystickPosition(x, y);
 }
@@ -831,8 +833,10 @@ function handleMouseMove(e) {
     if (!joystickActive) return;
     
     const rect = joystickContainer.getBoundingClientRect();
-    const x = e.clientX - rect.left - joystickCenter.x;
-    const y = e.clientY - rect.top - joystickCenter.y;
+    // Prepočet z pixelov obrazovky na pixely joysticku (herné plátno je zmenšené)
+    const k = rect.width ? joystickContainer.offsetWidth / rect.width : 1;
+    const x = (e.clientX - rect.left - rect.width / 2) * k;
+    const y = (e.clientY - rect.top - rect.height / 2) * k;
     
     updateJoystickPosition(x, y);
 }

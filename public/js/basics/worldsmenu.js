@@ -747,7 +747,7 @@ function createLevelModalIfNotExists() {
         </div>
     `;
     
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    (document.getElementById('bj-stage') || document.body).insertAdjacentHTML('beforeend', modalHTML);
     
     // Pridaj event listenery
     document.getElementById('modal-close-btn').addEventListener('click', closeLevelModal);
@@ -1354,7 +1354,7 @@ function createPexesoTrainingModalIfNotExists() {
     </div>
     `;
     
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    (document.getElementById('bj-stage') || document.body).insertAdjacentHTML('beforeend', modalHTML);
     console.log('✅ Pexeso training modal vytvorený');
 }
 

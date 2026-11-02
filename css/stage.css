@@ -1,0 +1,122 @@
+/*
+ * Herné plátno (viď public/js/stage.js).
+ * Všetok obsah stránky je v <div id="bj-stage">, ktorý má logický rozmer
+ * aspoň 1920×1080 a zmenší sa na veľkosť obrazovky.
+ */
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+body {
+    /* Pôvodné štýly rátali s min-height: 100vh – výšku teraz určuje plátno. */
+    min-height: 0 !important;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+#bj-stage {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--stage-w, 1920px);
+    height: var(--stage-h, 1080px);
+    /* zoom namiesto transform: scale – pri transform Chromium zle vykresľuje
+       rozmazanie (backdrop-filter) pod modálnymi oknami a zámkami levelov. */
+    zoom: var(--stage-scale, 1);
+    overflow: hidden;
+    /* Rozloženie preberá z <body> (pôvodné štýly stránok centrovali obsah na body). */
+    display: inherit;
+    flex-direction: inherit;
+    justify-content: inherit;
+    align-items: inherit;
+    box-sizing: border-box;
+}
+
+/* Staršie prehliadače bez podpory zoom (Firefox < 126) */
+@supports not (zoom: 1) {
+    #bj-stage {
+        transform: scale(var(--stage-scale, 1));
+        transform-origin: 0 0;
+    }
+}
+
+/* ===== Výzva „otoč telefón“ ===== */
+#bj-rotate {
+    display: none;
+}
+
+.bj-portrait #bj-rotate {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    background: rgba(28, 16, 10, 0.94);
+    color: #fff;
+    font-family: "Luckiest Guy", sans-serif;
+    text-align: center;
+    padding: 24px;
+}
+
+.bj-rotate-icon {
+    font-size: 72px;
+    animation: bj-rotate 2s ease-in-out infinite;
+}
+
+.bj-rotate-text {
+    font-size: 28px;
+    color: #ECCF17;
+    -webkit-text-stroke: 1px #000;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes bj-rotate {
+    0%, 20% { transform: rotate(0deg); }
+    50%, 70% { transform: rotate(-90deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bj-rotate-icon { animation: none; transform: rotate(-90deg); }
+}
+
+/* ===== Veľké dotykové tlačidlá =====
+ * Na telefóne je plátno zmenšené (~0,36×), preto malé ovládacie prvky
+ * zväčšíme, aby mali na displeji aspoň ~45 px (pohodlné pre detský prst). */
+@media (pointer: coarse) {
+    #bj-stage .kruhove-tlacidlo,
+    #bj-stage .kruhove-tlacidlo:focus {
+        width: 130px;
+        height: 130px;
+    }
+    #bj-stage .back-button {
+        font-size: 110px;
+        line-height: 1;
+        min-width: 130px;
+        min-height: 130px;
+    }
+    #bj-stage .nav-arrow {
+        width: 130px;
+        height: 130px;
+    }
+    #bj-stage .arrow-left {
+        border-top-width: 40px;
+        border-bottom-width: 40px;
+        border-right-width: 70px;
+    }
+    #bj-stage .arrow-right {
+        border-top-width: 40px;
+        border-bottom-width: 40px;
+        border-left-width: 66px;
+    }
+}

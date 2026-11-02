@@ -87,8 +87,10 @@ function handleTouchMove(e) {
     const rect = joystickContainer.getBoundingClientRect();
     
     // Vypočítaj relatívnu pozíciu od stredu joysticku
-    const x = touch.clientX - rect.left - joystickCenter.x;
-    const y = touch.clientY - rect.top - joystickCenter.y;
+    // Prepočet z pixelov obrazovky na pixely joysticku (herné plátno je zmenšené)
+    const k = rect.width ? joystickContainer.offsetWidth / rect.width : 1;
+    const x = (touch.clientX - rect.left - rect.width / 2) * k;
+    const y = (touch.clientY - rect.top - rect.height / 2) * k;
     
     // Aktualizuj pozíciu knobu a pohyb hráča
     updateJoystickPosition(x, y);
@@ -133,8 +135,10 @@ function handleMouseMove(e) {
     const rect = joystickContainer.getBoundingClientRect();
     
     // Vypočítaj relatívnu pozíciu od stredu
-    const x = e.clientX - rect.left - joystickCenter.x;
-    const y = e.clientY - rect.top - joystickCenter.y;
+    // Prepočet z pixelov obrazovky na pixely joysticku (herné plátno je zmenšené)
+    const k = rect.width ? joystickContainer.offsetWidth / rect.width : 1;
+    const x = (e.clientX - rect.left - rect.width / 2) * k;
+    const y = (e.clientY - rect.top - rect.height / 2) * k;
     
     // Aktualizuj pozíciu
     updateJoystickPosition(x, y);

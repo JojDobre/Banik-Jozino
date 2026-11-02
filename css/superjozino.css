@@ -274,12 +274,6 @@ body {
     gap: 20px;
 }
 
-@media (max-width: 800px) {
-    .mobile-controls {
-        display: flex;
-    }
-}
-
 /* Debug panel */
 .debug-panel {
     position: fixed;
@@ -629,35 +623,6 @@ body {
     }
 }
 
-/* Responzívny dizajn */
-@media (max-width: 768px) {
-    .listening-exercise-dialog {
-        padding: 25px;
-        max-width: 95%;
-    }
-    
-    .dialog-header h2 {
-        font-size: 24px;
-    }
-    
-    .listening-buttons-container {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .listening-btn {
-        width: 100%;
-        min-width: unset;
-    }
-    
-    .sound-buttons-container {
-        flex-direction: column;
-        gap: 15px;
-    }
-}
-
-
-
 /* ====================================== */
 /*     VIRTUAL JOYSTICK PRE MOBILY       */
 /*         (SuperJozino Edition)         */
@@ -852,95 +817,9 @@ body {
   }
 }
 
-/* ===== ZOBRAZENIE NA MOBILNÝCH ZARIADENIACH ===== */
-@media (max-width: 800px) {
-    .action-controls {
-        display: block;
-    }
-    
-    .joystick-controls {
-        display: block;
-    }
-    
-    /* Skryť pôvodné mobilné tlačidlá */
-    .mobile-controls {
-        display: none !important;
-    }
-}
 
-/* Pre menšie mobily (telefóny) */
-@media (max-width: 480px) {
-    .action-button {
-        width: 70px;
-        height: 70px;
-        font-size: 28px;
-        bottom: 15px;
-        left: 15px;
-    }
-    
-    .action-controls {
-        bottom: 15px;
-        left: 15px;
-        padding: 15px;
-    }
-    
-    .virtual-joystick {
-        width: 100px;
-        height: 100px;
-    }
-    
-    .joystick-base {
-        width: 75px;
-        height: 75px;
-    }
-    
-    .joystick-knob {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .joystick-controls {
-        bottom: 15px;
-        right: 15px;
-    }
-}
 
-/* Pre veľmi malé telefóny */
-@media (max-width: 360px) {
-    .action-button {
-        width: 60px;
-        height: 60px;
-        font-size: 24px;
-        bottom: 10px;
-        left: 10px;
-    }
-    
-    .action-controls {
-        bottom: 10px;
-        left: 10px;
-        padding: 10px;
-    }
-    
-    .virtual-joystick {
-        width: 90px;
-        height: 90px;
-    }
-    
-    .joystick-base {
-        width: 65px;
-        height: 65px;
-    }
-    
-    .joystick-knob {
-        width: 30px;
-        height: 30px;
-    }
-    
-    .joystick-controls {
-        bottom: 10px;
-        right: 10px;
-    }
-}
+
 
 /* ===== DEBUG REŽIM (voliteľný) ===== */
 .joystick-debug {
@@ -962,35 +841,31 @@ body {
   display: block;
 }
 
-/* ===== LANDSCAPE MÓDY (horizontálna orientácia) ===== */
-@media (max-width: 800px) and (orientation: landscape) {
-    .action-controls {
-        bottom: 15px;
-        left: 15px;
-    }
-    
-    .joystick-controls {
-        bottom: 15px;
-        right: 15px;
-    }
-    
-    .action-button {
-        width: 65px;
-        height: 65px;
-        font-size: 26px;
-    }
-    
-    .virtual-joystick {
-        width: 95px;
-        height: 95px;
-    }
-    
-    .joystick-knob {
-        width: 32px;
-        height: 32px;
-    }
+
+/* ===== DOTYKOVÉ OVLÁDANIE =====
+ * Zobrazí sa na dotykových zariadeniach. Rozmery sú v pixeloch herného plátna
+ * (1920×1080), ktoré sa na telefóne zmenší – preto sú ovládače zväčšené,
+ * aby boli pre detský prst dosť veľké. */
+@media (pointer: coarse) {
+  .action-controls,
+  .joystick-controls {
+    display: block;
+    z-index: 1000;
+  }
+  .action-controls {
+    left: 70px;
+    bottom: 70px;
+    scale: 2.4;
+    transform-origin: left bottom;
+  }
+  .joystick-controls {
+    right: 70px;
+    bottom: 70px;
+    scale: 2.4;
+    transform-origin: right bottom;
+  }
+  .action-button,
+  .virtual-joystick {
+    opacity: 0.85;
+  }
 }
-
-
-
-

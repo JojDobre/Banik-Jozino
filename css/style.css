@@ -11,7 +11,7 @@
 body {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
+    min-height: var(--stage-h, 100vh);
     font-family: "Luckiest Guy", sans-serif;
     overflow: hidden; /* Zabráni scrollovaniu */
     background: var(--Backgrtound, url('../images/worlds/background.jpg')) lightgray 50% / cover no-repeat;
@@ -26,8 +26,8 @@ body {
 /* Flexbox kontajner pre rozloženie na ľavo/pravo */
 .container {
    display: flex;
-   width: 100vw;
-   height: 100vh;
+   width: var(--stage-w, 100vw);
+   height: var(--stage-h, 100vh);
    align-items: center;
    justify-content: center;
    padding: 4rem 5rem;
@@ -553,201 +553,10 @@ body {
 
 
 /* ===== RESPONZÍVNE ŠTÝLY ===== */
-/* Pre tablety a menšie obrazovky */
-@media (max-width: 1024px) {
-    .container {
-        padding: 1rem;
-        gap: 1rem;
-    }
-    
-    .text-jozino {
-        font-size: 80px;
-        width: auto;
-    }
-    
-    .text-banik {
-        font-size: 35px;
-    }
-    
-    .character-image {
-        width: 400px;
-        height: 346px;
-    }
-    
-    .radial-background {
-        width: 400px;
-        height: 400px;
-    }
-}
 
-/* Pre mobilné zariadenia */
-@media (max-width: 900px) {
-    .container {
-        padding: 0.5rem;
-    }
-    
-    .menu-button {
-        font-size: 2rem;
-        padding: 0.8rem 2rem;
-    }
-        
-    .radial-background {
-        width: 300px;
-        height: 300px;
-    }
 
-    .right-section{
-        display: none;
-    }
 
-    .close {
-    font-size: 44px;
-    }
 
-    .modal-content {
-    padding: 1rem 2rem;
-    }
 
-    .modal-content h2 {
-    margin: 0 0 1rem 0;
-    font-size: 35px;
-    }
 
-    .modal-content p {
-        font-size: 18px;
-        padding: 0px 10px;
-        letter-spacing: 1.6px;
-    }
-}
 
-/* Pre veľmi malé mobilné zariadenia */
-@media (max-width: 480px) {
-   .menu-button {
-        font-size: 1.2rem;
-        padding: 0.6rem 1.5rem;
-    }
-
-    .right-section{
-        display: none;
-    }
-
-    .menu-button {
-        width: 100%;
-        max-height: 49.409px;
-    }
-
-    .close {
-        font-size: 30px;
-    }
-
-    .modal-content {
-        padding: 1rem 1rem;
-    }
-
-    .modal-content h2 {
-        margin: 0 0 1rem 0;
-        font-size: 28px;
-    }
-
-    .modal-content p {
-        font-size: 14px;
-        padding: 0px 5px;
-        letter-spacing: 1.6px;
-        margin-bottom: 0.5rem;
-    }
-
-    .loading-logo {
-        margin-bottom: 2rem;
-    }
-
-    .loading-text-jozino {
-        font-size: 64px;
-        width: auto;
-        line-height: 0px; /* 20% */
-    }
-
-    .loading-text-banik {
-        font-size: 30px;
-        line-height: 20px; /* 20% */
-    }
-
-    .loading-message {
-        font-size: 20px;
-    }
-
-}
-
-@media (max-width: 290px) {
-    .logo-container {
-        margin-bottom: 1rem;
-        position: relative;
-    }
-
-    .text-jozino {
-        font-size: 35px;
-        width: auto;
-        line-height: 0px; /* 20% */
-    }
-    
-    .text-banik {
-        font-size: 20px;
-        line-height: 20px; /* 20% */
-    }
-
-   .menu-button {
-        font-size: 0.8rem;
-        padding: 0.6rem 1.0rem;
-    }
-
-    .right-section{
-        display: none;
-    }
-
-    .menu-button {
-        width: 100%;
-        max-height: 39.409px;
-    }
-
-    .main-menu li {
-        margin-bottom: 0.8rem;
-    }
-
-    .close {
-    font-size: 20px;
-    }
-
-    .modal-content {
-    padding: 1rem 1rem;
-    }
-
-    .modal-content h2 {
-    margin: 0 0 1rem 0;
-    font-size: 20px;
-    }
-
-    .modal-content p {
-        font-size: 10px;
-        padding: 0px 5px;
-        letter-spacing: 1.6px;
-        margin-bottom: 0.5rem;
-    }
-
-    .loading-logo {
-        margin-bottom: 2rem;
-    }
-
-    .loading-text-jozino {
-        font-size: 35px;
-        width: auto;
-        line-height: 0px; /* 20% */
-    }
-
-    .loading-text-banik {
-        font-size: 20px;
-        line-height: 20px; /* 20% */
-    }
-
-    .loading-message {
-        font-size: 18px;
-    }
-}
