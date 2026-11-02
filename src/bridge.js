@@ -16,6 +16,7 @@ import * as rewards from './core/rewards.js';
 import * as minigames from './core/minigames.js';
 import * as levels from './core/levelGenerator.js';
 import { WORDS, findWords, getWord } from './content/words.js';
+import { CARDS, SETS } from './content/cards/index.js';
 import { installRewardPopup } from './ui/cards.js';
 import { createTierProgress } from './core/tierProgress.js';
 
@@ -27,7 +28,26 @@ const tts = createTTSService();
 const audio = createAudioService();
 
 let catalog = null;
-const getCatalog = () => (catalog ??= rewards.buildCatalog(WORDS));
+const getCatalog = () => (catalog ??= rewards.buildCatalog(CARDS));
+
+/**
+ * Prevod starej zbierky: karty, ktoré už v katalógu nie sú (pôvodné karty so
+ * slovami), sa premenia na iskričky – nič sa nestratí.
+ */
+function migrateCollection() {
+    const p = profiles.active();
+    const col = p?.collection;
+    if (!col?.cards) return;
+    const ids = new Set(getCatalog().map((c) => c.id));
+    let sparkles = 0;
+    const cards = {};
+    for (const [id, n] of Object.entries(col.cards)) {
+        if (ids.has(id)) cards[id] = n;
+        else sparkles += n;
+    }
+    if (sparkles) profiles.setCollection(p.id, { ...col, cards, sparkles: (col.sparkles || 0) + sparkles });
+}
+migrateCollection();
 
 function applySettings() {
     const p = profiles.active();
@@ -85,6 +105,7 @@ window.BJ = {
     rewards: {
         ...rewards,
         catalog: getCatalog,
+        sets: SETS,
         rewardLevel,
         collection: () => profiles.active()?.collection,
         openPack(packId) {

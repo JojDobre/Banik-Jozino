@@ -94,7 +94,7 @@ async function main() {
                 version: 2, activeId: 'p_test',
                 profiles: { p_test: { id: 'p_test', name: 'Ema', age: 5, ageGroup: '5-6', avatar: 'red_head_miner',
                     progressKey: 'speechTherapyProgress', settings: { sound: true, music: true, voiceInstructions: true },
-                    collection: { cards: { 'world_r:rak': 1, 'world_r:ryba': 2, 'world_l:lopta': 1 }, sparkles: 4, packs: [{ id: 'pack_t', set: 'world_r', size: 3 }] } } },
+                    collection: { cards: { rubin: 1, krtko: 2, koruna: 1, svetluska: 1 }, sparkles: 4, packs: [{ id: 'pack_t', set: 'world_r', size: 3 }] } } },
             }));
             localStorage.setItem('bj.tiers.p_test', JSON.stringify({ levels: { t1_01: { stars: 3 }, t1_02: { stars: 2 } } }));
         });

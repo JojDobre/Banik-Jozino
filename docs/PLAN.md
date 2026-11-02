@@ -171,6 +171,9 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 - ✅ zbierka kariet: okno s odmenou po leveli (aj v Bani a Pexese), album (`album.html`)
   so sadami podľa svetov, otváranie balíčkov, výmena iskričiek, ťuknutie na kartu prehrá slovo
 - ✅ nahovorené pokyny (tlačidlo s reproduktorom; v appke zaznejú aj automaticky)
+- ✅ animované zberateľské karty: 32 kreslených kariet v 4 témach (Drahokamy, Zvieratká,
+  Výbava, Poklady) – `src/content/cards/`; vzácne s dúhovým leskom, zlaté so zlatým;
+  veľká karta sa nakláňa podľa prsta; staré slovné karty sa premenili na iskričky
 - ⬜ svety písmen (úroveň 3) s levelmi z generátora slov – zatiaľ ostávajú pôvodné levely
 - ⬜ ikona a úvodná obrazovka appky
 

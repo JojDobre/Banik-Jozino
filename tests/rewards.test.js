@@ -4,13 +4,38 @@ import { buildCatalog, grantLevelReward, openPack, exchangeForCard, addCard, set
 import { emptyCollection } from '../src/core/profiles.js';
 import { seededRandom } from '../src/core/levelGenerator.js';
 
-const words = ['rak', 'ryba', 'ruka', 'ruža', 'rosa', 'rok'].map((w) => ({ word: w, image: `images/slova/${w}.png`, worlds: ['world_r'] }));
-const catalog = buildCatalog(words);
+import { CARDS, SETS } from '../src/content/cards/index.js';
 
-test('katalóg: karta pre každé slovo s obrázkom vo svete', () => {
+// malý testovací katalóg s jednou sadou (world_r) – pravidlá odmien
+const defs = ['rak', 'ryba', 'ruka', 'ruza', 'rosa', 'rok'].map((id) => ({ id: `world_r:${id}`, name: id, set: 'world_r' }));
+const catalog = buildCatalog(defs);
+
+test('katalóg z definícií; vzácnosť sa doplní, ak chýba', () => {
     assert.equal(catalog.length, 6);
     assert.ok(catalog.every((c) => c.set === 'world_r' && ['common', 'rare', 'gold'].includes(c.rarity)));
-    assert.equal(buildCatalog([{ word: 'x', image: null, worlds: ['world_r'] }]).length, 0);
+});
+
+test('karty s témami: každá má obrázok, sadu a jedinečné id', () => {
+    const real = buildCatalog(CARDS);
+    assert.equal(new Set(real.map((c) => c.id)).size, real.length);
+    for (const c of real) {
+        assert.equal(typeof c.art, 'function', c.id);
+        assert.ok(SETS.some((s) => s.id === c.set), c.id);
+        const svgText = c.art('t');
+        assert.match(svgText, /^<svg[\s\S]*<\/svg>$/, c.id);
+    }
+    // v každej sade sú bežné aj vzácnejšie karty
+    for (const s of SETS) {
+        const inSet = real.filter((c) => c.set === s.id);
+        assert.ok(inSet.some((c) => c.rarity === 'common') && inSet.some((c) => c.rarity !== 'common'), s.id);
+    }
+});
+
+test('odmena zo sady, ktorá v katalógu nie je (svet z Bane), padne z celého katalógu – aj vzácna', () => {
+    const real = buildCatalog(CARDS);
+    const r = grantLevelReward(real, emptyCollection(), { worldId: 'world_r', levelNumber: 1, stars: 3, previousStars: 0, firstCompletion: true }, seededRandom(9));
+    assert.equal(r.rewards.length, 2);
+    assert.notEqual(r.rewards[1].rarity, 'common');
 });
 
 test('prvé splnenie levelu dá kartu, opakované už nie', () => {

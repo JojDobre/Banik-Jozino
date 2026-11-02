@@ -8,7 +8,7 @@
 import '../bridge.js';
 import { h, topbar, requireProfile, say, modal, ICONS } from '../ui/kit.js';
 import { cardElement, showRewards } from '../ui/cards.js';
-import { WORLD_ORDER, worldLabel } from '../content/worlds.js';
+import { SETS, setById } from '../content/cards/index.js';
 import { EXCHANGE_COST } from '../core/rewards.js';
 
 const BJ = window.BJ;
@@ -22,10 +22,9 @@ function sparklesWord(n) {
     return n === 1 ? 'iskrička' : n >= 2 && n <= 4 ? 'iskričky' : 'iskričiek';
 }
 
+/** Prečíta meno karty (dieťa ho môže zopakovať – album je aj cvičenie). */
 function playCardWord(card) {
-    const word = BJ.content.getWord(card.word);
-    if (word?.audio) BJ.audio.play(word.audio);
-    else say(card.word);
+    say(card.name);
 }
 
 function openCard(card, owned, count) {
@@ -36,10 +35,11 @@ function openCard(card, owned, count) {
             h('div.card-detail', {}, [
                 cardElement(card, { big: true, count }),
                 h('div.card-detail__side', {}, [
-                    h('div.bj-subtitle', { text: 'Povedz to slovo:' }),
-                    h('div.card-detail__word', { text: card.name.toUpperCase() }),
+                    h('div.bj-subtitle', { text: setById(card.set)?.name || '' }),
+                    h('div.card-detail__word', { text: card.name }),
+                    h('div.bj-text', { text: 'Ťukni na reproduktor a povedz meno karty nahlas!' }),
                     h('div.bj-row', {}, [
-                        h('button.bj-icon-btn', { type: 'button', 'aria-label': 'Vypočuť slovo', html: ICONS.speaker, onclick: () => playCardWord(card) }),
+                        h('button.bj-icon-btn', { type: 'button', 'aria-label': 'Vypočuť meno karty', html: ICONS.speaker, onclick: () => playCardWord(card) }),
                         h('button.bj-btn', { type: 'button', text: 'Zavrieť', onclick: () => close() }),
                     ]),
                 ]),
@@ -106,7 +106,7 @@ function render() {
     const ownedCount = catalog.filter((c) => col.cards[c.id]).length;
     const packs = col.packs || [];
 
-    const sets = WORLD_ORDER.filter((s) => catalog.some((c) => c.set === s));
+    const sets = SETS.filter((s) => catalog.some((c) => c.set === s.id));
     const setTab = (id, label, owned, total) =>
         h('button.set-tab' + (currentSet === id ? '.is-active' : ''), {
             type: 'button',
@@ -123,8 +123,8 @@ function render() {
     const tabs = [
         setTab('all', 'Všetky', ownedCount, catalog.length),
         ...sets.map((s) => {
-            const inSet = catalog.filter((c) => c.set === s);
-            return setTab(s, worldLabel(s), inSet.filter((c) => col.cards[c.id]).length, inSet.length);
+            const inSet = catalog.filter((c) => c.set === s.id);
+            return setTab(s.id, s.name, inSet.filter((c) => col.cards[c.id]).length, inSet.length);
         }),
     ];
 

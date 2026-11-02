@@ -5,13 +5,52 @@
  */
 import { h } from './kit.js';
 
+import { setById } from '../content/cards/index.js';
+
 const RARITY_LABEL = { common: 'Bežná', rare: 'Vzácna', gold: 'Zlatá' };
+let uid = 0;
+
+/** Obrázok karty: kreslené animované SVG (karty s témami) alebo obrázok. */
+function cardArt(card) {
+    if (card.art) {
+        uid += 1;
+        return h('div.bj-card__art', { html: card.art(`c${uid}`) });
+    }
+    return h('img', { src: card.image, alt: '', loading: 'lazy' });
+}
+
+/**
+ * Naklonenie karty podľa prsta/myši (3D efekt) – pre veľké karty.
+ */
+export function enableTilt(el) {
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    const move = (e) => {
+        const r = el.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        const y = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        el.style.setProperty('--tilt-x', `${(-y * 12).toFixed(2)}deg`);
+        el.style.setProperty('--tilt-y', `${(x * 14).toFixed(2)}deg`);
+        el.style.setProperty('--foil-x', `${50 + x * 40}%`);
+        el.style.setProperty('--foil-y', `${50 + y * 40}%`);
+        el.classList.add('is-tilting');
+    };
+    const leave = () => {
+        el.classList.remove('is-tilting');
+        el.style.removeProperty('--tilt-x');
+        el.style.removeProperty('--tilt-y');
+    };
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerleave', leave);
+    el.addEventListener('pointerup', leave);
+}
 
 /**
  * @param {object} card – položka z katalógu (rewards.buildCatalog)
- * @param {object} [opts] – { missing, count, big }
+ * @param {object} [opts] – { missing, count, big, tilt }
  */
-export function cardElement(card, { missing = false, count = 0, big = false } = {}) {
+export function cardElement(card, { missing = false, count = 0, big = false, tilt = big } = {}) {
+    const set = setById(card.set);
     const cls = ['bj-card', `bj-card--${card.rarity}`];
     if (missing) cls.push('is-missing');
     if (big) cls.push('bj-card--big');
@@ -19,11 +58,18 @@ export function cardElement(card, { missing = false, count = 0, big = false } = 
         'data-card': card.id,
         'aria-label': missing ? 'Chýbajúca karta' : `${card.name}, ${RARITY_LABEL[card.rarity] || ''} karta`,
     }, [
-        h('div.bj-card__img', {}, [h('img', { src: card.image, alt: '', loading: 'lazy' })]),
-        h('div.bj-card__name', { text: missing ? '???' : card.name }),
+        h('div.bj-card__img', {}, [cardArt(card), missing ? null : h('div.bj-card__foil')]),
+        h('div.bj-card__name' + (missing ? '' : card.name.length > 13 ? '.is-xlong' : card.name.length > 9 ? '.is-long' : ''), { text: missing ? '???' : card.name }),
         h('span.bj-card__gem', { title: RARITY_LABEL[card.rarity] }),
+        set && !missing ? h('span.bj-card__set', { text: set.name }) : null,
         count > 1 ? h('span.bj-card__count', { text: `×${count}` }) : null,
     ]);
+    // farby sady (pozadie obrázka)
+    if (set) {
+        el.style.setProperty('--set-a', set.bg[0]);
+        el.style.setProperty('--set-b', set.bg[1]);
+    }
+    if (tilt && !missing) enableTilt(el);
     return el;
 }
 

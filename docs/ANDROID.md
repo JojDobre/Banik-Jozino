@@ -6,11 +6,16 @@ Rozpoznávanie reči a hlasové pokyny idú cez natívne pluginy
 lebo Android WebView nemá Web Speech API.
 
 ## Najrýchlejšie: hotové APK z GitHubu
-Po každom pushi do `main` sa APK zostaví automaticky:
-1. GitHub → záložka **Actions** → posledný beh **Android APK**.
-2. Dole v časti **Artifacts** stiahni `banik-jozino-debug-apk` (ZIP s APK).
-3. APK prenes do telefónu a otvor ho. Telefón sa spýta, či povoliť inštaláciu
-   z neznámeho zdroja (prehliadač/Súbory) – povoľ.
+Po každom pushi do `main` sa APK zostaví automaticky (~2 minúty) a nahrá do vydania
+**„Najnovšia testovacia verzia“**:
+
+- Priamy odkaz (otvor v telefóne):
+  https://github.com/JojDobre/Banik-Jozino/releases/download/najnovsia/banik-jozino.apk
+- alebo GitHub → **Releases** → Najnovšia testovacia verzia → `banik-jozino.apk`
+- alebo GitHub → **Actions** → beh **Android APK** → Artifacts (ZIP)
+
+APK otvor v telefóne. Telefón sa spýta, či povoliť inštaláciu z neznámeho zdroja – povoľ.
+Novšia verzia sa nainštaluje cez staršiu (postup a karty ostanú).
 
 Ide o testovaciu (debug) verziu – nie je určená na Google Play.
 

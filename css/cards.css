@@ -283,3 +283,161 @@
 .bj-staged .bj-reward .bj-btn:active {
     transform: scale(0.96);
 }
+
+/* =====================================================================
+ * Karty s kreslenými obrázkami (témy) – pozadie podľa sady, lesk, 3D
+ * ===================================================================== */
+.bj-staged .bj-card {
+    transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    will-change: transform;
+}
+
+.bj-staged .bj-card.is-tilting {
+    transition: transform 0.05s linear;
+}
+
+.bj-staged .bj-card__img {
+    position: relative;
+    background:
+        radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 55%),
+        linear-gradient(160deg, var(--set-b, #f1d9a6) 0%, var(--set-a, #c9a06a) 100%);
+}
+
+.bj-staged .bj-card__art {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bj-staged .bj-card__art svg {
+    width: 92%;
+    height: 92%;
+    overflow: visible;
+    filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.3));
+}
+
+/* dúhový lesk vzácnych kariet, zlatý lesk zlatých */
+.bj-staged .bj-card__foil {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0;
+}
+
+.bj-staged .bj-card--rare .bj-card__foil {
+    opacity: 0.55;
+    background: linear-gradient(115deg,
+        transparent 15%, rgba(255, 90, 200, 0.45) 30%, rgba(90, 220, 255, 0.45) 45%,
+        rgba(255, 245, 120, 0.45) 60%, rgba(120, 255, 170, 0.4) 72%, transparent 85%);
+    background-size: 260% 260%;
+    background-position: var(--foil-x, 0%) var(--foil-y, 50%);
+    mix-blend-mode: color-dodge;
+    animation: bj-foil 5s linear infinite;
+}
+
+.bj-staged .bj-card--gold .bj-card__foil {
+    opacity: 0.6;
+    background:
+        radial-gradient(circle at var(--foil-x, 30%) var(--foil-y, 20%), rgba(255, 255, 220, 0.8) 0%, transparent 35%),
+        linear-gradient(135deg, rgba(255, 215, 80, 0.35), rgba(255, 255, 255, 0) 50%, rgba(255, 190, 40, 0.35));
+    mix-blend-mode: soft-light;
+}
+
+.bj-staged .bj-card__set {
+    display: none;
+}
+
+.bj-staged .bj-card--big .bj-card__set {
+    display: block;
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 6px 14px 2px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1.1;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* chýbajúca karta: silueta, bez animácií */
+.bj-staged .bj-card.is-missing .bj-card__img {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.bj-staged .bj-card.is-missing .bj-card__art svg {
+    filter: brightness(0);
+    opacity: 0.3;
+}
+
+.bj-staged .bj-card.is-missing .card-art * {
+    animation: none !important;
+}
+
+@keyframes bj-foil {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+/* =====================================================================
+ * Animácie obrázkov (triedy z src/content/cards/art.js)
+ * ===================================================================== */
+.bj-staged .card-art * {
+    transform-box: view-box;
+}
+
+.bj-staged .card-art .a-float { animation: art-float 3.2s ease-in-out infinite; }
+.bj-staged .card-art .a-bob { animation: art-bob 2.4s ease-in-out infinite; transform-origin: 100px 180px; }
+.bj-staged .card-art .a-blink { animation: art-blink 4.5s ease-in-out infinite; }
+.bj-staged .card-art .a-flap-l { animation: art-flap-l 0.5s ease-in-out infinite alternate; }
+.bj-staged .card-art .a-flap-r { animation: art-flap-r 0.5s ease-in-out infinite alternate; }
+.bj-staged .card-art .a-twinkle { animation: art-twinkle 2.2s ease-in-out infinite; }
+.bj-staged .card-art .a-glow { animation: art-glow 2s ease-in-out infinite; }
+.bj-staged .card-art .a-spin { animation: art-spin 2.4s linear infinite; }
+.bj-staged .card-art .a-spin-slow { animation: art-spin 14s linear infinite; }
+.bj-staged .card-art .a-wiggle { animation: art-wiggle 2.6s ease-in-out infinite; }
+.bj-staged .card-art .a-swing { animation: art-swing 3s ease-in-out infinite; }
+.bj-staged .card-art .a-flicker { animation: art-flicker 0.35s ease-in-out infinite alternate; }
+.bj-staged .card-art .a-coin { animation: art-coin 3s ease-in-out infinite; }
+.bj-staged .card-art .a-tongue { animation: art-tongue 3s ease-in-out infinite; }
+.bj-staged .card-art .a-hue { animation: art-hue 5s linear infinite; }
+.bj-staged .card-art .a-lid { animation: art-lid 3.4s ease-in-out infinite; }
+.bj-staged .card-art .a-dash { animation: art-dash 1.6s linear infinite; }
+.bj-staged .card-art .a-needle { animation: art-needle 3.5s ease-in-out infinite; }
+
+@keyframes art-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes art-bob { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.03, 0.97); } }
+@keyframes art-blink { 0%, 44%, 50%, 100% { transform: scaleY(1); } 47% { transform: scaleY(0.1); } }
+@keyframes art-flap-l { from { transform: rotate(14deg); } to { transform: rotate(-16deg); } }
+@keyframes art-flap-r { from { transform: rotate(-14deg); } to { transform: rotate(16deg); } }
+@keyframes art-twinkle { 0%, 100% { transform: scale(0.3) rotate(0deg); opacity: 0; } 40%, 60% { transform: scale(1) rotate(45deg); opacity: 1; } }
+@keyframes art-glow { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.8; } }
+@keyframes art-spin { to { transform: rotate(360deg); } }
+@keyframes art-wiggle { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg); } }
+@keyframes art-swing { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+@keyframes art-flicker { from { transform: scale(1, 1); } to { transform: scale(0.92, 1.08); } }
+@keyframes art-coin { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.15); } }
+@keyframes art-tongue { 0%, 70%, 100% { transform: scaleX(0); } 78%, 92% { transform: scaleX(1); } }
+@keyframes art-hue { to { filter: hue-rotate(360deg); } }
+@keyframes art-lid { 0%, 60%, 100% { transform: rotate(0deg); } 70%, 85% { transform: rotate(-12deg); } }
+@keyframes art-dash { to { stroke-dashoffset: -32; } }
+@keyframes art-needle { 0%, 100% { transform: rotate(-20deg); } 40% { transform: rotate(25deg); } 70% { transform: rotate(-8deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .bj-staged .card-art *,
+    .bj-staged .bj-card__foil {
+        animation: none !important;
+    }
+}
+
+/* dlhé mená kariet – menšie písmo namiesto orezania */
+.bj-staged .bj-card__name.is-long { font-size: 25px; }
+.bj-staged .bj-card__name.is-xlong { font-size: 21px; white-space: normal; text-align: center; line-height: 1.05; }
+.bj-staged .bj-card--big .bj-card__name.is-long { font-size: 40px; }
+.bj-staged .bj-card--big .bj-card__name.is-xlong { font-size: 34px; }

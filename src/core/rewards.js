@@ -37,20 +37,18 @@ export function rarityFor(id) {
 }
 
 /**
- * Katalóg kariet zo slovníka: každé slovo s obrázkom, ktoré patrí do sveta,
- * je karta v sade toho sveta.
- * @param {Array} words – položky zo src/content/words.js
+ * Katalóg kariet z definícií (src/content/cards).
+ * @param {Array} defs – { id, name, set, rarity?, art?, image? }
  */
-export function buildCatalog(words) {
-    const cards = [];
-    for (const w of words) {
-        if (!w.image) continue;
-        for (const worldId of w.worlds || []) {
-            const id = `${worldId}:${w.word}`;
-            cards.push({ id, name: w.word, image: w.image, set: worldId, rarity: rarityFor(id), word: w.word });
-        }
-    }
-    return cards;
+export function buildCatalog(defs) {
+    return defs.map((d) => ({
+        id: d.id,
+        name: d.name,
+        set: d.set,
+        rarity: d.rarity || rarityFor(d.id),
+        art: d.art,
+        image: d.image,
+    }));
 }
 
 const clone = (c) => ({ cards: { ...c.cards }, sparkles: c.sparkles || 0, packs: [...(c.packs || [])] });
@@ -65,6 +63,8 @@ function pick(list, rng) {
  */
 export function drawCard(catalog, collection, { set, minRarity, rng = Math.random } = {}) {
     const minIdx = minRarity ? RARITIES.indexOf(minRarity) : 0;
+    // sada, ktorá v katalógu nie je (napr. svet z Bane), = vyber z celého katalógu
+    if (set && !catalog.some((c) => c.set === set)) set = undefined;
     let pool = catalog.filter((c) => (!set || c.set === set) && RARITIES.indexOf(c.rarity) >= minIdx);
     if (!pool.length) pool = catalog.filter((c) => !set || c.set === set);
     if (!pool.length) pool = catalog;

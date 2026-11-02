@@ -103,6 +103,7 @@
 .album-grid {
     display: grid;
     grid-template-columns: repeat(6, 220px);
+    padding: 6px 0;
     gap: 26px;
     justify-content: center;
 }
@@ -137,7 +138,7 @@
 }
 
 .card-detail__word {
-    font-size: 110px;
+    font-size: 84px;
     line-height: 1;
     padding-top: 0.15em;
     color: #fff;
