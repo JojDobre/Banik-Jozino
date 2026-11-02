@@ -51,7 +51,8 @@ if (profile) {
     const title = 'Čo budeme cvičiť?';
     app.replaceChildren(
         topbar({ back: 'index.html', profile }),
-        h('div.tiers-head', {}, [h('h1.bj-title', { text: title }), speakerButton('Čo budeme cvičiť? Počúvanie, zvuky alebo slová?')]),
+        h('div.bj-say', {}, [speakerButton('Čo budeme cvičiť? Počúvanie, zvuky alebo slová?')]),
+        h('div.tiers-head', {}, [h('h1.bj-title', { text: title })]),
         h('div.tiers', {}, [
             tierCard({
                 number: 1,

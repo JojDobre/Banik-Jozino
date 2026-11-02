@@ -1,13 +1,9 @@
 /* Album kariet (album.html) */
 
-.album-head {
+.album-bar {
     width: 1800px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 110px;
-    padding: 0 10px;
-    box-sizing: border-box;
+    justify-content: flex-end;
 }
 
 .album-stats {
@@ -155,7 +151,4 @@
     cursor: url('../images/active_cursor4.png') 5 5, pointer;
 }
 
-/* telefón: nadpis nesmie zasahovať pod hornú lištu */
-.bj-compact .album-head {
-    margin-top: 96px;
-}
+

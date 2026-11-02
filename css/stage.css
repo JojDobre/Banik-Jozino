@@ -27,6 +27,10 @@ body {
     top: 0;
     width: var(--stage-w, 1920px);
     height: var(--stage-h, 1080px);
+    /* Plátno vždy presne na celú obrazovku – aj keď sa po skrytí systémových
+       líšt zmení výška a WebView nepošle „resize“ (inak dole presvitá pásik). */
+    width: calc(100dvw / var(--stage-scale, 1));
+    height: calc(100dvh / var(--stage-scale, 1));
     /* zoom namiesto transform: scale – pri transform Chromium zle vykresľuje
        rozmazanie (backdrop-filter) pod modálnymi oknami a zámkami levelov. */
     zoom: var(--stage-scale, 1);
@@ -93,27 +97,4 @@ body {
     .bj-rotate-icon { animation: none; transform: rotate(-90deg); }
 }
 
-/* ===== Veľké dotykové tlačidlá =====
- * Na telefóne je plátno zmenšené (~0,36×), preto malé ovládacie prvky
- * zväčšíme, aby mali na displeji aspoň ~45 px (pohodlné pre detský prst). */
-@media (pointer: coarse) {
-    #bj-stage .kruhove-tlacidlo,
-    #bj-stage .kruhove-tlacidlo:focus {
-        width: 130px;
-        height: 130px;
-    }
-    #bj-stage .nav-arrow {
-        width: 130px;
-        height: 130px;
-    }
-    #bj-stage .arrow-left {
-        border-top-width: 40px;
-        border-bottom-width: 40px;
-        border-right-width: 70px;
-    }
-    #bj-stage .arrow-right {
-        border-top-width: 40px;
-        border-bottom-width: 40px;
-        border-left-width: 66px;
-    }
-}
+/* Veľkosti ovládacích prvkov sú jednotné – viď „Dizajnový systém“ v css/common.css. */

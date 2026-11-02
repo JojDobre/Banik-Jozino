@@ -14,13 +14,15 @@
 (function () {
     var DESIGN_W = 1920;
     var DESIGN_H = 1080;
+    // Telefón: jedna výška plátna pre VŠETKY stránky → rovnaká mierka všade
+    // (rovnaké tlačidlo je na každej obrazovke rovnako veľké).
+    var PHONE_H = 860;
     var root = document.documentElement;
     var state = { scale: 1, width: DESIGN_W, height: DESIGN_H, compact: false };
 
     /**
      * Telefón: kompaktné plátno (nižšie a užšie) => všetko je väčšie.
-     * Výšku kompaktného plátna si stránka určí cez <html data-phone-h="…">
-     * (podľa toho, koľko obsahu má); predvolene 900.
+     * Výška kompaktného plátna je rovnaká pre všetky stránky (PHONE_H).
      */
     function isPhone(vw, vh) {
         var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
@@ -31,7 +33,7 @@
         var vw = window.innerWidth;
         var vh = window.innerHeight;
         var compact = isPhone(vw, vh) && vw > vh;
-        var dh = compact ? Number(root.getAttribute('data-phone-h')) || 900 : DESIGN_H;
+        var dh = compact ? PHONE_H : DESIGN_H;
         var dw = DESIGN_W * (dh / DESIGN_H);
         var scale = Math.min(vw / dw, vh / dh);
         state.compact = compact;
@@ -49,6 +51,12 @@
 
     fit();
     window.addEventListener('resize', fit);
+    // Android: výška sa mení aj po skrytí systémových líšt (immersive) –
+    // nie vždy príde „resize“, preto aj visualViewport a kontrola po načítaní.
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', fit);
+    window.addEventListener('load', function () {
+        [100, 400, 1000, 2000].forEach(function (t) { setTimeout(fit, t); });
+    });
     window.addEventListener('orientationchange', function () {
         setTimeout(fit, 100);
     });

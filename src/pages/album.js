@@ -134,8 +134,8 @@ function render() {
 
     app.replaceChildren(
         topbar({ back, profile, album: false }),
-        h('div.album-head', {}, [
-            h('h1.bj-title', { text: 'Moja zbierka' }),
+        h('div.album-head', {}, [h('h1.bj-title', { text: 'Moja zbierka' })]),
+        h('div.album-bar', {}, [
             h('div.album-stats', {}, [
                 h('div.album-stat', {}, [h('span.album-stat__num', { text: `${ownedCount}` }), h('span', { text: ` / ${catalog.length} kariet` })]),
                 h('div.album-stat', {}, [h('span.album-stat__num', { text: `✨ ${col.sparkles || 0}` }), h('span', { text: ` ${sparklesWord(col.sparkles || 0)}` })]),

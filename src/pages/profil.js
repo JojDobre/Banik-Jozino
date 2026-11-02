@@ -64,7 +64,8 @@ function renderList() {
 
     app.replaceChildren(
         h('div.bj-topbar', {}, [h('div.back-button', {}, [h('a', { href: 'index.html', 'aria-label': 'Späť', html: ICONS.back })])]),
-        h('div.profile-head', {}, [h('h1.bj-title', { text: title }), speakerButton(title)]),
+        h('div.bj-say', {}, [speakerButton(title)]),
+        h('div.profile-head', {}, [h('h1.bj-title', { text: title })]),
         h('div.profile-grid', {}, [...tiles, list.length < 6 ? add : null]),
     );
 }
@@ -185,7 +186,8 @@ function renderForm(profile) {
                 ? h('div.back-button', {}, [h('a', { href: '#', 'aria-label': 'Späť', html: ICONS.back, onclick: (e) => { e.preventDefault(); renderList(); } })])
                 : h('div.back-button', {}, [h('a', { href: 'index.html', 'aria-label': 'Späť', html: ICONS.back })]),
         ]),
-        h('div.profile-head', {}, [h('h1.bj-title', { text: title }), speakerButton(title)]),
+        h('div.bj-say', {}, [speakerButton(title)]),
+        h('div.profile-head', {}, [h('h1.bj-title', { text: title })]),
         h('div.profile-form.bj-panel', {}, [
             h('div.form-row', {}, [h('label.form-label', { text: 'Meno' }), nameInput]),
             h('div.form-row', {}, [h('label.form-label', { text: 'Koľko máš rokov?' }), h('div.age-row', {}, ageButtons)]),

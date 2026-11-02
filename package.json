@@ -17,7 +17,8 @@
     "android:open": "cap open android",
     "screenshots": "node scripts/screenshots.mjs",
     "build:voice": "node scripts/build-voice.mjs",
-    "check:center": "node scripts/check-centering.cjs"
+    "check:center": "node scripts/check-centering.cjs",
+    "audit:ui": "node scripts/audit-ui.cjs"
   },
   "devDependencies": {
     "@capacitor/android": "^8.6.0",

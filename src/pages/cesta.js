@@ -87,13 +87,12 @@ function render(path, prog, chapterId) {
 
     app.replaceChildren(
         topbar({ back: 'urovne.html', profile }),
+        h('div.bj-say', {}, [speakerButton('Ťukni na tlačidlo Hrať.')]),
         h('div.chapter-head', {}, [
-            nav(prevCh, 'left'),
             h('div.chapter-title', {}, [
                 h('div.chapter-title__small', { text: `Počúvam · kapitola ${chapterId}` }),
                 h('h1.bj-title', { text: chapter.title }),
             ]),
-            nav(nextCh, 'right'),
         ]),
         h('div.path-map.bj-panel', { style: { backgroundImage: `url('${chapter.background}')` } }, [
             h('div.path-map__shade'),
@@ -101,11 +100,14 @@ function render(path, prog, chapterId) {
             ...nodes,
         ]),
         h('div.path-footer', {}, [
-            h('div.path-footer__stars', {}, [stars(1, 1), h('span', { text: `${chapterStars} / ${levels.length * 3}` })]),
-            chapterUnlocked
-                ? h('a.bj-btn.bj-btn--primary.path-play', { href: playHref, text: 'Hrať' })
-                : h('div.bj-text', { text: 'Dokonči predchádzajúcu kapitolu.' }),
-            speakerButton('Ťukni na tlačidlo Hrať.'),
+            nav(prevCh, 'left'),
+            h('div.path-footer__center', {}, [
+                h('div.path-footer__stars', {}, [stars(1, 1), h('span', { text: `${chapterStars} / ${levels.length * 3}` })]),
+                chapterUnlocked
+                    ? h('a.bj-btn.bj-btn--primary.path-play', { href: playHref, text: 'Hrať' })
+                    : h('div.bj-text', { text: 'Dokonči predchádzajúcu kapitolu.' }),
+            ]),
+            nav(nextCh, 'right'),
         ]),
     );
 }

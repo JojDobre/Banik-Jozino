@@ -235,18 +235,6 @@
     filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
 }
 
-@media (pointer: coarse) {
-    .bj-staged .back-button,
-    .bj-staged .back-button a,
-    .bj-staged a.back-button {
-        width: 130px;
-        height: 130px;
-    }
-    .bj-staged .back-button svg {
-        width: 76px;
-        height: 76px;
-    }
-}
 
 /* ===== Tlačidlo menu v hrách (rovnaká veľkosť a poloha ako tlačidlo späť) ===== */
 .bj-staged #menuButton {
@@ -256,12 +244,6 @@
     height: 76px;
 }
 
-@media (pointer: coarse) {
-    .bj-staged #menuButton {
-        width: 130px;
-        height: 130px;
-    }
-}
 
 /* ===== Nastavenia v oknách (tréning Pexesa a Bane) =====
  * Okná nastavuje skôr rodič – popisky sú v čitateľnom písme a ovládacie
@@ -473,3 +455,368 @@
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
 }
+
+
+/* =====================================================================
+ * DIZAJNOVÝ SYSTÉM – jednotné rozmery pre celú appku
+ * Všetky obrazovky majú na telefóne rovnakú mierku (js/stage.js, PHONE_H),
+ * takže rovnaká hodnota = rovnaká fyzická veľkosť na každej stránke.
+ * ===================================================================== */
+:root {
+    --bj-round: 88px;      /* okrúhle tlačidlá: späť, menu, nastavenia, reproduktor */
+    --bj-edge: 24px;       /* odstup od okraja obrazovky */
+    --bj-border: 5px;      /* žltý okraj */
+}
+
+.bj-compact {
+    --bj-round: 108px;     /* na telefóne ~52 px – pohodlné pre detský prst */
+}
+
+/* --- okrúhle tlačidlá --- */
+.bj-staged .back-button,
+.bj-staged .back-button a,
+.bj-staged a.back-button,
+.bj-staged .bj-round-btn,
+.bj-staged .sj-gear,
+.bj-staged .bj-icon-btn,
+.bj-staged #menuButton,
+.bj-staged .kruhove-tlacidlo {
+    width: var(--bj-round) !important;
+    height: var(--bj-round) !important;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+.bj-staged .back-button a,
+.bj-staged a.back-button,
+.bj-staged .bj-round-btn,
+.bj-staged .sj-gear,
+.bj-staged .bj-icon-btn,
+.bj-staged #menuButton,
+.bj-staged .kruhove-tlacidlo {
+    border-radius: 50%;
+    border: var(--bj-border) solid #ECCF17 !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.bj-staged .back-button svg,
+.bj-staged .bj-round-btn svg,
+.bj-staged .sj-gear svg,
+.bj-staged .bj-icon-btn svg {
+    width: 56% !important;
+    height: 56% !important;
+}
+
+/* poloha vľavo hore – na každej stránke rovnaká */
+.bj-staged .back-button,
+.bj-staged #menuButton {
+    position: absolute !important;
+    top: var(--bj-edge) !important;
+    left: var(--bj-edge) !important;
+    z-index: 1001;
+}
+
+/* tlačidlo menu v hrách (Baňa, Pexeso): rovnaké ako tlačidlo späť, s ikonou ☰ */
+.bj-staged #menuButton,
+.bj-staged .kruhove-tlacidlo {
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 7h14M5 12h14M5 17h14' stroke='%23000' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M5 7h14M5 12h14M5 17h14' stroke='%23FFD900' stroke-width='2.8' stroke-linecap='round'/%3E%3C/svg%3E") center / 56% no-repeat,
+        url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat !important;
+}
+
+/* --- horná lišta nových obrazoviek --- */
+.bj-staged .bj-topbar {
+    top: var(--bj-edge);
+    left: var(--bj-edge);
+    right: var(--bj-edge);
+    height: var(--bj-round);
+}
+
+.bj-staged .bj-topbar .back-button {
+    top: 0 !important;
+    left: 0 !important;
+}
+
+/* čipy (album, profil) a rámčeky skóre majú výšku okrúhlych tlačidiel */
+html.bj-staged .bj-chip,
+html.bj-staged .sj-hud__item {
+    height: var(--bj-round);
+    border-width: var(--bj-border);
+    border-radius: calc(var(--bj-round) / 2);
+    font-size: calc(var(--bj-round) * 0.4);
+}
+
+.bj-staged .bj-chip img {
+    width: calc(var(--bj-round) * 0.78);
+    height: calc(var(--bj-round) * 0.78);
+}
+
+/* Super Jožino: lišta v rovnakej polohe */
+html.bj-staged .sj-topbar {
+    top: var(--bj-edge);
+    left: var(--bj-edge);
+    right: var(--bj-edge);
+    height: var(--bj-round);
+}
+
+.bj-staged .sj-topbar .back-button {
+    top: 0 !important;
+    left: 0 !important;
+}
+
+.bj-staged .sj-gear {
+    top: 0;
+}
+
+/* --- nadpis obrazovky: v strede hornej lišty (medzi späť a čipmi) --- */
+.bj-staged .tiers-head,
+.bj-staged .profile-head,
+.bj-staged .chapter-head,
+.bj-staged .game-head,
+.bj-staged .album-head {
+    position: absolute !important;
+    top: var(--bj-edge);
+    left: 50%;
+    transform: translateX(-50%);
+    height: var(--bj-round);
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    z-index: 40;
+    white-space: nowrap;
+}
+
+.bj-staged .tiers-head .bj-title,
+.bj-staged .profile-head .bj-title,
+.bj-staged .album-head .bj-title,
+.bj-staged .chapter-head .bj-title {
+    font-size: calc(var(--bj-round) * 0.6);
+    padding-top: 0.15em;
+}
+
+/* obsah obrazovky začína pod hornou lištou – na každej stránke rovnako */
+.bj-staged .bj-screen {
+    padding: calc(var(--bj-edge) + var(--bj-round) + 24px) 60px 40px;
+}
+
+/* minihra: tabuľa s nadpisom + postup pod ňou */
+.bj-staged .game-head {
+    height: auto;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bj-staged .bj-screen:has(.game-head) {
+    padding-top: calc(var(--bj-edge) + var(--bj-round) + 80px);
+}
+
+.bj-staged .chapter-title__small {
+    font-size: calc(var(--bj-round) * 0.28);
+}
+
+.bj-staged .chapter-title {
+    min-width: 600px;
+}
+
+/* tlačidlo „prečítaj pokyn“ – vždy hneď vedľa tlačidla späť */
+.bj-staged .bj-say {
+    position: absolute;
+    top: var(--bj-edge);
+    left: calc(var(--bj-edge) + var(--bj-round) + 18px);
+    z-index: 45;
+}
+
+/* cesta: šípky kapitol na krajoch spodnej lišty */
+.bj-staged .path-footer {
+    width: 1760px;
+    justify-content: space-between;
+}
+
+.bj-staged .path-footer__center {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+.bj-staged .chapter-arrow {
+    width: var(--bj-round);
+    height: var(--bj-round);
+}
+
+/* minihra: tlačidlá so slovom rovnako veľké ako ostatné okrúhle tlačidlá */
+.bj-staged .bj-screen {
+    --bubble: var(--bj-round);
+}
+
+/* tlačidlá menu (hlavné menu, menu v hrách, koniec hry) – na telefóne väčšie */
+.bj-compact .menu-button,
+.bj-compact .pause-button {
+    width: 400px !important;
+    height: 88px !important;
+    font-size: 50px !important;
+    border-radius: 44px !important;
+}
+
+.bj-compact .main-menu li {
+    margin-bottom: 14px;
+}
+
+.bj-compact .dialogove-okno .execise-window,
+.bj-compact #endgame .execise-window {
+    width: 600px;
+    max-width: none;
+    height: auto;
+    max-height: none;
+    padding: 60px 50px 50px;
+}
+
+/* ===== Minimálna veľkosť textu na telefóne =====
+ * Na telefóne je plátno zmenšené na ~0,48 – text pod ~32 px by bol menší
+ * ako 15 px. Všetky texty preto aspoň 32 px (popisky) / 34 px (obsah). */
+.bj-compact .profile-tile__age { font-size: 34px; }
+.bj-compact .tier-card__text { font-size: 34px; }
+.bj-compact .chapter-title__small { font-size: 34px; }
+.bj-compact .round-action--replay .round-action__label { font-size: 34px; }
+.bj-compact .set-tab__count { font-size: 30px; }
+.bj-compact .album-sets { width: 360px; }
+.bj-compact .set-tab__label { font-size: 34px; }
+
+/* ===== Baňa: bočný panel ===== */
+.bj-compact .stats > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 4px 8px;
+    margin-top: 6px;
+}
+.bj-compact .stats a,
+.bj-compact .stats span {
+    font-size: 34px;
+    line-height: 1.1;
+}
+.bj-compact .stats img { width: 32px; height: 32px; }
+
+/* ===== Výber svetov (worldsmenu) a pexeso =====
+ * Lišta svetov v rovnakej výške ako okrúhle tlačidlá, obsah zmenšený tak,
+ * aby sa celý zmestil na výšku telefónu (860 px plátna). */
+.bj-compact .main-container {
+    height: 100%;
+    padding: var(--bj-edge) 24px 24px;
+    gap: 24px;
+    justify-content: flex-start;
+    box-sizing: border-box;
+}
+.bj-compact .worlds-navigation { height: var(--bj-round); }
+.bj-compact .world-button {
+    height: var(--bj-round);
+    width: 270px;
+    border-radius: calc(var(--bj-round) / 2);
+    border: var(--bj-border) solid #AC3F0B;
+}
+.bj-compact .world-button.active { border: var(--bj-border) solid #16B921; }
+.bj-compact .world-button span,
+.bj-compact .world-button.active span { font-size: 60px; line-height: 1; }
+.bj-compact .worlds-buttons-container { gap: 30px; }
+.bj-compact .nav-arrow { width: var(--bj-round); height: var(--bj-round); }
+.bj-compact .arrow-left { border-top-width: 26px; border-bottom-width: 26px; border-right-width: 44px; }
+.bj-compact .arrow-right { border-top-width: 26px; border-bottom-width: 26px; border-left-width: 44px; }
+/* 860 − 24 − 108 − 24 − 24 = 680 px na obsah s výškou 800 px */
+.bj-compact .main-container > .content-section { zoom: 0.85; }
+
+/* zamknutý level: len zámok (bez rozmazaného čísla pod ním) */
+.bj-staged .level-card:has(.lock) h1,
+.bj-staged .level-card:has(.lock) .level-stars { visibility: hidden; }
+.bj-staged .level-card .lock {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-radius: 26px;
+}
+.bj-staged .level-card .lock img { width: 64px; }
+
+/* ===== Pexeso ===== */
+.bj-compact .top-panel { height: var(--bj-round); gap: 30px; }
+.bj-compact .panel-item {
+    height: var(--bj-round);
+    width: 260px;
+    box-sizing: border-box;
+    border-radius: calc(var(--bj-round) / 2);
+    border: var(--bj-border) solid #ECCF17;
+    font-size: calc(var(--bj-round) * 0.42);
+}
+
+/* Baňa na telefóne: logo v paneli vynechané – miesto pre čitateľné štatistiky */
+.bj-compact .stats-menu .logo-container { display: none; }
+.bj-compact .stats-menu .window { padding: 18px 10px; display: flex; align-items: center; justify-content: center; }
+.bj-compact .stats-menu .stats { padding: 0; }
+
+/* Album na telefóne: 5 stĺpcov (širší panel sád) */
+.bj-compact .album-grid { grid-template-columns: repeat(5, 220px); }
+.bj-compact .stats > div > a { flex-basis: 100%; text-align: center; }
+.bj-compact .profile-tile__edit { font-size: 32px; padding: 12px 30px 8px; border-radius: 30px; }
+
+/* odznak s počtom (balíčky) – na telefóne väčší a čitateľný */
+.bj-compact .bj-badge {
+    width: 56px;
+    min-width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    top: -18px;
+    right: -18px;
+}
+
+/* ===== Zatváracie tlačidlo okien (×) – všade rovnaké okrúhle tlačidlo ===== */
+html.bj-staged .close {
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 50% !important;
+    border: var(--bj-border) solid #ECCF17 !important;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    font-size: 0 !important;
+    color: transparent !important;
+    cursor: pointer;
+    z-index: 5;
+}
+html.bj-staged .close::before {
+    content: '';
+    width: 50%;
+    height: 50%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6L6 18' stroke='%23000' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M6 6l12 12M18 6L6 18' stroke='%23FFD900' stroke-width='3.4' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+html.bj-staged .execise-window > .close {
+    position: absolute !important;
+    top: -30px !important;
+    right: -30px !important;
+}
+
+/* ===== Textové okná (pravidlá, o projekte, okno levelu, tréning) na telefóne =====
+ * Pôvodne navrhnuté pre počítač – na telefóne zväčšené ako celok, aby texty,
+ * zaškrtávacie políčka a tlačidlá mali rovnakú veľkosť ako zvyšok appky. */
+.bj-compact .modal-content { zoom: 1.42; }
+.bj-compact .level-modal-content {
+    zoom: 1.4;
+    max-height: calc(var(--stage-h, 860px) * 0.92 / 1.4);
+}
+/* obsah okna sa posúva, nestláča sa */
+.bj-staged .level-modal-body { min-height: 0; }
+.bj-staged .level-modal-body > * { flex-shrink: 0; }
+
+/* okno levelu: údaje v strede, čitateľné */
+.bj-staged #level-detail-modal .level-modal-body { align-items: center; text-align: center; gap: 4px; }
+.bj-staged #level-detail-modal .level-modal-body p { font-size: 26px; margin: 0 0 10px; }
+.bj-staged #level-detail-modal .words-list { justify-content: center; margin-bottom: 14px; }
+.bj-staged #level-detail-modal .level-info,
+.bj-staged #level-detail-modal .level-progress { display: flex; flex-direction: column; align-items: center; }
+.bj-staged #level-detail-modal .modal-stars { margin-top: 0; padding-bottom: 12px; }
+.bj-staged #level-detail-modal .modal-stars img { width: 44px; height: 44px; }
+.bj-staged #level-detail-modal .level-modal-body strong { font-size: 26px; }

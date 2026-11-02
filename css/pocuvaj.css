@@ -17,10 +17,11 @@
 }
 
 /* tmavšie pozadie – postavy a tlačidlá vyniknú */
-.bj-screen.bj-screen--dim::before {
+body.bj-ui {
     background:
         radial-gradient(ellipse 60% 55% at 50% 58%, rgba(255, 190, 90, 0.18) 0%, transparent 70%),
-        radial-gradient(ellipse at center, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.78) 100%);
+        radial-gradient(ellipse at center, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.78) 100%),
+        #1c0f08 url('../images/worlds/background.jpg') 50% / cover no-repeat;
 }
 
 /* ===== Hlavička: drevená tabuľa s nadpisom ===== */

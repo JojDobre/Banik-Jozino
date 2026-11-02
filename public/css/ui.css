@@ -21,7 +21,11 @@ body.bj-ui {
     margin: 0;
     font-family: "Luckiest Guy", sans-serif;
     color: #fff;
-    background: #1c0f08 url('../images/worlds/background.jpg') 50% / cover no-repeat;
+    /* stmavenie je súčasťou pozadia stránky (nie prekrytia obrazovky),
+       takže pod plátnom nikdy nepresvitne iné pozadie */
+    background:
+        radial-gradient(ellipse at center, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.55) 100%),
+        #1c0f08 url('../images/worlds/background.jpg') 50% / cover no-repeat;
     cursor: url('../images/cursor.png') 5 5, auto;
     user-select: none;
     -webkit-user-select: none;
@@ -48,11 +52,7 @@ body.bj-ui {
 }
 
 .bj-screen--dim::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.55) 100%);
-    pointer-events: none;
+    content: none;
 }
 
 /* :where = nulová špecifickosť – nikdy neprebije pravidlá stránky */
