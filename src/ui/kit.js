@@ -30,7 +30,11 @@ export function h(selector, props = {}, children = []) {
     return el;
 }
 
+const GEAR_ICON =
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="#000" stroke-width="0.8" d="M10.3 2h3.4l.5 2.6c.6.2 1.2.5 1.7.9l2.5-.9 1.7 2.9-2 1.8c.1.6.1 1.2 0 1.8l2 1.8-1.7 2.9-2.5-.9c-.5.4-1.1.7-1.7.9l-.5 2.6h-3.4l-.5-2.6c-.6-.2-1.2-.5-1.7-.9l-2.5.9-1.7-2.9 2-1.8a5 5 0 0 1 0-1.8l-2-1.8 1.7-2.9 2.5.9c.5-.4 1.1-.7 1.7-.9zM12 8.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8z" transform="translate(0 1)"/></svg>';
+
 export const ICONS = {
+    gear: GEAR_ICON,
     back: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7.5 12l7 7" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     speaker: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="#000" stroke-width="1"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
     replay: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="#000" stroke-width="1"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>',
@@ -89,12 +93,23 @@ export function albumChip() {
     ]);
 }
 
-/** Horná lišta: späť vľavo, vpravo profil a album. */
-export function topbar({ back, profile, album = true } = {}) {
+/** Okrúhle tlačidlo nastavení (ozubené koliesko). */
+export function settingsButton() {
+    return h('button.bj-round-btn.bj-settings-btn', {
+        type: 'button',
+        'aria-label': 'Nastavenia',
+        html: GEAR_ICON,
+        onclick: () => window.BJ.openSettings(),
+    });
+}
+
+/** Horná lišta: späť vľavo, vpravo album, profil a nastavenia. */
+export function topbar({ back, profile, album = true, settings = true } = {}) {
     return h('div.bj-topbar', {}, [
         back ? backButton(back) : null,
         album ? albumChip() : null,
         profile ? profileChip(profile) : null,
+        settings ? settingsButton() : null,
     ]);
 }
 
@@ -104,7 +119,7 @@ export function topbar({ back, profile, album = true } = {}) {
  */
 export function say(text) {
     try {
-        return window.BJ.tts.speak(text);
+        return window.BJ.say(text);
     } catch {
         return Promise.resolve(false);
     }

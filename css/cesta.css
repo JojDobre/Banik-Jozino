@@ -236,3 +236,12 @@ a.path-node__btn:active {
     font-size: 56px;
     border-radius: 55px;
 }
+
+/* šípky kapitol bližšie k nadpisu – vpravo hore sú čipy albumu a profilu */
+.chapter-head {
+    gap: 24px;
+}
+
+.chapter-title {
+    min-width: 640px;
+}

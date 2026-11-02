@@ -1743,3 +1743,9 @@ body.dialog-open .action-controls,
 body.dialog-open .joystick-controls {
   display: none !important;
 }
+
+/* Po skončení levelu (okno výsledkov) dotykové ovládanie zmizne. */
+body:has(#endgame[style*="block"]) .action-controls,
+body:has(#endgame[style*="block"]) .joystick-controls {
+  display: none !important;
+}

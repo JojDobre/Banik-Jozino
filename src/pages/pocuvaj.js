@@ -17,6 +17,26 @@ const profile = requireProfile();
 
 const MAX_ATTEMPTS = 2;
 
+const ICON_CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12.8 9.6 18 19.8 6.4" fill="none" stroke="#000" stroke-width="6.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 12.8 9.6 18 19.8 6.4" fill="none" stroke="#38e04a" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_CROSS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 18 18M18 6 6 18" fill="none" stroke="#000" stroke-width="6.4" stroke-linecap="round"/><path d="M6 6 18 18M18 6 6 18" fill="none" stroke="#ff5a4e" stroke-width="3.8" stroke-linecap="round"/></svg>';
+const ICON_REPLAY = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.05-4.95" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/><path d="M19 12a7 7 0 1 1-2.05-4.95" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><path d="M19.8 3.6v5h-5z" fill="currentColor" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/></svg>';
+
+/**
+ * Animovaný baník (20 snímok státia zo sprite-ov Super Jožina).
+ * avatar.image končí na „idle_000.png“ – ostatné snímky majú len iné číslo.
+ */
+function minerSprite(avatar) {
+    const frames = Array.from({ length: 20 }, (_, i) => avatar.image.replace(/_000\.png$/, `_${String(i).padStart(3, '0')}.png`));
+    frames.forEach((src) => { new Image().src = src; });
+    const img = h('img.miner__img', { src: frames[0], alt: '', draggable: 'false' });
+    let i = Math.floor(Math.random() * 20);
+    setInterval(() => {
+        i = (i + 1) % frames.length;
+        img.src = frames[i];
+    }, 75);
+    return img;
+}
+
 /** Prehranie s poistkou – ak by zvuk nedohral (chyba), hra nezamrzne. */
 function play(src, maxMs = 5000) {
     return Promise.race([BJ.audio.play(src), pause(maxMs)]);
@@ -35,14 +55,35 @@ function start(level, path) {
     const dots = rounds.map(() => h('span.round-dot'));
     const roundLabel = h('div.game-sub');
 
-    const bubbleA = h('button.miner__bubble', { type: 'button', 'aria-label': 'Prvé slovo', html: ICONS.speaker, onclick: () => !busy && replayOne('a') });
-    const bubbleB = h('button.miner__bubble', { type: 'button', 'aria-label': 'Druhé slovo', html: ICONS.speaker, onclick: () => !busy && replayOne('b') });
-    const minerA = h('div.miner', {}, [bubbleA, h('img.miner__img', { src: leftAv.image, alt: '' })]);
-    const minerB = h('div.miner.miner--right', {}, [bubbleB, h('img.miner__img', { src: rightAv.image, alt: '' })]);
+    const station = (av, side, label) => {
+        const bubble = h('button.miner__bubble', {
+            type: 'button',
+            'aria-label': label,
+            html: ICONS.speaker,
+            onclick: () => !busy && replayOne(side),
+        }, []);
+        bubble.append(h('span.miner__num', { text: side === 'a' ? '1' : '2' }));
+        const el = h(`div.miner.miner--${side}`, {}, [
+            bubble,
+            h('div.miner__stage', {}, [h('div.miner__spot'), h('div.miner__body', {}, [minerSprite(av)]), h('div.miner__pedestal')]),
+        ]);
+        return { el, bubble };
+    };
+    const A = station(leftAv, 'a', 'Prvé slovo');
+    const B = station(rightAv, 'b', 'Druhé slovo');
+    const bubbleA = A.bubble;
+    const bubbleB = B.bubble;
+    const minerA = A.el;
+    const minerB = B.el;
 
-    const replayBtn = h('button.bj-btn.bj-btn--small', { type: 'button', onclick: () => !busy && playPair() }, [h('span', { html: ICONS.replay, style: { width: '48px', height: '48px', display: 'inline-flex' } }), 'Znova']);
-    const btnSame = h('button.answer-btn', { type: 'button', 'aria-label': 'Rovnaké', onclick: () => answer(true) }, [h('img', { src: 'images/rovnake.png', alt: '' }), h('span', { text: 'Rovnaké' })]);
-    const btnDiff = h('button.answer-btn', { type: 'button', 'aria-label': 'Iné', onclick: () => answer(false) }, [h('img', { src: 'images/rozdielne.png', alt: '' }), h('span', { text: 'Iné' })]);
+    const roundBtn = (cls, label, icon, onclick) =>
+        h(`button.round-action.${cls}`, { type: 'button', 'aria-label': label, onclick }, [
+            h('span.round-action__btn', { html: icon }),
+            h('span.round-action__label', { text: label }),
+        ]);
+    const replayBtn = roundBtn('round-action--replay', 'Znova', ICON_REPLAY, () => !busy && playPair());
+    const btnSame = roundBtn('round-action--same', 'Rovnaké', ICON_CHECK, () => answer(true));
+    const btnDiff = roundBtn('round-action--diff', 'Iné', ICON_CROSS, () => answer(false));
     const feedback = h('div.feedback', { 'aria-live': 'polite' });
 
     function setBusy(v) {
@@ -78,7 +119,7 @@ function start(level, path) {
     }
 
     function updateHeader() {
-        roundLabel.textContent = `Level ${level.number} · kolo ${Math.min(index + 1, rounds.length)} / ${rounds.length}`;
+        roundLabel.textContent = `Level ${level.number}`;
         dots.forEach((d, i) => {
             d.classList.toggle('is-done', i < index);
             d.classList.toggle('is-current', i === index);
@@ -142,7 +183,7 @@ function start(level, path) {
 
         const title = earned === 3 ? 'Výborne!' : earned >= 1 ? 'Dobrá práca!' : 'Skúsime znova?';
         const end = h('div.bj-modal', {}, [
-            h('div.bj-modal__box.bj-panel.end-box', {}, [
+            h('div.bj-modal__box.bj-panel.end-box', { 'data-reward-slot': '' }, [
                 h('h2.bj-title.bj-title--yellow', { text: title }),
                 h('div.end-stars', {}, [stars(earned)]),
                 h('div.bj-text', { text: `Správne: ${Math.round(points * 10) / 10} z ${rounds.length}` }),
@@ -170,9 +211,16 @@ function start(level, path) {
 
     app.replaceChildren(
         topbar({ back: backHref, profile, album: false }),
-        h('div.game-head', {}, [h('h1.bj-title', { text: 'Rovnaké alebo iné?' }), roundLabel, h('div.round-dots', {}, dots)]),
-        h('div.duel', {}, [minerA, h('div.duel__vs', { text: '?' }), minerB]),
-        h('div.answers', {}, [btnSame, replayBtn, btnDiff]),
+        h('div.game-head', {}, [
+            h('h1.game-sign', { text: 'Rovnaké alebo iné?' }),
+            h('div.game-progress', {}, [roundLabel, h('div.round-dots', {}, dots)]),
+        ]),
+        h('div.arena', {}, [
+            minerA,
+            h('div.arena__middle', {}, [h('div.arena__q', { text: '?' }), replayBtn]),
+            minerB,
+        ]),
+        h('div.answers', {}, [btnSame, btnDiff]),
         feedback,
     );
     updateHeader();

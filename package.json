@@ -15,7 +15,8 @@
     "optimize:images": "node scripts/optimize-images.mjs",
     "android:sync": "vite build && cap sync android",
     "android:open": "cap open android",
-    "screenshots": "node scripts/screenshots.mjs"
+    "screenshots": "node scripts/screenshots.mjs",
+    "build:voice": "node scripts/build-voice.mjs"
   },
   "devDependencies": {
     "@capacitor/android": "^8.6.0",

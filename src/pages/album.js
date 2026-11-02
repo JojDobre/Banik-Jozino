@@ -64,7 +64,7 @@ function openCard(card, owned, count) {
                         onclick: async () => {
                             BJ.rewards.exchange(card.id);
                             close();
-                            await showRewards([{ type: 'card', cardId: card.id, rarity: card.rarity, duplicate: false, sparkles: 0 }], { title: 'Karta je tvoja!' });
+                            await showRewards([{ type: 'card', cardId: card.id, rarity: card.rarity, duplicate: false, sparkles: 0 }], { title: 'Karta je tvoja!', pack: false });
                             render();
                         },
                     }),
@@ -80,24 +80,9 @@ function openPack() {
     const col = BJ.rewards.collection();
     const pack = col.packs[0];
     if (!pack) return;
-    const stage = document.getElementById('bj-stage');
-    const overlay = h('div.bj-reward', {}, [
-        h('div.bj-reward__box', {}, [
-            h('div.bj-reward__title', { text: 'Ťukni na balíček!' }),
-            h('button.bj-pack.pack-btn', {
-                type: 'button',
-                'aria-label': 'Otvoriť balíček',
-                text: '?',
-                onclick: async () => {
-                    overlay.remove();
-                    const rewards = BJ.rewards.openPack(pack.id);
-                    await showRewards(rewards, { title: 'Balíček otvorený!' });
-                    render();
-                },
-            }),
-        ]),
-    ]);
-    stage.append(overlay);
+    // balíček sa otvorí s animáciou (ťuknutie → roztrhnutie → karty)
+    const rewards = BJ.rewards.openPack(pack.id);
+    showRewards(rewards, { title: 'Balíček otvorený!' }).then(render);
 }
 
 function render() {

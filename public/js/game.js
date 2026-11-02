@@ -3349,6 +3349,7 @@ function updateMenuDialog(worldId, levelId, isTraining) {
         <li><button onclick="restartCurrentLevel()" class="menu-button">Reštart</button></li>
         <li><button onclick="returnToMenu()" class="menu-button">Svety</button></li>
         <li><button onclick="window.location.href='index.html'" class="menu-button">Menu</button></li>
+        <li><button onclick="window.BJ && window.BJ.openSettings()" class="menu-button">Nastavenia</button></li>
     `;
     
     console.log('Menu dialog aktualizovaný');

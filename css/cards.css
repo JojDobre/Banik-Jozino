@@ -441,3 +441,353 @@
 .bj-staged .bj-card__name.is-xlong { font-size: 21px; white-space: normal; text-align: center; line-height: 1.05; }
 .bj-staged .bj-card--big .bj-card__name.is-long { font-size: 40px; }
 .bj-staged .bj-card--big .bj-card__name.is-xlong { font-size: 34px; }
+
+/* =====================================================================
+ * Otváranie balíčka (src/ui/cards.js – showRewards)
+ * ===================================================================== */
+.bj-staged .bj-reward {
+    overflow: hidden;
+}
+
+.bj-staged .bj-reward__rays {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2600px;
+    height: 2600px;
+    margin: -1300px 0 0 -1300px;
+    background: repeating-conic-gradient(from 0deg, rgba(255, 217, 0, 0.16) 0deg 10deg, transparent 10deg 24deg);
+    -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 55%);
+    mask-image: radial-gradient(circle, #000 0%, transparent 55%);
+    animation: bj-rays 18s linear infinite;
+    pointer-events: none;
+}
+
+.bj-staged .bj-reward.is-flash::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    pointer-events: none;
+    animation: bj-flash 0.6s ease-out forwards;
+}
+
+.bj-staged .bj-reward__box {
+    position: relative;
+    min-height: 760px;
+    justify-content: center;
+}
+
+.bj-staged .bj-reward__title.is-pop {
+    animation: bj-title-pop 0.5s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+.bj-staged .bj-reward__stage {
+    min-height: 470px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bj-staged .bj-reward__notes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 40px;
+}
+
+.bj-staged .bj-reward__ok {
+    opacity: 0;
+    transform: scale(0.6);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+.bj-staged .bj-reward__ok.is-visible {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+/* --- balíček --- */
+.bj-staged .bj-pack2-btn {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    animation: bj-pack-in 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) both, bj-pack-idle 1.8s ease-in-out 0.6s infinite;
+}
+
+.bj-staged .bj-pack2 {
+    position: relative;
+    width: 300px;
+    height: 420px;
+    filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.55));
+}
+
+.bj-staged .bj-pack2__body,
+.bj-staged .bj-pack2__top {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background:
+        repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.14) 0 8px, transparent 8px 26px),
+        linear-gradient(160deg, #a96bff 0%, #6a3fc4 45%, #3b1f7a 100%);
+    border: 7px solid #ECCF17;
+    box-sizing: border-box;
+    transition: transform 0.6s cubic-bezier(0.3, 0, 0.3, 1), opacity 0.6s ease;
+}
+
+.bj-staged .bj-pack2.is-gold .bj-pack2__body,
+.bj-staged .bj-pack2.is-gold .bj-pack2__top {
+    background:
+        repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.22) 0 8px, transparent 8px 26px),
+        linear-gradient(160deg, #fff39a 0%, #ffc928 45%, #c98a00 100%);
+    border-color: #fff;
+}
+
+.bj-staged .bj-pack2__body {
+    top: 80px;
+    bottom: 0;
+    border-radius: 6px 6px 26px 26px;
+    border-top: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    overflow: hidden;
+}
+
+/* vrchná časť s cikcakom (miesto roztrhnutia) */
+.bj-staged .bj-pack2__top {
+    top: 0;
+    height: 96px;
+    border-radius: 26px 26px 0 0;
+    border-bottom: none;
+    clip-path: polygon(0 0, 100% 0, 100% 84%, 95% 100%, 90% 84%, 85% 100%, 80% 84%, 75% 100%, 70% 84%, 65% 100%, 60% 84%, 55% 100%, 50% 84%, 45% 100%, 40% 84%, 35% 100%, 30% 84%, 25% 100%, 20% 84%, 15% 100%, 10% 84%, 5% 100%, 0 84%);
+}
+
+.bj-staged .bj-pack2__top::after {
+    content: '';
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    top: 20px;
+    height: 22px;
+    background: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.25) 0 6px, transparent 6px 14px);
+    border-radius: 6px;
+}
+
+.bj-staged .bj-pack2__shine {
+    position: absolute;
+    inset: -40%;
+    background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.55) 50%, transparent 58%);
+    animation: bj-shine 2.6s ease-in-out infinite;
+}
+
+.bj-staged .bj-pack2__logo {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 7px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.45);
+}
+
+.bj-staged .bj-pack2__logo span {
+    font-size: 100px;
+    line-height: 1;
+    color: #FFD900;
+    -webkit-text-stroke: 2px #000;
+    animation: bj-pulse 1.4s ease-in-out infinite;
+}
+
+.bj-staged .bj-pack2__label {
+    position: relative;
+    font-size: 36px;
+    line-height: 1;
+    padding-top: 0.15em;
+    color: #fff;
+    -webkit-text-stroke: 1px #000;
+    text-transform: uppercase;
+    text-shadow: 0 3px 4px rgba(0, 0, 0, 0.5);
+}
+
+.bj-staged .bj-pack2-btn.is-shaking {
+    animation: bj-pack-shake 0.7s ease-in-out;
+}
+
+.bj-staged .bj-pack2-btn.is-opening .bj-pack2__top {
+    transform: translate(-140px, -420px) rotate(-48deg);
+    opacity: 0;
+}
+
+.bj-staged .bj-pack2-btn.is-opening .bj-pack2__body {
+    transform: translateY(260px) scale(0.85);
+    opacity: 0;
+}
+
+/* --- otočenie karty --- */
+.bj-staged .bj-flip {
+    position: relative;
+    width: 220px;
+    height: 300px;
+    perspective: 1200px;
+    opacity: 0;
+    transform: translateY(260px) scale(0.3);
+    transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+.bj-staged .bj-flip.is-big {
+    width: 330px;
+    height: 450px;
+}
+
+.bj-staged .bj-flip.is-out {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.bj-staged .bj-flip__face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition: transform 0.6s cubic-bezier(0.3, 0.1, 0.2, 1);
+}
+
+.bj-staged .bj-flip__face > .bj-card {
+    width: 100%;
+    height: 100%;
+    animation: none !important;
+}
+
+.bj-staged .bj-flip__front {
+    transform: rotateY(180deg);
+}
+
+.bj-staged .bj-flip.is-flipped .bj-flip__back {
+    transform: rotateY(-180deg);
+}
+
+.bj-staged .bj-flip.is-flipped .bj-flip__front {
+    transform: rotateY(0deg);
+}
+
+.bj-staged .bj-reward__cards {
+    gap: 40px;
+}
+
+/* --- konfety a iskry --- */
+.bj-staged .bj-confetti {
+    position: absolute;
+    width: 18px;
+    height: 26px;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 5;
+    animation: bj-confetti 1.3s cubic-bezier(0.1, 0.7, 0.3, 1) forwards;
+}
+
+/* --- darček na obrazovke výsledkov --- */
+.bj-staged .bj-gift {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 0 auto 18px;
+    padding: 10px 34px 6px 18px;
+    border-radius: 60px;
+    border: 6px solid #fff;
+    background: linear-gradient(0deg, #c98a00 0%, #FFD900 100%);
+    box-shadow: 0 0 30px rgba(255, 217, 0, 0.7), 0 10px 18px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    font-family: "Luckiest Guy", sans-serif;
+    animation: bj-gift-bounce 1.1s ease-in-out infinite;
+}
+
+.bj-staged .bj-gift__box {
+    font-size: 72px;
+    line-height: 1;
+    animation: bj-wiggle 1.2s ease-in-out infinite;
+}
+
+.bj-staged .bj-gift__text {
+    font-size: 38px;
+    line-height: 1;
+    padding-top: 0.15em;
+    color: #fff;
+    text-transform: uppercase;
+    -webkit-text-stroke: 1.5px #000;
+    white-space: nowrap;
+}
+
+.bj-staged .bj-gift.is-floating {
+    position: fixed;
+    right: 40px;
+    bottom: 40px;
+    z-index: 100000;
+    margin: 0;
+}
+
+@keyframes bj-rays { to { transform: rotate(360deg); } }
+@keyframes bj-flash { from { opacity: 0.95; } to { opacity: 0; } }
+@keyframes bj-title-pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes bj-pack-in { from { transform: translateY(-700px) rotate(-14deg); } to { transform: translateY(0) rotate(0); } }
+@keyframes bj-pack-idle { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-16px) rotate(2deg); } }
+@keyframes bj-pack-shake {
+    0%, 100% { transform: rotate(0) scale(1); }
+    15% { transform: rotate(-6deg) scale(1.03); }
+    30% { transform: rotate(6deg) scale(1.06); }
+    45% { transform: rotate(-9deg) scale(1.08); }
+    60% { transform: rotate(9deg) scale(1.1); }
+    75% { transform: rotate(-12deg) scale(1.12); }
+    90% { transform: rotate(12deg) scale(1.14); }
+}
+@keyframes bj-confetti {
+    0% { transform: translate(-50%, -50%) rotate(0) scale(1); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)) scale(0.6); opacity: 0; }
+}
+@keyframes bj-gift-bounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.04); } }
+
+@media (prefers-reduced-motion: reduce) {
+    .bj-staged .bj-reward__rays,
+    .bj-staged .bj-pack2-btn,
+    .bj-staged .bj-gift,
+    .bj-staged .bj-gift__box {
+        animation: none !important;
+    }
+}
+
+/* odmena je samostatná „scéna“ – výsledky pod ňou nepresvitajú */
+.bj-staged .bj-reward {
+    background: radial-gradient(circle at center, #4a2408 0%, #1a0b03 60%, #0b0401 100%);
+}
+
+.bj-staged .bj-pack2-btn,
+.bj-staged .bj-pack2-btn * {
+    font-family: "Luckiest Guy", sans-serif;
+}
+
+/* telefón – balíček a karty väčšie */
+.bj-compact .bj-reward__box {
+    transform: scale(1.18);
+}
+
+/* darček v úzkom okne výsledkov pôvodných hier */
+.bj-staged #endgame .bj-gift {
+    padding: 8px 26px 4px 14px;
+}
+
+.bj-staged #endgame .bj-gift__box {
+    font-size: 56px;
+}
+
+.bj-staged #endgame .bj-gift__text {
+    font-size: 30px;
+}

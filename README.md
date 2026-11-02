@@ -73,6 +73,7 @@ Speech recognition requires a secure context (`localhost` or HTTPS) and an inter
 | `npm run build` | Production build into `dist/` |
 | `npm run build:words` | Regenerate the word dictionary from levels, images and audio |
 | `npm run screenshots` | Screenshots of all screens on 7 device sizes + error check (after `npm run build`) |
+| `npm run build:voice` | Generate spoken instructions with the Piper neural voice (needs `piper` + `ffmpeg`) |
 | `npm run optimize:images` | Shrink oversized images (keeps names and formats) |
 | `npm run android:sync` / `android:open` | Build and open the Android app – see [docs/ANDROID.md](docs/ANDROID.md) |
 

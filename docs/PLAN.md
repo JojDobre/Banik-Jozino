@@ -174,6 +174,16 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 - ✅ animované zberateľské karty: 32 kreslených kariet v 4 témach (Drahokamy, Zvieratká,
   Výbava, Poklady) – `src/content/cards/`; vzácne s dúhovým leskom, zlaté so zlatým;
   veľká karta sa nakláňa podľa prsta; staré slovné karty sa premenili na iskričky
+- ✅ spätná väzba z telefónu:
+  - appka na celú obrazovku (skrytý stavový riadok aj navigácia, obrazovka nezhasína)
+  - väčšie UI na telefóne – kompaktné plátno, výška podľa stránky (`<html data-phone-h>`)
+  - Nastavenia: zvuky a hlas zvlášť (hlavné menu, horná lišta, menu v Bani a Pexese)
+  - lepší hlas: vety a mená kariet vopred nahraté neurónovým hlasom Piper
+    (`npm run build:voice` → `public/hlas/`), systémový hlas len ako záloha
+  - odmena: najprv výsledky levelu, v nich darček; po ťuknutí animácia balíčka
+    (zatrasenie, roztrhnutie, karty vyletia a otočia sa, iskry/konfety podľa vzácnosti)
+  - nový vzhľad minihry „Rovnaké alebo iné?“ – tabuľa, animovaní baníci na podstavcoch
+    s reflektorom, okrúhle drevené tlačidlá
 - ⬜ svety písmen (úroveň 3) s levelmi z generátora slov – zatiaľ ostávajú pôvodné levely
 - ⬜ ikona a úvodná obrazovka appky
 
@@ -192,6 +202,9 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 - ⬜ testy na viacerých telefónoch
 
 ### Fáza 7 – Rodič a Google Play ⬜
+- ⬜ **overiť licenciu hlasu** Piper `sk_SK-lili-medium`: dáta CC0, ale model je dotrénovaný
+  z anglického hlasu lessac (dáta s licenciou možno len na nekomerčné použitie) –
+  pred vydaním potvrdiť, prípadne nahradiť (vlastné nahrávky / komerčný neurónový hlas)
 - ⬜ rodičovská brána, štatistiky pre rodiča
 - ⬜ zásady ochrany súkromia, program Families, Data safety
 - ⬜ uzavreté testovanie (osobný účet: 12 testerov / 14 dní), zverejnenie

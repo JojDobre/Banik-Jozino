@@ -3,6 +3,14 @@
   "appName": "Baník Jožino",
   "webDir": "dist",
   "android": {
-    "allowMixedContent": false
+    "allowMixedContent": false,
+    "backgroundColor": "#1c0f08"
+  },
+  "backgroundColor": "#1c0f08",
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "disable",
+      "hidden": true
+    }
   }
 }

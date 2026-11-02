@@ -26,6 +26,7 @@ export const DEVICES = [
     { id: 'desktop-1440p', width: 2560, height: 1440 },
     { id: 'tablet-4x3', width: 1024, height: 768, touch: true },
     { id: 'phone-landscape', width: 844, height: 390, touch: true },
+    { id: 'phone-wide', width: 915, height: 412, touch: true },
     { id: 'phone-portrait', width: 390, height: 844, touch: true },
 ];
 

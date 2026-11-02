@@ -1,5 +1,6 @@
 node_modules/
 dist/
 screenshots/
+.cache/
 .DS_Store
 *.log

@@ -11,6 +11,7 @@ import { createSpeechService, SpeechError } from './core/speech.js';
 import { matchesWord, normalizeTranscript, analyzeWord } from './core/slovak.js';
 import { createTTSService } from './core/tts.js';
 import { createAudioService } from './core/audio.js';
+import { createVoiceService } from './core/voice.js';
 import { createProfileStore, ageGroupFromAge, AGE_GROUPS } from './core/profiles.js';
 import * as rewards from './core/rewards.js';
 import * as minigames from './core/minigames.js';
@@ -18,6 +19,7 @@ import * as levels from './core/levelGenerator.js';
 import { WORDS, findWords, getWord } from './content/words.js';
 import { CARDS, SETS } from './content/cards/index.js';
 import { installRewardPopup } from './ui/cards.js';
+import { openSettings } from './ui/settings.js';
 import { createTierProgress } from './core/tierProgress.js';
 
 const profiles = createProfileStore(window.localStorage);
@@ -26,6 +28,7 @@ profiles.ensureDefault();
 const speech = createSpeechService();
 const tts = createTTSService();
 const audio = createAudioService();
+const voice = createVoiceService({ tts });
 
 let catalog = null;
 const getCatalog = () => (catalog ??= rewards.buildCatalog(CARDS));
@@ -52,8 +55,13 @@ migrateCollection();
 function applySettings() {
     const p = profiles.active();
     if (!p) return;
-    audio.setMuted(!p.settings.sound);
-    tts.setEnabled(p.settings.voiceInstructions);
+    const sound = p.settings.sound !== false;
+    const speak = p.settings.voiceInstructions !== false;
+    audio.setMuted(!sound);
+    // pôvodné hry (Baňa, Pexeso…) prehrávajú cez Howler – vypne sa aj ich zvuk
+    if (window.Howler) window.Howler.mute(!sound);
+    tts.setEnabled(speak);
+    voice.setEnabled(speak);
 }
 applySettings();
 
@@ -93,6 +101,18 @@ window.BJ = {
     analyzeWord,
     tts,
     audio,
+    voice,
+    /** Prečíta pokyn (nahratý hlas, inak syntéza). */
+    say: (text) => voice.say(text),
+    /** Zmena nastavení aktívneho profilu ({ sound, voiceInstructions }). */
+    setSettings(patch) {
+        const p = profiles.active();
+        if (!p) return;
+        profiles.update(p.id, { settings: patch });
+        applySettings();
+    },
+    openSettings,
+    settings: () => ({ sound: true, voiceInstructions: true, ...(profiles.active()?.settings || {}) }),
     profiles,
     ageGroupFromAge,
     AGE_GROUPS,

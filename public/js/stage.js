@@ -15,12 +15,27 @@
     var DESIGN_W = 1920;
     var DESIGN_H = 1080;
     var root = document.documentElement;
-    var state = { scale: 1, width: DESIGN_W, height: DESIGN_H };
+    var state = { scale: 1, width: DESIGN_W, height: DESIGN_H, compact: false };
+
+    /**
+     * Telefón: kompaktné plátno (nižšie a užšie) => všetko je väčšie.
+     * Výšku kompaktného plátna si stránka určí cez <html data-phone-h="…">
+     * (podľa toho, koľko obsahu má); predvolene 900.
+     */
+    function isPhone(vw, vh) {
+        var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+        return coarse && Math.min(vw, vh) < 600;
+    }
 
     function fit() {
         var vw = window.innerWidth;
         var vh = window.innerHeight;
-        var scale = Math.min(vw / DESIGN_W, vh / DESIGN_H);
+        var compact = isPhone(vw, vh) && vw > vh;
+        var dh = compact ? Number(root.getAttribute('data-phone-h')) || 900 : DESIGN_H;
+        var dw = DESIGN_W * (dh / DESIGN_H);
+        var scale = Math.min(vw / dw, vh / dh);
+        state.compact = compact;
+        root.classList.toggle('bj-compact', compact);
         state.scale = scale;
         state.width = vw / scale;
         state.height = vh / scale;

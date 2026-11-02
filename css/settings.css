@@ -1,0 +1,159 @@
+/* Okno Nastavenia (src/ui/settings.js) – načítava sa na všetkých stránkach. */
+
+.bj-staged .bj-settings {
+    position: fixed;
+    inset: 0;
+    z-index: 100002;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 4, 0, 0.65);
+    backdrop-filter: blur(6px);
+    font-family: "Luckiest Guy", sans-serif;
+    animation: bj-fade 0.2s ease-out;
+}
+
+.bj-staged .bj-settings__box {
+    position: relative;
+    width: 900px;
+    padding: 50px 70px 46px;
+    box-sizing: border-box;
+    border-radius: 36px;
+    border: 7px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.bj-staged .bj-settings__head {
+    text-align: center;
+    font-size: 72px;
+    line-height: 1;
+    padding-top: 0.15em;
+    color: #FFD900;
+    -webkit-text-stroke: 2px #000;
+    text-shadow: 0 6px 10px rgba(0, 0, 0, 0.45);
+}
+
+.bj-staged .bj-settings__who {
+    text-align: center;
+    font-family: "Nunito", sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    text-transform: none;
+    color: #fff3c4;
+    margin-top: -12px;
+}
+
+.bj-staged .bj-settings__row {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 22px 30px;
+    border-radius: 28px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.bj-staged .bj-settings__icon {
+    font-size: 70px;
+    line-height: 1;
+    width: 90px;
+    text-align: center;
+}
+
+.bj-staged .bj-settings__label {
+    flex: 1;
+}
+
+.bj-staged .bj-settings__title {
+    font-size: 52px;
+    line-height: 1;
+    padding-top: 0.15em;
+    -webkit-text-stroke: 1px #000;
+}
+
+.bj-staged .bj-settings__text {
+    margin-top: 6px;
+    font-family: "Nunito", sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    text-transform: none;
+    color: #f1dcc0;
+}
+
+/* prepínač – veľký pre detský prst */
+.bj-staged .bj-switch {
+    position: relative;
+    width: 190px;
+    height: 100px;
+    flex-shrink: 0;
+    border-radius: 50px;
+    border: 5px solid #6b2a0a;
+    background: #6d5a50;
+    box-shadow: inset 0 6px 10px rgba(0, 0, 0, 0.4);
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.bj-staged .bj-switch.is-on {
+    background: linear-gradient(0deg, #15981E 0%, #0F1 100%);
+    border-color: #1A511D;
+}
+
+.bj-staged .bj-switch__knob {
+    position: absolute;
+    top: 7px;
+    left: 8px;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: 5px solid #ECCF17;
+    box-sizing: border-box;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.45);
+    transition: left 0.2s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+.bj-staged .bj-switch.is-on .bj-switch__knob {
+    left: 98px;
+}
+
+.bj-staged .bj-settings__close {
+    position: absolute;
+    top: 18px;
+    right: 26px;
+    width: 80px;
+    height: 80px;
+    border: none;
+    background: none;
+    color: #fff;
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 84px;
+    line-height: 1;
+    -webkit-text-stroke: 2px #000;
+    cursor: pointer;
+}
+
+.bj-staged .bj-settings__ok {
+    align-self: center;
+    margin-top: 6px;
+    min-width: 320px;
+    height: 100px;
+    padding: 8px 50px 0;
+    border-radius: 50px;
+    border: 5px solid #1A511D;
+    background: linear-gradient(0deg, #15981E 0%, #0F1 100%);
+    color: #FFD900;
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 48px;
+    line-height: 1;
+    text-transform: uppercase;
+    -webkit-text-stroke: 1px #000;
+    filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.35));
+    cursor: pointer;
+}

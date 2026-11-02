@@ -358,3 +358,30 @@ body.bj-ui {
 .bj-staged .bj-reward__note {
     text-transform: none;
 }
+
+/* Okrúhle tlačidlo v štýle tlačidla späť (drevo + žltý okraj) */
+.bj-round-btn {
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 5px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    color: #FFD900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s ease;
+}
+
+.bj-round-btn svg {
+    width: 56%;
+    height: 56%;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+}
+
+.bj-round-btn:active {
+    transform: scale(0.92);
+}

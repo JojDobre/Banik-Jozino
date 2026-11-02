@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="sk">
+<html lang="sk" data-phone-h="1040">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="Logopedická hra pre najmenších">
     <meta name="author" content="Adam Reňak">
     <meta name="keywords" content="Adam Reňak, Joj_Dobre, Diplomová práca, Logopedická hra, TUKE">
@@ -24,6 +24,7 @@
     <link rel="stylesheet" type="text/css" href="css/stage.css" />
     <link rel="stylesheet" type="text/css" href="css/common.css" />
     <link rel="stylesheet" type="text/css" href="css/cards.css" />
+    <link rel="stylesheet" type="text/css" href="css/settings.css" />
     <script src="js/stage.js"></script>
 </head>
 
@@ -207,6 +208,7 @@
                       <li><button id="pauseResumeBtn" class="pause-button">Pokračovať</button></li>
                       <li><button id="pauseRestartBtn" class="pause-button">Hrať znova</button></li>
                       <li><button id="pauseMenuBtn" class="pause-button">Späť do menu</button></li>
+                      <li><button class="pause-button" onclick="window.BJ && window.BJ.openSettings()">Nastavenia</button></li>
                   </ul>
               </nav>
           </div>
