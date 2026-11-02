@@ -1,0 +1,228 @@
+/* Minihra „Rovnaké alebo iné?“ (pocuvaj.html) */
+
+.game-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.game-sub {
+    font-size: 34px;
+    line-height: 1;
+    padding-top: 0.15em;
+    color: #FFD900;
+    -webkit-text-stroke: 1px #000;
+}
+
+.round-dots {
+    display: flex;
+    gap: 14px;
+}
+
+.round-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 4px solid #ECCF17;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.round-dot.is-done {
+    background: #2fe03a;
+}
+
+.round-dot.is-current {
+    background: #FFD900;
+    animation: bj-pulse 1.2s ease-in-out infinite;
+}
+
+/* ===== Dvaja baníci ===== */
+.duel {
+    flex: 1;
+    width: 1500px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-bottom: 10px;
+}
+
+.duel__vs {
+    align-self: center;
+    font-size: 180px;
+    line-height: 1;
+    padding-top: 0.15em;
+    color: #FFD900;
+    -webkit-text-stroke: 3px #000;
+    text-shadow: 0 10px 16px rgba(0, 0, 0, 0.5);
+}
+
+.miner {
+    position: relative;
+    width: 470px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.miner__img {
+    width: 340px;
+    height: 340px;
+    object-fit: contain;
+    filter: drop-shadow(0 14px 10px rgba(0, 0, 0, 0.5));
+    transition: transform 0.2s ease;
+}
+
+.miner--right .miner__img {
+    transform: scaleX(-1);
+}
+
+.miner.is-speaking .miner__img {
+    animation: bj-bounce 0.5s ease-in-out infinite;
+}
+
+.miner__bubble {
+    position: relative;
+    width: 210px;
+    height: 160px;
+    margin-bottom: 26px;
+    border-radius: 80px;
+    border: 6px solid #ECCF17;
+    background: #fff7e6;
+    color: #AC3F0B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.miner__bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -34px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 22px solid transparent;
+    border-right: 22px solid transparent;
+    border-top: 34px solid #ECCF17;
+}
+
+.miner__bubble svg {
+    width: 100px;
+    height: 100px;
+}
+
+.miner__bubble.is-speaking {
+    background: #FFD900;
+    transform: scale(1.15);
+}
+
+/* ===== Odpovede ===== */
+.answers {
+    display: flex;
+    align-items: center;
+    gap: 90px;
+    margin-bottom: 10px;
+}
+
+.answer-btn {
+    width: 280px;
+    height: 300px;
+    border: none;
+    background: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 54px;
+    line-height: 1;
+    -webkit-text-stroke: 2px #000;
+    text-shadow: 0 6px 8px rgba(0, 0, 0, 0.5);
+    transition: transform 0.15s ease, filter 0.2s ease;
+}
+
+.answer-btn img {
+    width: 220px;
+    height: 220px;
+    filter: drop-shadow(0 12px 10px rgba(0, 0, 0, 0.5));
+}
+
+.answer-btn span {
+    padding-top: 0.15em;
+}
+
+.answer-btn:hover {
+    transform: scale(1.06);
+}
+
+.answer-btn:active {
+    transform: scale(0.94);
+}
+
+.answer-btn[disabled] {
+    filter: grayscale(0.7) brightness(0.65);
+}
+
+/* ===== Spätná väzba ===== */
+.feedback {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 1.4, 0.4, 1);
+    z-index: 60;
+}
+
+.feedback.is-visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.feedback img {
+    width: 300px;
+    height: 300px;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 12px rgba(0, 0, 0, 0.5));
+}
+
+.feedback__text {
+    font-size: 80px;
+    line-height: 1;
+    padding-top: 0.15em;
+    -webkit-text-stroke: 2px #000;
+    text-shadow: 0 8px 12px rgba(0, 0, 0, 0.6);
+}
+
+.feedback.is-ok .feedback__text {
+    color: #2fe03a;
+}
+
+.feedback.is-bad .feedback__text {
+    color: #ff6b5e;
+}
+
+/* ===== Koniec ===== */
+.end-box {
+    min-width: 760px;
+}
+
+.end-stars .bj-stars img {
+    width: 110px;
+    height: 110px;
+}
+
+.end-stars .bj-stars img:nth-child(2) {
+    width: 140px;
+    height: 140px;
+}

@@ -18,6 +18,7 @@ export const MINIGAMES = [
     { id: 'mario', title: 'Super Jožino', tiers: [3], ages: ['7-8'], exercise: ['speech', 'listening'], page: 'superjozino.html', status: 'ready' },
 
     // úroveň 1 – Počúvam
+    { id: 'same-different', title: 'Rovnaké alebo iné?', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], page: 'pocuvaj.html', status: 'ready' },
     { id: 'who-makes-it', title: 'Kto to robí?', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], status: 'planned' },
     { id: 'sound-pexeso', title: 'Zvukové pexeso', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], status: 'planned' },
     { id: 'mine-bells', title: 'Zvončeky v bani', tiers: [1], ages: ['5-6', '7-8'], exercise: ['listening'], status: 'planned' },

@@ -1,0 +1,155 @@
+/* Album kariet (album.html) */
+
+.album-head {
+    width: 1800px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 110px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.album-stats {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.album-stat {
+    font-size: 36px;
+    line-height: 1;
+    padding-top: 0.15em;
+    -webkit-text-stroke: 1px #000;
+}
+
+.album-stat__num {
+    color: #FFD900;
+    font-size: 46px;
+}
+
+.album-pack-btn {
+    position: relative;
+    animation: bj-pulse 1.6s ease-in-out infinite;
+}
+
+.album-body {
+    flex: 1;
+    min-height: 0;
+    width: 1800px;
+    display: flex;
+    gap: 30px;
+    margin-top: 24px;
+}
+
+.album-sets {
+    width: 300px;
+    flex-shrink: 0;
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.album-sets::-webkit-scrollbar {
+    display: none;
+}
+
+.set-tab {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 68px;
+    padding: 6px 20px 0;
+    border-radius: 22px;
+    border: 4px solid transparent;
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-family: "Luckiest Guy", sans-serif;
+    -webkit-text-stroke: 1px #000;
+}
+
+.set-tab.is-active {
+    border-color: #ECCF17;
+    background: rgba(236, 207, 23, 0.25);
+}
+
+.set-tab__label {
+    font-size: 32px;
+}
+
+.set-tab__count {
+    font-family: "Nunito", sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    color: #FFD900;
+    -webkit-text-stroke: 0;
+    white-space: nowrap;
+}
+
+.album-cards {
+    flex: 1;
+    min-width: 0;
+    padding: 30px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thick;
+    scrollbar-color: #ECCF17 rgba(0, 0, 0, 0.3);
+}
+
+.album-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 220px);
+    gap: 26px;
+    justify-content: center;
+}
+
+.album-grid .bj-card {
+    transition: transform 0.15s ease;
+}
+
+.album-grid .bj-card:hover {
+    transform: translateY(-6px) scale(1.03);
+}
+
+.album-empty {
+    text-align: center;
+    color: #FFD900;
+    margin: 0 0 30px;
+}
+
+/* ===== Detail karty ===== */
+.card-detail {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.card-detail__side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 26px;
+    max-width: 560px;
+}
+
+.card-detail__word {
+    font-size: 110px;
+    line-height: 1;
+    padding-top: 0.15em;
+    color: #fff;
+    -webkit-text-stroke: 2px #000;
+    text-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
+}
+
+.album-hint {
+    font-size: 24px;
+    color: #FFD900;
+}
+
+.pack-btn {
+    cursor: url('../images/active_cursor4.png') 5 5, pointer;
+}

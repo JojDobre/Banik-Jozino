@@ -3913,7 +3913,8 @@ function completeLevel() {
         console.log(' Win dialóg zobrazený s výsledkami!');
         
         // 6. Zobraz notifikácie o odomknutom obsahu
-        if (saveResult.saved) {
+        // (funkcia showUnlockNotificationsInGame zatiaľ neexistuje – pôvodne tu hra padala)
+        if (saveResult.saved && typeof showUnlockNotificationsInGame === 'function') {
             setTimeout(() => {
                 showUnlockNotificationsInGame(saveResult);
             }, 1000);

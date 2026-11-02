@@ -32,7 +32,10 @@ Banik-Jozino/
 ├── src/                 # New modular code (ES modules, bundled by Vite)
 │   ├── core/            # speech, tts, audio, profiles, rewards (cards),
 │   │                    # minigames registry, level generator, Slovak helpers
-│   ├── content/         # Word dictionary (generated + manual overrides)
+│   ├── content/         # Word dictionary, tier 1 path, worlds
+│   ├── games/           # Minigame logic (testable, no DOM)
+│   ├── pages/           # New screens (profile, tiers, path, album, minigames)
+│   ├── ui/              # UI helpers, collectible cards, reward popup
 │   └── bridge.js        # Exposes services to the games as window.BJ
 ├── public/              # Copied to the build as-is
 │   ├── js/              # Game logic (Baňa, Pexeso, Super Jožino, menus)
@@ -44,7 +47,8 @@ Banik-Jozino/
 ├── scripts/             # Tooling: word dictionary, image optimization
 ├── android/             # Android app project (Capacitor)
 ├── docs/                # PLAN.md (roadmap), ANDROID.md (building the app)
-└── *.html               # Pages: index, worldsmenu, game, pexeso, superjozino
+└── *.html               # Pages: index, profil, urovne, cesta, pocuvaj, album,
+                         #        worldsmenu, game, pexeso, superjozino
 ```
 
 ## Getting started

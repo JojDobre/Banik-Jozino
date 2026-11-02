@@ -160,11 +160,19 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
   - nové okrúhle tlačidlo späť, rovnako veľké tlačidlo menu v hrách
 - ⬜ vlastná ikona appky a úvodná obrazovka (presunuté do fázy 6)
 
-### Fáza 3 – Nová štruktúra ⬜
-- ⬜ výber úrovne 1/2/3, cesta levelov (úroveň 1), svety písmen s generovanými levelmi (úroveň 3)
-- ⬜ vytvorenie profilu s vekom
-- ⬜ zbierka kariet: odmeny, balíčky, album
-- ⬜ nahovorené pokyny
+### Fáza 3 – Nová štruktúra ✅ (čiastočne)
+- ✅ profily detí (`profil.html`): meno, vek 3–8, avatar (5 baníkov), viac hráčov,
+  úprava a zmazanie; pri prvom spustení privítanie „Ahoj! Ako sa voláš?“
+- ✅ výber úrovne (`urovne.html`): 1 Počúvam, 2 Zvuky a hlásky (zatiaľ „Čoskoro“),
+  3 Slová (pôvodné svety písmen); hviezdy za úroveň, upozornenie na vek
+- ✅ cesta levelov úrovne 1 (`cesta.html`): 3 kapitoly × 10 levelov, darček každý 4. level,
+  postup pre každý profil zvlášť (`src/core/tierProgress.js`)
+- ✅ prvá minihra úrovne 1 „Rovnaké alebo iné?“ (`pocuvaj.html`) – dĺžka podľa veku
+- ✅ zbierka kariet: okno s odmenou po leveli (aj v Bani a Pexese), album (`album.html`)
+  so sadami podľa svetov, otváranie balíčkov, výmena iskričiek, ťuknutie na kartu prehrá slovo
+- ✅ nahovorené pokyny (tlačidlo s reproduktorom; v appke zaznejú aj automaticky)
+- ⬜ svety písmen (úroveň 3) s levelmi z generátora slov – zatiaľ ostávajú pôvodné levely
+- ⬜ ikona a úvodná obrazovka appky
 
 ### Fáza 4 – Minihry úrovne 1 ⬜
 - ⬜ Kto to robí?, Zvukové pexeso, Zvončeky v bani, Hláskový vláčik
@@ -188,6 +196,7 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 ---
 
 ## Známe chyby (na opravu neskôr)
+- ~~Baňa padala po zobrazení výsledkov (`showUnlockNotificationsInGame` neexistuje)~~ – opravené vo fáze 3.
 - Super Jožino: netopier (`Bat`) nemá animáciu `walk` (len varovanie v konzole). Pád hry na chýbajúcom obrázku je opravený.
 - Všetkých 260 levelov je typu `banik`; Pexeso a Super Jožino nie sú v postupe.
 - Posluchové cvičenie má len 15 dvojíc zvukov.

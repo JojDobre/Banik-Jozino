@@ -31,6 +31,11 @@ export const DEVICES = [
 
 export const PAGES = [
     { id: 'menu', url: 'index.html' },
+    { id: 'profil', url: 'profil.html' },
+    { id: 'urovne', url: 'urovne.html' },
+    { id: 'cesta', url: 'cesta.html' },
+    { id: 'pocuvaj', url: 'pocuvaj.html?level=t1_01' },
+    { id: 'album', url: 'album.html' },
     { id: 'pravidla', url: 'index.html', action: async (p) => p.click('.show-rules') },
     { id: 'svety', url: 'worldsmenu.html' },
     { id: 'trening-pexeso', url: 'worldsmenu.html', action: async (p) => p.click('#pexeso-button') },
@@ -81,6 +86,17 @@ async function main() {
             viewport: { width: device.width, height: device.height },
             hasTouch: Boolean(device.touch),
             isMobile: Boolean(device.touch) && device.width < 1000,
+        });
+        // pripravený profil (vek 5) s pár kartami, aby sa nové obrazovky dali nafotiť
+        await ctx.addInitScript(() => {
+            if (localStorage.getItem('bj.profiles')) return;
+            localStorage.setItem('bj.profiles', JSON.stringify({
+                version: 2, activeId: 'p_test',
+                profiles: { p_test: { id: 'p_test', name: 'Ema', age: 5, ageGroup: '5-6', avatar: 'red_head_miner',
+                    progressKey: 'speechTherapyProgress', settings: { sound: true, music: true, voiceInstructions: true },
+                    collection: { cards: { 'world_r:rak': 1, 'world_r:ryba': 2, 'world_l:lopta': 1 }, sparkles: 4, packs: [{ id: 'pack_t', set: 'world_r', size: 3 }] } } },
+            }));
+            localStorage.setItem('bj.tiers.p_test', JSON.stringify({ levels: { t1_01: { stars: 3 }, t1_02: { stars: 2 } } }));
         });
         for (const pg of PAGES) {
             if (only.length && !only.includes(pg.id)) continue;

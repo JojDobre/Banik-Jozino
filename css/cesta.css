@@ -1,0 +1,238 @@
+/* Cesta levelov úrovne 1 (cesta.html) */
+
+.chapter-head {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-top: 14px;
+    height: 150px;
+}
+
+.chapter-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 760px;
+}
+
+.chapter-title__small {
+    font-size: 32px;
+    line-height: 1;
+    padding-top: 0.15em;
+    color: #FFD900;
+    -webkit-text-stroke: 1px #000;
+}
+
+.chapter-arrow {
+    width: 110px;
+    height: 110px;
+    border: none;
+    background: none;
+    padding: 0;
+    position: relative;
+}
+
+.chapter-arrow::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-top: 40px solid transparent;
+    border-bottom: 40px solid transparent;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+
+.chapter-arrow--left::before {
+    border-right: 66px solid #FBDB68;
+    transform: translate(-60%, -50%);
+}
+
+.chapter-arrow--right::before {
+    border-left: 66px solid #FBDB68;
+    transform: translate(-40%, -50%);
+}
+
+.chapter-arrow[disabled] {
+    opacity: 0.25;
+}
+
+/* ===== Mapa ===== */
+.path-map {
+    position: relative;
+    width: 1760px;
+    height: 700px;
+    margin-top: 10px;
+    background-size: cover;
+    background-position: center;
+    overflow: visible;
+}
+
+.path-map__shade {
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.35) 100%);
+}
+
+.path-line {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.path-line__shadow {
+    fill: none;
+    stroke: rgba(60, 25, 5, 0.65);
+    stroke-width: 46;
+    stroke-linecap: round;
+}
+
+.path-line__road {
+    fill: none;
+    stroke: #f3d9a4;
+    stroke-width: 26;
+    stroke-linecap: round;
+    stroke-dasharray: 2 46;
+}
+
+/* ===== Zastávka (level) ===== */
+.path-node {
+    position: absolute;
+    width: 0;
+    height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.path-node__btn {
+    position: absolute;
+    left: -72px;
+    top: -72px;
+    width: 144px;
+    height: 144px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 7px solid #AC3F0B;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-decoration: none;
+    font-size: 70px;
+    line-height: 1;
+    -webkit-text-stroke: 2px #000;
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.5);
+    transition: transform 0.15s ease;
+}
+
+.path-node__btn > span {
+    padding-top: 10px;
+}
+
+a.path-node__btn:hover {
+    transform: scale(1.08);
+}
+
+a.path-node__btn:active {
+    transform: scale(0.95);
+}
+
+.path-node.is-done .path-node__btn {
+    border-color: #ECCF17;
+}
+
+.path-node.is-current .path-node__btn {
+    border-color: #2fe03a;
+    box-shadow: 0 0 0 8px rgba(47, 224, 58, 0.4), 0 10px 18px rgba(0, 0, 0, 0.5);
+    animation: bj-pulse 1.4s ease-in-out infinite;
+}
+
+.path-node.is-locked .path-node__btn {
+    filter: grayscale(0.9) brightness(0.6);
+    width: 120px;
+    height: 120px;
+    left: -60px;
+    top: -60px;
+}
+
+.path-node.is-locked .path-node__btn svg {
+    width: 64px;
+    height: 64px;
+}
+
+.path-node .bj-stars {
+    position: absolute;
+    top: 78px;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 2px;
+}
+
+.path-node .bj-stars img {
+    width: 38px;
+    height: 38px;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+}
+
+.path-node .bj-stars img.off {
+    filter: grayscale(1) brightness(0.5) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+}
+
+.path-node__gift {
+    position: absolute;
+    left: 36px;
+    top: -96px;
+    font-size: 58px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.5));
+    animation: bj-bounce 2s ease-in-out infinite;
+}
+
+.path-node__hero {
+    position: absolute;
+    left: -80px;
+    top: -250px;
+    width: 160px;
+    height: 160px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.5));
+    animation: bj-bounce 1.6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* ===== Spodná lišta ===== */
+.path-footer {
+    margin-top: 26px;
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+.path-footer__stars {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 48px;
+    line-height: 1;
+    -webkit-text-stroke: 1px #000;
+}
+
+.path-footer__stars > span:last-child {
+    padding-top: 0.15em;
+}
+
+.path-footer__stars img {
+    width: 56px;
+    height: 56px;
+}
+
+.path-play {
+    min-width: 380px;
+    height: 110px;
+    font-size: 56px;
+    border-radius: 55px;
+}

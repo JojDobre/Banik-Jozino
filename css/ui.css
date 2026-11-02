@@ -1,0 +1,360 @@
+/*
+ * Spoločné komponenty nových obrazoviek (profil, úrovne, cesta, album, minihry).
+ * Plátno má 1920×1080 (viď css/stage.css) – rozmery sú v pixeloch plátna.
+ * Vizuálny štýl preberá z pôvodnej hry: drevo, žlté/hnedé okraje, Luckiest Guy.
+ */
+
+:root {
+    --bj-yellow: #ECCF17;
+    --bj-gold: #FFD900;
+    --bj-brown: #AC3F0B;
+    --bj-dark: #3a1606;
+    --bj-green-1: #0F1;
+    --bj-green-2: #15981E;
+    --bj-green-border: #1A511D;
+    --bj-red: #E5372B;
+    --bj-wood: url('../images/pozadie_button_mobile_2.png');
+    --bj-wood-dark: url('../images/pozadie_button.png');
+}
+
+body.bj-ui {
+    margin: 0;
+    font-family: "Luckiest Guy", sans-serif;
+    color: #fff;
+    background: #1c0f08 url('../images/worlds/background.jpg') 50% / cover no-repeat;
+    cursor: url('../images/cursor.png') 5 5, auto;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.bj-ui button,
+.bj-ui a {
+    cursor: url('../images/active_cursor4.png') 5 5, pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== Obrazovka ===== */
+.bj-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 40px 60px 50px;
+}
+
+.bj-screen--dim::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.55) 100%);
+    pointer-events: none;
+}
+
+.bj-screen > * {
+    position: relative;
+}
+
+/* ===== Text ===== */
+.bj-title {
+    margin: 0;
+    font-size: 76px;
+    line-height: 1;
+    padding-top: 0.15em;
+    color: #fff;
+    text-align: center;
+    -webkit-text-stroke: 2px #000;
+    text-shadow: 0 6px 10px rgba(0, 0, 0, 0.45);
+    letter-spacing: 1px;
+}
+
+.bj-title--yellow {
+    color: var(--bj-gold);
+}
+
+.bj-subtitle {
+    margin: 0;
+    font-size: 40px;
+    line-height: 1.1;
+    padding-top: 0.15em;
+    color: var(--bj-gold);
+    text-align: center;
+    -webkit-text-stroke: 1px #000;
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+.bj-text {
+    font-family: "Nunito", "Segoe UI", sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    line-height: 1.35;
+    color: #fff;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== Panel (drevo so žltým okrajom) ===== */
+.bj-panel {
+    background: var(--bj-wood) #5a2a0e 50% / cover no-repeat;
+    border: 6px solid var(--bj-yellow);
+    border-radius: 34px;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+    box-sizing: border-box;
+}
+
+.bj-panel--brown {
+    border-color: var(--bj-brown);
+}
+
+/* ===== Tlačidlá ===== */
+.bj-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    min-width: 260px;
+    height: 92px;
+    padding: 0 40px;
+    box-sizing: border-box;
+    border-radius: 46px;
+    border: 5px solid var(--bj-brown);
+    background: var(--bj-wood-dark) #4a1f08 50% / cover no-repeat;
+    color: #fff;
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 40px;
+    line-height: 1;
+    padding-top: 6px;
+    text-transform: uppercase;
+    -webkit-text-stroke: 1px #000;
+    text-decoration: none;
+    filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.35));
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.bj-btn:hover {
+    transform: scale(1.04);
+}
+
+.bj-btn:active {
+    transform: scale(0.96);
+}
+
+.bj-btn--primary {
+    border-color: var(--bj-green-border);
+    background: linear-gradient(0deg, var(--bj-green-2) 0%, var(--bj-green-1) 100%);
+    color: var(--bj-gold);
+}
+
+.bj-btn--danger {
+    border-color: #6b0f0a;
+    background: linear-gradient(0deg, #a3160d 0%, var(--bj-red) 100%);
+}
+
+.bj-btn--small {
+    min-width: 0;
+    height: 72px;
+    padding: 6px 28px 0;
+    font-size: 30px;
+}
+
+.bj-btn[disabled] {
+    filter: grayscale(0.8) brightness(0.7);
+    pointer-events: none;
+}
+
+/* Okrúhle ikonové tlačidlo (reproduktor a pod.) */
+.bj-icon-btn {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 5px solid var(--bj-yellow);
+    background: var(--bj-wood) #5a2a0e 50% / cover no-repeat;
+    color: var(--bj-gold);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s ease;
+}
+
+.bj-icon-btn svg {
+    width: 52px;
+    height: 52px;
+}
+
+.bj-icon-btn:active {
+    transform: scale(0.94);
+}
+
+/* ===== Horná lišta ===== */
+.bj-topbar {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    right: 24px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.bj-topbar > * {
+    pointer-events: auto;
+}
+
+.bj-topbar .back-button {
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
+
+.bj-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    height: 88px;
+    padding: 0 30px 0 8px;
+    border-radius: 44px;
+    border: 5px solid var(--bj-yellow);
+    background: var(--bj-wood) #5a2a0e 50% / cover no-repeat;
+    color: #fff;
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 34px;
+    line-height: 1;
+    text-decoration: none;
+    -webkit-text-stroke: 1px #000;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+    position: relative;
+}
+
+.bj-chip > span {
+    padding-top: 6px;
+}
+
+.bj-chip img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.bj-badge {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    min-width: 46px;
+    height: 46px;
+    padding: 4px 10px 0;
+    box-sizing: border-box;
+    border-radius: 23px;
+    background: var(--bj-red);
+    border: 3px solid #fff;
+    color: #fff;
+    font-size: 26px;
+    line-height: 38px;
+    text-align: center;
+    -webkit-text-stroke: 0;
+    animation: bj-pulse 1.4s ease-in-out infinite;
+}
+
+/* ===== Hviezdy ===== */
+.bj-stars {
+    display: inline-flex;
+    gap: 6px;
+    align-items: flex-end;
+}
+
+.bj-stars img {
+    width: 36px;
+    height: 36px;
+}
+
+.bj-stars img.off {
+    filter: grayscale(1) brightness(0.55);
+    opacity: 0.7;
+}
+
+/* ===== Modálne okno ===== */
+.bj-modal {
+    position: absolute;
+    inset: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 4, 0, 0.6);
+    backdrop-filter: blur(6px);
+    animation: bj-fade 0.2s ease-out;
+}
+
+.bj-modal__box {
+    padding: 50px 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
+    max-width: 1100px;
+    animation: bj-pop 0.25s ease-out;
+}
+
+.bj-row {
+    display: flex;
+    gap: 26px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ===== Animácie ===== */
+@keyframes bj-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes bj-pop {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bj-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+}
+
+@keyframes bj-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bj-ui *,
+    .bj-ui *::before,
+    .bj-ui *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Luckiest Guy má malé písmená odlišného tvaru – v hre sa všetko píše veľkými
+   (ako v pôvodných obrazovkách). Čitateľný text (Nunito) ostáva normálne. */
+.bj-ui .bj-screen,
+.bj-staged .bj-reward {
+    text-transform: uppercase;
+}
+
+.bj-ui .bj-text,
+.bj-ui input,
+.bj-ui .profile-tile__age,
+.bj-ui .tier-card__note,
+.bj-ui .set-tab__count,
+.bj-ui .link-btn,
+.bj-staged .bj-reward__note {
+    text-transform: none;
+}

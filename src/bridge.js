@@ -16,6 +16,8 @@ import * as rewards from './core/rewards.js';
 import * as minigames from './core/minigames.js';
 import * as levels from './core/levelGenerator.js';
 import { WORDS, findWords, getWord } from './content/words.js';
+import { installRewardPopup } from './ui/cards.js';
+import { createTierProgress } from './core/tierProgress.js';
 
 const profiles = createProfileStore(window.localStorage);
 profiles.ensureDefault();
@@ -50,6 +52,9 @@ function rewardLevel(result) {
     return given;
 }
 
+// Okno s odmenou (karta, balíček) – na každej stránke vrátane pôvodných hier.
+installRewardPopup();
+
 window.addEventListener('bj:level-progress', (e) => {
     try {
         const given = rewardLevel(e.detail);
@@ -60,7 +65,7 @@ window.addEventListener('bj:level-progress', (e) => {
 });
 
 window.BJ = {
-    version: '0.3.0',
+    version: '0.4.0',
     speech,
     SpeechError,
     matchesWord,
@@ -73,6 +78,8 @@ window.BJ = {
     AGE_GROUPS,
     applySettings,
     content: { WORDS, findWords, getWord },
+    /** Postup v úrovniach 1 a 2 pre aktívny profil. */
+    tierProgress: () => createTierProgress(window.localStorage, profiles.active().id),
     minigames,
     levels,
     rewards: {

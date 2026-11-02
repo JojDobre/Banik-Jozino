@@ -12,6 +12,25 @@ export const STORAGE_KEY = 'bj.profiles';
 export const LEGACY_PROGRESS_KEY = 'speechTherapyProgress';
 export const AGE_GROUPS = ['3-4', '5-6', '7-8'];
 
+/** Avatary – postavičky baníkov (sprity zo Super Jožina). */
+const MINER = (dir, file) => `images/superjozino/assets/player/keyframes/${dir}/${file}`;
+export const AVATARS = [
+    { id: 'yellow_hat', name: 'Jožko', image: MINER('yellow_hat', '__yellow_hat_idle_000.png') },
+    { id: 'green_miner', name: 'Zelenáč', image: MINER('green_miner', '__green_miner_idle_000.png') },
+    { id: 'red_head_miner', name: 'Ryšavec', image: MINER('red_head_miner', '__miner_idle_000.png') },
+    { id: 'red_shirt_miner', name: 'Červenák', image: MINER('red_shirt_miner', '__red_shirt_miner_idle_000.png') },
+    { id: 'old_miner', name: 'Dedko', image: MINER('old_miner', '__old_miner_idle_000.png') },
+];
+
+export function avatarById(id) {
+    return AVATARS.find((a) => a.id === id) || AVATARS[0];
+}
+
+/** Profil ešte nemá zadaný vek – treba ho nastaviť (vek určuje vhodné minihry). */
+export function needsSetup(profile) {
+    return !profile || profile.age === null || profile.age === undefined;
+}
+
 /** Veková skupina z veku v rokoch. */
 export function ageGroupFromAge(age) {
     if (age === null || age === undefined || age === '') return null;
@@ -61,7 +80,7 @@ export function createProfileStore(storage = globalThis.localStorage) {
         storage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
-    function create({ name = 'Hráč', age = null, progressKey } = {}) {
+    function create({ name = 'Hráč', age = null, avatar = AVATARS[0].id, progressKey } = {}) {
         const id = newId();
         const isFirst = Object.keys(data.profiles).length === 0;
         data.profiles[id] = {
@@ -69,6 +88,7 @@ export function createProfileStore(storage = globalThis.localStorage) {
             name,
             age: age === null ? null : Number(age),
             ageGroup: ageGroupFromAge(age),
+            avatar,
             createdAt: new Date().toISOString(),
             // Prvý profil preberá pôvodný postup.
             progressKey: progressKey || (isFirst ? LEGACY_PROGRESS_KEY : `${LEGACY_PROGRESS_KEY}:${id}`),
@@ -109,7 +129,7 @@ export function createProfileStore(storage = globalThis.localStorage) {
             data.activeId = id;
             save();
         },
-        /** Zmena mena / veku / nastavení. */
+        /** Zmena mena / veku / avatara / nastavení. */
         update(id, patch) {
             const p = data.profiles[id];
             if (!p) throw new Error(`Profil ${id} neexistuje`);
@@ -118,6 +138,7 @@ export function createProfileStore(storage = globalThis.localStorage) {
                 p.age = patch.age === null ? null : Number(patch.age);
                 p.ageGroup = ageGroupFromAge(patch.age);
             }
+            if (patch.avatar !== undefined) p.avatar = patch.avatar;
             if (patch.settings) p.settings = { ...p.settings, ...patch.settings };
             save();
             return p;
