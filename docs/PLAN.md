@@ -150,6 +150,14 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
   - chýbajúce súbory: priečinok `Checkpoint` (veľké písmeno – na Androide by nefungoval),
     ikona sveta Z, ikony v posluchovom cvičení Super Jožina, `banik.ico`
   - Super Jožino už nepadá pri štarte
+- ✅ doladenie vzhľadu (`css/common.css`):
+  - karty levelov: číslo a hviezdy v strede, väčšie hviezdy, mriežka vycentrovaná v paneli
+  - logo JOŽINO/BANÍK: jedna definícia pre všetky obrazovky, farebný prechod pokrýva aj dĺžeň
+  - texty s farebným prechodom: dĺžne a mäkčene (Á, Č, Š…) už nie sú len obrysy
+  - pravidlá a nastavenia tréningu v čitateľnom písme Nunito, väčšie ovládacie prvky
+  - koniec hry: veľké hviezdy, okno sa prispôsobí obsahu (Baňa sa predtým nezmestila)
+  - Baňa: bočný panel zarovnaný s hracou plochou, väčšie ikony
+  - nové okrúhle tlačidlo späť, rovnako veľké tlačidlo menu v hrách
 - ⬜ vlastná ikona appky a úvodná obrazovka (presunuté do fázy 6)
 
 ### Fáza 3 – Nová štruktúra ⬜

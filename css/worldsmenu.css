@@ -417,17 +417,19 @@ body {
 
 .level-card{
     position: relative;
-    width: 150px;
-    height: 125px;
-    aspect-ratio: 6/5;
+    width: 160px;
+    height: 140px;
 
     background: url('../images/pozadie_button_mobile_2.png') lightgray 50% / cover no-repeat;
 
+    /* Číslo a hviezdy presne v strede karty */
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 6px;
     text-align: center;
-    padding: auto 1rem;
+    padding: 0;
     box-sizing: border-box;
     border: 4px solid #AC3F0B;
     border-radius: 30px;
@@ -477,23 +479,30 @@ body {
     text-align: center;
     font-family: "Luckiest Guy", sans-serif;
     margin: 0;
-    padding: 0px 10px;
+    padding: 0 10px;
     letter-spacing: 1.6px;
     color: #FFF;
     font-size: 64px;
     font-style: normal;
     font-weight: 400;
-    line-height: normal;
+    /* Luckiest Guy má veľký horný okraj písma – line-height 1 a malý posun
+       dole, aby číslo opticky sedelo v strede. */
+    line-height: 1;
+    transform: translateY(4px);
+    -webkit-text-stroke: 1px #000;
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.35);
 }
 
 .level-stars{
     display: flex;
+    justify-content: center;
+    gap: 4px;
 
 }
 
 .level-stars img{
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     aspect-ratio: 1/1;
 }
 
@@ -564,11 +573,11 @@ body {
 .levels-grid {
     width: 100%;
     height: 100%;
-    padding: 20px;
-    gap: 20px;
+    padding: 20px 20px 40px;
+    gap: 22px;
     display: flex;
     flex-wrap: wrap;
-    align-content: flex-start;
+    align-content: center;            /* mriežka zvislo v strede panela */
     justify-content: center;
     align-items: center;
     /* Grid pre levely sa definuje neskôr */

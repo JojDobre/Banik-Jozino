@@ -1,0 +1,348 @@
+/*
+ * Spoločné prvky všetkých obrazoviek.
+ * Všetky pravidlá majú predponu .bj-staged (trieda na <html> zo stage.js),
+ * aby mali prednosť pred štýlmi stránok bez ohľadu na poradie súborov
+ * (Vite pri zostavení vkladá štýly stránky až za spoločné štýly).
+ */
+
+/* ===== LOGO „JOŽINO / BANÍK“ =====
+ * Jedna definícia pre menu, načítavanie aj panel v hre.
+ * Rozmery sú v em, takže logo vyzerá rovnako v každej veľkosti
+ * (veľkosť písma ostáva zo štýlov stránky).
+ */
+.bj-staged .logo-text,
+.bj-staged .loading-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    max-width: none;
+}
+.bj-staged .text-jozino,
+.bj-staged .loading-text-jozino {
+    display: block;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    transform: none;
+    white-space: nowrap;
+}
+.bj-staged .text-banik,
+.bj-staged .loading-text-banik {
+    display: block;
+    line-height: 1;
+    white-space: nowrap;
+    /* Farebný prechod je orezaný na text (background-clip). Horný odsadenie
+       zabezpečí, že pokryje aj dĺžeň nad Í – inak z neho ostal len obrys. */
+    padding: 0.32em 0.1em 0.05em;
+    /* „BANÍK“ mierne zasahuje pod „JOŽINO“ (štýl loga). */
+    margin: -0.9em 0 0;
+}
+
+/* Panel v hre Baňa – menšie logo */
+.bj-staged .stats-menu .text-banik {
+    margin-top: -0.5em;
+    padding-bottom: 0.3em;
+}
+
+/* ===== Texty s farebným prechodom (background-clip: text) =====
+ * Pri písme Luckiest Guy siahajú dĺžne a mäkčene (Á, Č, Š…) nad bežnú výšku
+ * písma. Farebný prechod ich nepokryl a ostal z nich len obrys.
+ * Horné odsadenie rozšíri plochu prechodu; záporný okraj ruší posun rozloženia. */
+.bj-staged .stats a,
+.bj-staged .tlacidlo a,
+.bj-staged .game-title span,
+.bj-staged .menu-button.primary span,
+.bj-staged .modal-text-content span,
+.bj-staged .btn-primary a,
+.bj-staged .level-modal-body strong,
+.bj-staged .players-panel .name,
+.bj-staged .card-container span,
+.bj-staged .cvicenie-content-2 h1,
+.bj-staged .cvicenie-text p,
+.bj-staged .modal-content h2,
+.bj-staged .pause-modal-header h2,
+.bj-staged .practice-button h3 {
+    padding-top: 0.3em;
+    margin-top: -0.3em;
+}
+
+/* ===== Štítky so slovami (okno levelu, tréning) =====
+ * Písmo Luckiest Guy sedí v riadku vysoko – väčší horný odstup ho
+ * opticky vycentruje v štítku. */
+.bj-staged .word-tag,
+.bj-staged .word-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    font-size: 18px;
+    padding: 9px 14px 6px;
+}
+
+/* ===== Baňa: bočný panel zarovnaný s hracou plochou (800 px) ===== */
+.bj-staged .hra .stats-menu {
+    height: 800px;
+    justify-content: space-between;
+}
+
+/* Obsah boxov (zlato, diamanty, kryštály) zvislo v strede */
+.bj-staged .hra .menu-golds,
+.bj-staged .hra .menu-diamonds,
+.bj-staged .hra .menu-kov {
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+}
+.bj-staged .hra .menu-golds h1,
+.bj-staged .hra .menu-diamonds h1,
+.bj-staged .hra .menu-kov h1 {
+    margin: 0;
+    line-height: 1;
+}
+.bj-staged .hra .stats-menu .item img,
+.bj-staged .hra .golds-container img,
+.bj-staged .hra .diamonds-container img,
+.bj-staged .hra .kov-container img {
+    width: 44px;
+    height: 44px;
+}
+
+/* ===== Dlhší text (pravidlá, o projekte) =====
+ * Luckiest Guy je na odstavce ťažko čitateľné (mieša malé a veľké písmená,
+ * diakritika je drobná). Odstavce sú v Nunito, nadpisy ostávajú v štýle hry. */
+.bj-staged .modal-text-content p {
+    font-family: "Nunito", "Segoe UI", sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    line-height: 1.45;
+    letter-spacing: 0;
+    /* prvý riadok sa nesmie orezať (dĺžne nad písmenami) */
+    padding-top: 0.4em;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.35);
+}
+.bj-staged .modal-text-content p span {
+    display: inline-block;
+    font-family: "Luckiest Guy", sans-serif;
+    font-weight: 400;
+    font-size: 30px;
+    letter-spacing: 1px;
+    margin-top: 0.2em;
+}
+
+/* ===== Koniec hry (Baňa, Pexeso) =====
+ * Hviezdy sú pre dieťa hlavná odmena – musia byť veľké. Obsah okna
+ * je zvislo v strede a riadky štatistík majú odstup. */
+.bj-staged #endgame .execise-window {
+    /* výška podľa obsahu (pôvodne pevných 550 px – obsah sa nezmestil) */
+    height: auto;
+    min-height: 0;
+    max-height: none !important;
+    padding: 40px 48px;
+}
+
+.bj-staged #endgame .cvicenie-content-2 {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+.bj-staged #endgame .stats {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 6px 0 0;
+}
+
+.bj-staged #endgame .stats > div,
+.bj-staged #endgame .additional-stats > div {
+    line-height: 1.25;
+}
+
+.bj-staged #endgame .modal-stars,
+.bj-staged #endgame .stars-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 14px;
+    margin: 10px 0 14px !important;
+    padding: 0;
+}
+
+.bj-staged #endgame .modal-stars img {
+    width: 72px !important;
+    height: 72px !important;
+}
+
+/* stredná hviezda o niečo väčšia */
+.bj-staged #endgame .modal-stars img:nth-child(2),
+.bj-staged #endgame .stars-container img:nth-child(2) {
+    width: 88px !important;
+    height: 88px !important;
+}
+
+.bj-staged #endgame .gameend .main-menu ul {
+    margin: 0;
+}
+
+/* ===== Tlačidlo späť =====
+ * Okrúhle tlačidlo v štýle hry (drevo, žltý okraj) so šípkou. */
+.bj-staged .back-button {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    width: 76px;
+    height: 76px;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    font-size: 0;
+    z-index: 1001;
+}
+
+.bj-staged .back-button,
+.bj-staged .back-button a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bj-staged .back-button a,
+.bj-staged a.back-button {
+    width: 76px;
+    height: 76px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 4px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    color: #FFD900;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+    text-decoration: none;
+}
+
+.bj-staged .back-button svg {
+    width: 44px;
+    height: 44px;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+}
+
+@media (pointer: coarse) {
+    .bj-staged .back-button,
+    .bj-staged .back-button a,
+    .bj-staged a.back-button {
+        width: 130px;
+        height: 130px;
+    }
+    .bj-staged .back-button svg {
+        width: 76px;
+        height: 76px;
+    }
+}
+
+/* ===== Tlačidlo menu v hrách (rovnaká veľkosť a poloha ako tlačidlo späť) ===== */
+.bj-staged #menuButton {
+    top: 24px;
+    left: 24px;
+    width: 76px;
+    height: 76px;
+}
+
+@media (pointer: coarse) {
+    .bj-staged #menuButton {
+        width: 130px;
+        height: 130px;
+    }
+}
+
+/* ===== Nastavenia v oknách (tréning Pexesa a Bane) =====
+ * Okná nastavuje skôr rodič – popisky sú v čitateľnom písme a ovládacie
+ * prvky dosť veľké aj pre telefón (plátno je tam zmenšené ~0,36×). */
+.bj-staged .level-modal-content {
+    max-width: 860px;
+}
+
+.bj-staged .level-modal-body {
+    padding: 12px 36px;
+    gap: 16px;
+}
+
+.bj-staged .level-modal-body .subtitle-modal {
+    font-size: 34px;
+    margin: 6px 0 4px;
+}
+
+.bj-staged .checkbox-option,
+.bj-staged .item-control label,
+.bj-staged .player-count-control label,
+.bj-staged .players-names-container label {
+    font-family: "Nunito", "Segoe UI", sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1.3;
+}
+
+.bj-staged .checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 18px;
+}
+
+.bj-staged .checkbox-option input[type="checkbox"] {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    accent-color: #2fbf3a;
+}
+
+.bj-staged .level-modal-body select,
+.bj-staged .level-modal-body input[type="number"],
+.bj-staged .level-modal-body .player-name-input {
+    font-family: "Nunito", "Segoe UI", sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    height: 56px;
+    padding: 0 14px;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.bj-staged .level-modal-body select {
+    min-width: 200px;
+}
+
+.bj-staged .level-modal-body input[type="number"] {
+    width: 130px;
+    text-align: center;
+}
+
+.bj-staged .level-modal-body .word-item,
+.bj-staged .level-modal-body .word-tag {
+    font-size: 22px;
+    padding: 11px 18px 7px;
+}
+
+.bj-staged .level-modal-footer .btn-primary {
+    min-height: 72px;
+    font-size: 32px;
+}
+
+.bj-staged .words-scrollable-container h3 {
+    font-family: "Nunito", "Segoe UI", sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 0;
+    text-transform: none;
+    margin: 0 0 10px;
+}

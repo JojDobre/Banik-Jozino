@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuperJozino</title>
     <link rel="stylesheet" href="css/superjozino.css">
+    <link rel="stylesheet" type="text/css" href="css/fonts.css" />
     <link rel="icon" type="image/png" href="images/icons/favicon.png">
     <!-- Spoločné služby (reč, zvuk, profily, karty) – window.BJ -->
     <script type="module" src="src/bridge.js"></script>
     <!-- Herné plátno 1920×1080 – škálovanie na každú obrazovku -->
     <link rel="stylesheet" type="text/css" href="css/stage.css" />
+    <link rel="stylesheet" type="text/css" href="css/common.css" />
     <script src="js/stage.js"></script>
 </head>
 <body>
   <div id="bj-stage">
-    <a href="index.html" class="back-button">←</a>
+    <a href="index.html" class="back-button" aria-label="Späť"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 7.5 12l7 7" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <div class="game-container">
         <canvas id="gameCanvas" width="800" height="800"></canvas>
         <div id="debugPanel" class="debug-panel">
