@@ -1,14 +1,23 @@
 name: Android APK
 
-# Zostaví testovacie (debug) APK. Stiahneš ho v záložke Actions →
-# posledný beh „Android APK“ → Artifacts → banik-jozino-debug-apk.
+# Zostaví testovacie (debug) APK po každom pushi do main.
+#
+# Kde ho nájdeš:
+#  - Releases → „Najnovšia testovacia verzia“ → banik-jozino.apk
+#    (stály odkaz, dá sa otvoriť priamo v telefóne, netreba prihlásenie)
+#    https://github.com/<owner>/<repo>/releases/download/najnovsia/banik-jozino.apk
+#  - Actions → beh „Android APK“ → Artifacts (ZIP)
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write   # vytvorenie/aktualizácia Release s APK
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: true
 
 jobs:
   apk:
@@ -32,11 +41,51 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npx cap sync android
+
+      - name: Číslo verzie
+        id: ver
+        run: |
+          APP_VERSION=$(node -p "require('./package.json').version")
+          echo "app=$APP_VERSION" >> "$GITHUB_OUTPUT"
+          echo "code=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+          echo "name=$APP_VERSION-build.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
       - name: Gradle assembleDebug
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        # versionCode = číslo behu (každá verzia sa dá nainštalovať cez starú)
+        run: >
+          ./gradlew assembleDebug --no-daemon
+          -PbjVersionCode=${{ steps.ver.outputs.code }}
+          -PbjVersionName=${{ steps.ver.outputs.name }}
+
+      - name: Premenovanie APK
+        run: |
+          mkdir -p out
+          cp android/app/build/outputs/apk/debug/app-debug.apk out/banik-jozino.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk "out/banik-jozino-${{ steps.ver.outputs.name }}.apk"
+
       - uses: actions/upload-artifact@v4
         with:
-          name: banik-jozino-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: banik-jozino-${{ steps.ver.outputs.name }}
+          path: out/banik-jozino-${{ steps.ver.outputs.name }}.apk
           retention-days: 30
+
+      - name: Release „Najnovšia testovacia verzia“
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=najnovsia
+          NOTES="Testovacia (debug) verzia ${{ steps.ver.outputs.name }} z commitu ${GITHUB_SHA::7}.
+
+          Inštalácia: stiahni banik-jozino.apk v telefóne a otvor ho (povoľ inštaláciu z neznámeho zdroja).
+          Nie je určená na Google Play."
+          # značka vždy ukazuje na najnovší commit
+          git tag -f "$TAG"
+          git push -f origin "refs/tags/$TAG"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "Najnovšia testovacia verzia (${{ steps.ver.outputs.name }})" --notes "$NOTES" --prerelease
+          else
+            gh release create "$TAG" --title "Najnovšia testovacia verzia (${{ steps.ver.outputs.name }})" --notes "$NOTES" --prerelease
+          fi
+          gh release upload "$TAG" out/banik-jozino.apk --clobber
