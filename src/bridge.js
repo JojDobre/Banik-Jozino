@@ -80,6 +80,32 @@ function rewardLevel(result) {
     return given;
 }
 
+/**
+ * Holý text v tlačidlách menu obalí do <span>, aby sa dal presne vycentrovať
+ * (CSS text-box funguje len na textovom prvku – viď css/common.css).
+ * Sleduje aj tlačidlá, ktoré hry vytvoria neskôr.
+ */
+function wrapButtonText(root = document) {
+    root.querySelectorAll?.('.menu-button, .pause-button').forEach((btn) => {
+        for (const node of [...btn.childNodes]) {
+            if (node.nodeType === 3 && node.textContent.trim()) {
+                const span = document.createElement('span');
+                span.className = 'bj-btn-text';
+                span.textContent = node.textContent.trim();
+                node.replaceWith(span);
+            }
+        }
+    });
+}
+function watchButtons() {
+    wrapButtonText();
+    new MutationObserver((list) => {
+        for (const m of list) for (const n of m.addedNodes) if (n.nodeType === 1) wrapButtonText(n.parentNode || n);
+    }).observe(document.body, { childList: true, subtree: true });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watchButtons);
+else watchButtons();
+
 // Okno s odmenou (karta, balíček) – na každej stránke vrátane pôvodných hier.
 installRewardPopup();
 

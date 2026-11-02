@@ -1966,8 +1966,15 @@ class Game {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
-        this.width = 800;
+        // Svet je vysoký 800 px; šírka plátna podľa pomeru strán obrazovky,
+        // takže hra vyplní celú plochu (na širokom telefóne vidno viac sveta).
         this.height = 800;
+        this.fitCanvas();
+        window.addEventListener('resize', () => this.fitCanvas());
+
+        // Pozadie s paralaxou (les zo sveta L)
+        this.bgImage = new Image();
+        this.bgImage.src = 'images/worlds/world_l.png';
         
         // Herné vlastnosti
         this.gravity = 0.45;
@@ -2110,6 +2117,7 @@ class Game {
     }
 
     setupDebugControls() {
+        if (/[?&]debug\b/.test(location.search)) document.documentElement.classList.add('sj-debug');
         const toggleBtn = document.getElementById('toggleDebug');
         toggleBtn.addEventListener('click', () => {
             this.debug = !this.debug;
@@ -2196,12 +2204,10 @@ class Game {
         this.speechModal.innerHTML = `
             <div class="speech-content">
                 <h2>${exercise.word}</h2>
-                <img src="${exercise.imageUrl}" alt="${exercise.word}" style="max-width: 200px; margin-bottom: 20px;">
-                <div class="attempts-info">Počet pokusov: ${exercise.attempts}/5</div>
-                <button id="startRecording" class="button">
-                    Začať nahrávanie
-                </button>
-                <div class="result-message" style="margin-top: 10px; min-height: 20px;"></div>
+                <div class="speech-image"><img src="${exercise.imageUrl}" alt="${exercise.word}"></div>
+                <div class="attempts-info">Pokus ${Math.min(exercise.attempts + 1, 5)} z 5</div>
+                <button id="startRecording" class="button button--primary">Hovoriť</button>
+                <div class="result-message"></div>
             </div>
         `;
         this.speechModal.style.display = 'flex';
@@ -2224,8 +2230,8 @@ class Game {
                 <p>Zozbierané mince: ${this.collectedCoins}/${this.totalCoins}</p>
                 <p>Zozbierané diamanty: ${this.collectedDiamonds}/${this.requiredDiamonds}</p>
                 <div class="game-over-buttons">
-                    <button class="button" onclick="location.reload()">Späť do menu</button>
-                    <button class="button" id="restartLevel">Reštartovať level</button>
+                    <button class="button" onclick="location.href='urovne.html'">Menu</button>
+                    <button class="button button--primary" id="restartLevel">Znova</button>
                 </div>
             </div>
         `;
@@ -2271,7 +2277,7 @@ class Game {
             resultMessage.style.color = '#f44336';
         } finally {
             recordButton.disabled = false;
-            recordButton.textContent = 'Začať nahrávanie';
+            recordButton.textContent = 'Hovoriť';
         }
     }
 
@@ -2785,18 +2791,19 @@ class Game {
             <div class="level-complete-content">
                 <h2>Level ${this.currentLevel} dokončený!</h2>
                 <div class="stars">
-                    ${Array(stars).fill('⭐').join('')}
+                    ${[0, 1, 2].map((i) => `<img src="images/star_active.png" alt="" class="${i < stars ? '' : 'off'}">`).join('')}
                 </div>
                 <p>Zozbierané mince: ${this.collectedCoins}/${this.totalCoins} (${coinPercentage.toFixed(1)}%)</p>
                 <p>Zozbierané diamanty: ${this.collectedDiamonds}/${this.requiredDiamonds}</p>
                 <h3>Rečové cvičenia:</h3>
                 ${this.currentLevelData.diamonds
+                    .filter(diamond => diamond.speechExercise)
                     .map(diamond => `
                         <p>${diamond.speechExercise.word}: ${diamond.speechExercise.attempts} pokusov</p>
                     `).join('')}
                 <div class="game-over-buttons">
-                    <button class="button" onclick="location.reload()">Späť do menu</button>
-                    <button class="button" id="nextLevel">Ďalší level</button>
+                    <button class="button" onclick="location.href='urovne.html'">Menu</button>
+                    <button class="button button--primary" id="nextLevel">Ďalší level</button>
                 </div>
             </div>
         `;
@@ -2983,12 +2990,14 @@ class Game {
         
         // Vytvorenie game over obrazovky
         const modalContent = `
-            <div style="background: white; padding: 20px; border-radius: 10px; text-align: center;">
-                <h2>Game Over</h2>
-                <p>Zozbierané mince: ${this.collectedCoins}/${this.totalCoins}</p>
-                <p>Zozbierané diamanty: ${this.collectedDiamonds}/${this.requiredDiamonds}</p>
-                <button onclick="location.reload()" style="padding: 10px 20px; margin: 5px;">Späť do menu</button>
-                <button id="restartLevel" style="padding: 10px 20px; margin: 5px;">Reštartovať level</button>
+            <div class="game-over-content">
+                <h2>Koniec hry</h2>
+                <p>Mince: ${this.collectedCoins}/${this.totalCoins}</p>
+                <p>Diamanty: ${this.collectedDiamonds}/${this.requiredDiamonds}</p>
+                <div class="game-over-buttons">
+                    <button class="button" onclick="location.href='urovne.html'">Menu</button>
+                    <button class="button button--primary" id="restartLevel">Znova</button>
+                </div>
             </div>
         `;
         
@@ -3371,9 +3380,41 @@ drawPlatform(tileName, x, y, width, height) {
 
 
 
+    /** Šírka plátna podľa obrazovky (výška sveta ostáva 800). */
+    fitCanvas() {
+        const vw = window.innerWidth || 1600;
+        const vh = window.innerHeight || 900;
+        this.width = Math.round(Math.min(2000, Math.max(800, this.height * (vw / vh))));
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+    }
+
+    /** Obloha + les s paralaxou (pohybuje sa pomalšie ako svet). */
+    drawBackground() {
+        const ctx = this.ctx;
+        const sky = ctx.createLinearGradient(0, 0, 0, this.height);
+        sky.addColorStop(0, '#5fb8ff');
+        sky.addColorStop(0.6, '#bfe6ff');
+        sky.addColorStop(1, '#fff3c9');
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, this.width, this.height);
+        const img = this.bgImage;
+        if (img && img.complete && img.naturalWidth) {
+            const h = this.height;
+            const w = img.naturalWidth * (h / img.naturalHeight);
+            const off = -((this.camera.x * 0.3) % w);
+            ctx.imageSmoothingEnabled = true;
+            for (let x = off - w; x < this.width; x += w) ctx.drawImage(img, x, 0, w, h);
+        }
+        // jemný opar – pozadie ustúpi, platformy a postavy vyniknú
+        ctx.fillStyle = 'rgba(255, 246, 225, 0.45)';
+        ctx.fillRect(0, 0, this.width, this.height);
+    }
+
     draw() {
         // Vyčistenie canvas
         this.ctx.clearRect(0, 0, this.width, this.height);
+        this.drawBackground();
 
         // Uloženie kontextu pred transformáciou
         this.ctx.save();
@@ -3381,9 +3422,6 @@ drawPlatform(tileName, x, y, width, height) {
         // Posun všetkého podľa pozície kamery
         this.ctx.translate(-this.camera.x, 0);
 
-        // Vykreslenie pozadia (voliteľné)
-        this.ctx.fillStyle = '#87CEEB'; // svetlomodrá obloha
-        this.ctx.fillRect(this.camera.x, 0, this.width, this.height);
 
         // Vykreslenie platforiem a zeme
 this.ctx.imageSmoothingEnabled = false;
@@ -3540,12 +3578,18 @@ for (let platform of this.currentLevelData.platforms) {
 
 
     drawUI() {
-        // Životy a skóre
-        this.ctx.fillStyle = 'white';
-        this.ctx.font = '20px Arial';
-        this.ctx.fillText(`Mince: ${this.collectedCoins}/${this.totalCoins}`, 10, 30);
-        this.ctx.fillText(`Diamanty: ${this.collectedDiamonds}/${this.requiredDiamonds}`, 10, 60);
-        this.ctx.fillText(`Životy: ${this.lives}`, 10, 90);
+        // Skóre v rámčekoch nad hrou (HTML, viď superjozino.html .sj-hud)
+        const hud = this.hud || (this.hud = {
+            coins: document.getElementById('hudCoins'),
+            diamonds: document.getElementById('hudDiamonds'),
+            lives: document.getElementById('hudLives'),
+        });
+        const c = `${this.collectedCoins}/${this.totalCoins}`;
+        const d = `${this.collectedDiamonds}/${this.requiredDiamonds}`;
+        const l = '❤'.repeat(Math.max(0, this.lives)) || '–';
+        if (hud.coins && hud.coins.textContent !== c) hud.coins.textContent = c;
+        if (hud.diamonds && hud.diamonds.textContent !== d) hud.diamonds.textContent = d;
+        if (hud.lives && hud.lives.textContent !== l) hud.lives.textContent = l;
 
 
         if (this.debug) {
@@ -3597,8 +3641,8 @@ class Coin {
         
         // Rečové cvičenie (len pre Blue Diamond)
         this.speechExercise = type === 'blueDiamond' ? {
-            word: this.getRandomWord(),
-            imageUrl: this.getRandomImage(),
+            // slovo a obrázok musia patriť k sebe
+            ...(() => { const w = this.getRandomWord(); return { word: w, imageUrl: `images/slova/${w}.png` }; })(),
             attempts: 0,
             completed: false
         } : null;
@@ -3622,7 +3666,7 @@ class Coin {
      * Získanie náhodného slova pre rečové cvičenie
      */
     getRandomWord() {
-        const words = ['pes', 'mačka', 'auto', 'dom', 'strom', 'slnko', 'voda', 'ruka'];
+        const words = ['auto', 'dom', 'strom', 'slnko', 'ruka', 'ryba', 'rak', 'lopta'];
         return words[Math.floor(Math.random() * words.length)];
     }
     
@@ -3630,7 +3674,7 @@ class Coin {
      * Získanie náhodného obrázka pre rečové cvičenie
      */
     getRandomImage() {
-        return `images/${this.getRandomWord()}.png`;
+        return `images/slova/${this.getRandomWord()}.png`;
     }
     
     /**

@@ -65,7 +65,7 @@ function start(level, path) {
         bubble.append(h('span.miner__num', { 'aria-hidden': 'true' }, [centeredGlyph(side === 'a' ? '1' : '2', { size: 62, stroke: 5 })]));
         const el = h(`div.miner.miner--${side}`, {}, [
             bubble,
-            h('div.miner__stage', {}, [h('div.miner__spot'), h('div.miner__body', {}, [minerSprite(av)]), h('div.miner__pedestal')]),
+            h('div.miner__stage', {}, [h('div.miner__spot'), h('div.miner__body', {}, [minerSprite(av)])]),
         ]);
         return { el, bubble };
     };

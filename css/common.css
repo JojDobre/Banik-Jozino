@@ -346,3 +346,130 @@
     text-transform: none;
     margin: 0 0 10px;
 }
+
+/* ===== Text v tlačidlách menu presne v strede =====
+ * Luckiest Guy: pri line-height 1 sú veľké písmená o 0,15 em vyššie než stred
+ * riadku (ascent 1440, descent 608, výška veľkých písmen 1424 / 2048).
+ * padding-top 0,3 em posunie obsah v stredenom flex tlačidle o 0,15 em nadol. */
+.bj-staged .menu-button,
+.bj-staged .pause-button {
+    line-height: 1;
+    padding-top: 0.3em;
+    padding-bottom: 0;
+    box-sizing: border-box;
+}
+
+.bj-staged .menu-button span {
+    line-height: 1;   /* (padding/margin pre diakritiku – viď vyššie, súčet 0) */
+}
+
+/* Novšie prehliadače (Chrome / Android WebView 133+): riadok sa oreže presne
+ * na výšku veľkých písmen → text je v strede bez ohľadu na metriky písma
+ * a zaokrúhľovanie pri zmenšenom plátne telefónu. */
+@supports (text-box: trim-both cap alphabetic) {
+    .bj-staged .menu-button,
+    .bj-staged .pause-button {
+        padding-top: 0;
+    }
+    .bj-staged .menu-button,
+    .bj-staged .menu-button span,
+    .bj-staged .pause-button {
+        text-box: trim-both cap alphabetic;
+    }
+}
+
+/* ===== Baňa: karta so slovom (rečové cvičenie) ===== */
+.bj-staged #cvicenie .execise-window {
+    width: 760px;
+    max-width: none;
+    height: auto;
+    max-height: none;
+    min-height: 0;
+    padding: 40px 60px 46px;
+    border-width: 7px;
+    border-radius: 36px;
+}
+
+.bj-staged #cvicenie .cvicenie-content {
+    padding: 0;
+    gap: 22px;
+    align-items: center;
+    width: 100%;
+}
+
+.bj-staged #cvicenie .word-progress {
+    width: 100%;
+    margin: 0;
+}
+
+.bj-staged #cvicenie .progress-text {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #FFD900;
+    -webkit-text-stroke: 1px #000;
+    text-transform: uppercase;
+}
+
+.bj-staged #cvicenie .progress-bar {
+    height: 18px;
+    border-radius: 9px;
+    border: 3px solid #ECCF17;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.bj-staged #cvicenie .cvicenie-text p {
+    margin: 0;
+    font-size: 84px;
+    line-height: 1;
+    padding-top: 0.15em;
+    -webkit-text-stroke: 2px #000;
+    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.45));
+}
+
+.bj-staged #cvicenie .cvicenie-text:has(#cvicenie-image) {
+    width: 320px;
+    height: 320px;
+    border-radius: 30px;
+    border: 5px solid #AC3F0B;
+    background: radial-gradient(circle at 50% 40%, #fff7e0 0%, #f1d9a6 100%);
+    align-items: center;
+    justify-content: center;
+}
+
+.bj-staged #cvicenie #cvicenie-image {
+    width: 86%;
+    height: 86%;
+    min-width: 0;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+}
+
+.bj-staged #cvicenie .tlacidlo {
+    width: 340px;
+    height: 104px;
+    border-radius: 52px;
+    border-width: 5px;
+}
+
+.bj-staged #cvicenie #rozpoznanie {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.bj-staged #cvicenie #rozpoznanie a {
+    font-size: 54px;
+    line-height: 1;
+    text-box: trim-both cap alphabetic;
+}
+
+/* tmavé rozmazané pozadie pod oknami cvičení a výsledkov (Baňa, Pexeso) */
+.bj-staged #blur-background {
+    background: radial-gradient(ellipse 55% 60% at 50% 50%, rgba(60, 30, 6, 0.45) 0%, rgba(8, 3, 0, 0.9) 100%) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}

@@ -1,0 +1,291 @@
+/*
+ * Super Jožino – vzhľad v štýle appky (drevo, žlté okraje, Luckiest Guy).
+ * Predpona .bj-staged = prednosť pred css/superjozino.css bez ohľadu na poradie.
+ */
+
+.bj-staged body,
+.bj-staged #bj-stage {
+    background: #1c0f08;
+}
+
+/* ===== Hra na celú plochu ===== */
+.bj-staged .game-container {
+    position: absolute;
+    inset: 0;
+}
+
+.bj-staged #gameCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none;
+    background: #5fb8ff;
+    display: block;
+}
+
+/* ===== Horná lišta ===== */
+.bj-staged .sj-topbar {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    right: 24px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.bj-staged .sj-topbar > * {
+    pointer-events: auto;
+}
+
+.bj-staged .sj-topbar .back-button {
+    top: 10px;
+    left: 0;
+}
+
+.bj-staged .sj-hud {
+    display: flex;
+    gap: 22px;
+}
+
+.bj-staged .sj-hud__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 84px;
+    min-width: 190px;
+    padding: 0 28px 0 14px;
+    box-sizing: border-box;
+    border-radius: 42px;
+    border: 5px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 40px;
+    color: #fff;
+    -webkit-text-stroke: 1px #000;
+}
+
+.bj-staged .sj-hud__item span {
+    padding-top: 6px;
+    line-height: 1;
+}
+
+.bj-staged .sj-hud__item img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.5));
+}
+
+.bj-staged .sj-hud__item--lives {
+    min-width: 0;
+    padding: 0 28px;
+    color: #ff4d5e;
+    letter-spacing: 4px;
+}
+
+.bj-staged .sj-gear {
+    position: absolute;
+    right: 0;
+    top: 4px;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 5px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    color: #FFD900;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.bj-staged .sj-gear svg {
+    width: 56%;
+    height: 56%;
+}
+
+/* ladiaci panel len pri ?debug */
+.bj-staged .debug-panel {
+    display: none;
+}
+
+.bj-staged.sj-debug .debug-panel {
+    display: block;
+    top: 130px;
+}
+
+/* ===== Dotykové ovládanie: joystick vľavo, skok vpravo (ako v Bani) ===== */
+@media (pointer: coarse) {
+    .bj-staged .joystick-controls {
+        left: 70px !important;
+        right: auto !important;
+        bottom: 70px !important;
+        transform-origin: left bottom !important;
+    }
+    .bj-staged .action-controls {
+        right: 70px !important;
+        left: auto !important;
+        bottom: 70px !important;
+        padding: 0 !important;
+        transform-origin: right bottom !important;
+    }
+}
+
+.bj-staged .action-button {
+    font-family: "Luckiest Guy", sans-serif;
+}
+
+/* ===== Okná (rečové cvičenie, koniec hry, level dokončený) ===== */
+.bj-staged .speech-modal,
+.bj-staged .modal,
+.bj-staged #zvuky {
+    background: radial-gradient(ellipse at center, rgba(40, 18, 4, 0.55) 0%, rgba(0, 0, 0, 0.88) 75%) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.bj-staged .speech-content,
+.bj-staged .game-over-content,
+.bj-staged .level-complete-content,
+.bj-staged .listening-exercise-dialog {
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat !important;
+    border: 7px solid #ECCF17 !important;
+    border-radius: 36px !important;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55) !important;
+    color: #fff !important;
+    font-family: "Luckiest Guy", sans-serif !important;
+    text-align: center;
+    max-width: none !important;
+    width: 760px !important;
+    padding: 46px 60px !important;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+}
+
+.bj-staged .speech-content h2,
+.bj-staged .game-over-content h2,
+.bj-staged .level-complete-content h2,
+.bj-staged .listening-exercise-dialog h2 {
+    margin: 0;
+    font-size: 72px;
+    line-height: 1;
+    padding-top: 0.15em;
+    color: #FFD900 !important;
+    -webkit-text-stroke: 2px #000;
+    text-shadow: 0 6px 10px rgba(0, 0, 0, 0.45);
+    text-transform: uppercase;
+}
+
+.bj-staged .level-complete-content h3 {
+    margin: 4px 0 0;
+    font-size: 34px;
+    color: #FFD900;
+    -webkit-text-stroke: 1px #000;
+}
+
+.bj-staged .speech-content p,
+.bj-staged .game-over-content p,
+.bj-staged .level-complete-content p,
+.bj-staged .attempts-info,
+.bj-staged .result-message,
+.bj-staged .instruction-text {
+    margin: 0;
+    font-family: "Nunito", sans-serif !important;
+    font-weight: 800;
+    font-size: 30px !important;
+    color: #fff !important;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.45);
+}
+
+.bj-staged .speech-image {
+    width: 300px;
+    height: 300px;
+    border-radius: 30px;
+    background: radial-gradient(circle at 50% 40%, #fff7e0 0%, #f1d9a6 100%);
+    border: 5px solid #AC3F0B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bj-staged .speech-image img {
+    max-width: 86% !important;
+    max-height: 86% !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+.bj-staged .stars {
+    display: flex;
+    gap: 14px;
+    align-items: flex-end;
+}
+
+.bj-staged .stars img {
+    width: 90px;
+    height: 90px;
+}
+
+.bj-staged .stars img:nth-child(2) {
+    width: 110px;
+    height: 110px;
+}
+
+.bj-staged .stars img.off {
+    filter: grayscale(1) brightness(0.5);
+    opacity: 0.7;
+}
+
+/* tlačidlá */
+.bj-staged .speech-content .button,
+.bj-staged .game-over-content .button,
+.bj-staged .level-complete-content .button,
+.bj-staged #startRecording {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 260px;
+    height: 92px;
+    margin: 0;
+    padding: 8px 40px 0;
+    border-radius: 46px;
+    border: 5px solid #AC3F0B;
+    background: url('../images/pozadie_button.png') #4a1f08 50% / cover no-repeat;
+    color: #fff;
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 40px;
+    line-height: 1;
+    text-transform: uppercase;
+    -webkit-text-stroke: 1px #000;
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+}
+
+.bj-staged .button--primary,
+.bj-staged #startRecording {
+    border-color: #1A511D !important;
+    background: linear-gradient(0deg, #15981E 0%, #0F1 100%) !important;
+    color: #FFD900 !important;
+}
+
+.bj-staged #startRecording[disabled] {
+    filter: brightness(0.75);
+}
+
+.bj-staged .game-over-buttons {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-top: 6px;
+}

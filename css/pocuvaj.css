@@ -2,7 +2,7 @@
 
 .bj-screen {
     --miner: 470px;        /* výška postavy */
-    --bubble: 150px;       /* tlačidlo so slovom vedľa hlavy */
+    --bubble: 112px;       /* tlačidlo so slovom vedľa hlavy */
     --action: 190px;       /* okrúhle tlačidlá odpovedí */
     padding-bottom: 36px;
 }
@@ -10,7 +10,7 @@
 /* telefón – kompaktné plátno (js/stage.js) */
 .bj-compact .bj-screen {
     --miner: 400px;
-    --bubble: 132px;
+    --bubble: 104px;
     --action: 160px;
     padding-top: 26px;
     padding-bottom: 22px;
@@ -447,4 +447,42 @@
 @keyframes bj-q-bob {
     0%, 100% { transform: rotate(-4deg); }
     50% { transform: rotate(4deg) translateY(-6px); }
+}
+
+/* tieň pod postavou (namiesto podstavca) */
+.miner__stage::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    width: 220px;
+    height: 34px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, transparent 70%);
+}
+
+/* menší odznak čísla pri menšom tlačidle */
+.miner__num {
+    width: 48px !important;
+    height: 48px !important;
+}
+
+/* Spätná väzba cez celú obrazovku: tmavé rozmazané pozadie, svetlo v strede */
+.feedback {
+    background: radial-gradient(ellipse 55% 60% at 50% 50%, rgba(60, 30, 6, 0.55) 0%, rgba(8, 3, 0, 0.92) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.feedback.is-ok {
+    background: radial-gradient(ellipse 55% 60% at 50% 50%, rgba(40, 120, 30, 0.45) 0%, rgba(4, 12, 2, 0.92) 100%);
+}
+
+.feedback.is-bad {
+    background: radial-gradient(ellipse 55% 60% at 50% 50%, rgba(140, 40, 20, 0.45) 0%, rgba(14, 3, 1, 0.92) 100%);
+}
+
+.feedback__text {
+    background: none;
 }
