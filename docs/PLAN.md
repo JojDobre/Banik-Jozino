@@ -117,14 +117,21 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 - ✅ opravy: `lang="sk"`, favicon, duplicitný text pravidiel, chyba HTML vo `worldsmenu.html`,
   odkazy na neexistujúce stránky (`mario.html`, `worlds-menu.html`, `level-selector.html`)
 
-### Fáza 1 – Jadro ⬜
-- ⬜ prechod na ES moduly
-- ⬜ `SpeechService` (z Bane), `AudioService`, `TTSService`
-- ⬜ ProgressManager v2: profily detí, vek, úrovne, karty
-- ⬜ slovník slov s údajmi, generátor levelov, zoznam minihier s vekom
-- ⬜ Baňa, Pexeso, Super Jožino prevedené na spoločné služby
-- ⬜ rýchly test Capacitoru: funguje rozpoznávanie reči na reálnom Androide?
-- ⬜ `npm run build` (produkčné zostavenie) a nasadenie webu (GitHub Pages)
+### Fáza 1 – Jadro ✅ (okrem testu na telefóne)
+- ✅ nový kód ako ES moduly v `src/`; staré hry ostávajú klasické skripty v `public/js`
+  a nové služby používajú cez `window.BJ` (prevedú sa postupne pri redizajne)
+- ✅ `SpeechService` (podľa Bane), `AudioService`, `TTSService` – prehliadač aj Android
+- ✅ Baňa, Pexeso a Super Jožino rozpoznávajú reč cez spoločnú službu
+  a porovnávajú slová rovnakým pravidlom ako Baňa (presná zhoda)
+- ✅ profily detí (meno, vek, nastavenia); každý profil má vlastný postup,
+  prvý profil preberá doterajší postup
+- ✅ zbierka kariet – logika a ukladanie (karta za level, balíček za každý 4. level,
+  vzácna karta za prvé 3 ★, iskričky za duplikáty); karty sa už udeľujú, obrazovka albumu príde vo fáze 3
+- ✅ slovník slov (`src/content/words.js`, generuje `npm run build:words`),
+  generátor levelov, zoznam minihier s vekom
+- ✅ `npm run build`, automatické testy (`npm test`) a nasadenie webu (GitHub Actions → Pages)
+- 🔄 Android projekt (Capacitor) pripravený – **čaká na test rozpoznávania reči na reálnom telefóne**
+  (návod v `docs/ANDROID.md`)
 
 ### Fáza 2 – Dizajn ⬜
 - ⬜ pevné plátno 1920×1080 škálované na obrazovku (vyzerá rovnako všade)
@@ -159,9 +166,11 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 
 ---
 
-## Známe chyby (nájdené počas fázy 0, na opravu neskôr)
+## Známe chyby (na opravu neskôr)
 - Super Jožino: netopier (`Bat`) nemá animáciu `walk` a hra padá na `drawImage` s chýbajúcim obrázkom.
 - Všetkých 260 levelov je typu `banik`; Pexeso a Super Jožino nie sú v postupe.
 - Posluchové cvičenie má len 15 dvojíc zvukov.
 - Opakujúce sa názvy levelov (napr. 24× „Prvé Ď-čka“).
 - Všetky svety sú odomknuté, podmienky odomknutia sú zakomentované.
+- Pexeso a Super Jožino stále používajú vlastné zvukové efekty (nie `AudioService`).
+- ~~Pexeso volalo neexistujúcu metódu `saveLevelProgress`, postup sa neukladal~~ – opravené vo fáze 1.

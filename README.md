@@ -17,7 +17,8 @@ Baník Jožino targets 16 problematic Slovak phonemes (R, L, S, Z, C, Š, Ž, Č
 ## Tech stack
 
 - **HTML5 / CSS3 / JavaScript** — application core
-- **Vite** — local dev server
+- **Vite** — dev server and build
+- **Capacitor** — Android app (native speech recognition and text-to-speech)
 - **Web Speech API** — in-browser speech recognition
 - **Howler.js** — audio playback
 - **Canvas API** — game rendering
@@ -27,56 +28,50 @@ Baník Jožino targets 16 problematic Slovak phonemes (R, L, S, Z, C, Š, Ž, Č
 ## Project structure
 
 ```
-Speech-Therapy-Game/
-├── config/          # World and level configuration
-│   ├── worlds.js
-│   └── levels.js
-├── js/
-│   ├── basics/      # Menu logic
-│   ├── managers/    # ProgressManager, GameRouter, CachePreloader
-│   ├── game.js      # Baník game logic
-│   ├── pexeso/      # Pexeso game logic
-│   ├── superjozino/ # Super Jožino game logic
-│   └── vendor/      # Third-party libraries (Howler.js)
-├── css/             # Stylesheets per game
-├── docs/            # Development plan (PLAN.md)
-├── fonts/           # Local fonts (works offline)
-├── images/          # Sprites, icons, world assets
-├── scripts/         # Tooling (image optimization)
-├── zvuky/           # Audio assets
-├── index.html       # Main menu
-├── worldsmenu.html  # World and level selection
-├── game.html        # Baník entry point
-├── pexeso.html      # Pexeso entry point
-└── superjozino.html # Super Jožino entry point
+Banik-Jozino/
+├── src/                 # New modular code (ES modules, bundled by Vite)
+│   ├── core/            # speech, tts, audio, profiles, rewards (cards),
+│   │                    # minigames registry, level generator, Slovak helpers
+│   ├── content/         # Word dictionary (generated + manual overrides)
+│   └── bridge.js        # Exposes services to the games as window.BJ
+├── public/              # Copied to the build as-is
+│   ├── js/              # Game logic (Baňa, Pexeso, Super Jožino, menus)
+│   ├── config/          # World and level configuration
+│   ├── images/ zvuky/   # Images and audio
+│   └── fonts/
+├── css/                 # Stylesheets per page
+├── tests/               # Unit tests (node --test)
+├── scripts/             # Tooling: word dictionary, image optimization
+├── android/             # Android app project (Capacitor)
+├── docs/                # PLAN.md (roadmap), ANDROID.md (building the app)
+└── *.html               # Pages: index, worldsmenu, game, pexeso, superjozino
 ```
 
 ## Getting started
 
-### Prerequisites
-
-- Node.js 18+
-- npm 9+
-
-### Installation
+Requires Node.js 22.
 
 ```bash
-git clone https://github.com/JojDobre/Speech-Therapy-Game-v2.git
-cd Speech-Therapy-Game-v2
+git clone https://github.com/JojDobre/Banik-Jozino.git
+cd Banik-Jozino
 npm install
 npm run dev
 ```
 
-Then open the printed URL (e.g. `http://localhost:5173`) in a Chromium-based browser (Chrome or Edge recommended).
+Open the printed URL (e.g. `http://localhost:5173`) in Chrome or Edge.
 Speech recognition requires a secure context (`localhost` or HTTPS) and an internet connection.
 
-To shrink oversized images (keeps file names and formats):
+| Command | What it does |
+|---|---|
+| `npm run dev` | Local dev server |
+| `npm test` | Unit tests |
+| `npm run build` | Production build into `dist/` |
+| `npm run build:words` | Regenerate the word dictionary from levels, images and audio |
+| `npm run optimize:images` | Shrink oversized images (keeps names and formats) |
+| `npm run android:sync` / `android:open` | Build and open the Android app – see [docs/ANDROID.md](docs/ANDROID.md) |
 
-```bash
-npm run optimize:images
-```
-
-See [docs/PLAN.md](docs/PLAN.md) for the development roadmap.
+Pushing to `main` runs the tests and deploys the web version to GitHub Pages.
+See [docs/PLAN.md](docs/PLAN.md) for the roadmap.
 
 ## How it works
 
@@ -95,7 +90,7 @@ Points are awarded only after a successful speech or listening exercise — not 
 
 ## Browser support
 
-Speech recognition relies on the Web Speech API. Best supported on Chrome, Edge, and Opera (desktop and Android), and on Safari with limitations. Firefox does not support speech recognition.
+In the browser, speech recognition relies on the Web Speech API — best supported on Chrome, Edge, and Opera, and on Safari with limitations. Firefox does not support it. The Android app uses the system speech recognizer through a Capacitor plugin.
 
 ## Author
 

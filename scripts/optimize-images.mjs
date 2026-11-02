@@ -15,7 +15,7 @@ import { readdir, stat, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', 'public');
 const DRY = process.argv.includes('--dry');
 
 // Pravidlá: priečinok -> maximálna dĺžka dlhšej strany v px.

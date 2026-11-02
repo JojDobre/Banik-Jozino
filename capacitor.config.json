@@ -1,0 +1,8 @@
+{
+  "appId": "sk.banikjozino.app",
+  "appName": "Baník Jožino",
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": false
+  }
+}
