@@ -38,6 +38,8 @@ body.bj-ui {
     position: relative;
     width: 100%;
     height: 100%;
+    overflow: hidden;
+    overflow: clip;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -53,7 +55,8 @@ body.bj-ui {
     pointer-events: none;
 }
 
-.bj-screen > * {
+/* :where = nulová špecifickosť – nikdy neprebije pravidlá stránky */
+.bj-screen > :where(*) {
     position: relative;
 }
 
@@ -384,4 +387,51 @@ body.bj-ui {
 
 .bj-round-btn:active {
     transform: scale(0.92);
+}
+
+/* ===== Číslo presne v strede krúžku (kit.centeredGlyph) =====
+ * SVG text vyplní vnútro krúžku; poloha je vypočítaná z metrík písma,
+ * takže sedí v strede pri každej veľkosti aj na zmenšenom plátne telefónu. */
+.bj-glyph {
+    position: absolute !important;
+    inset: 0;
+    display: block;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none;
+}
+
+.bj-glyph svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.bj-glyph text {
+    font-family: "Luckiest Guy", sans-serif;
+}
+
+/* krúžky s číslom: text rieši SVG, vlastné písmo/odsadenie netreba */
+.path-node__btn,
+.miner__num,
+.arena__q,
+.tier-card__number,
+.age-btn,
+.bj-badge {
+    padding: 0 !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    -webkit-text-stroke: 0 !important;
+}
+
+.arena__q,
+.tier-card__number,
+.age-btn {
+    position: relative;
+}
+
+.bj-badge {
+    min-width: 46px;
+    width: 46px;
 }

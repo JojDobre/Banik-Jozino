@@ -774,9 +774,10 @@
     font-family: "Luckiest Guy", sans-serif;
 }
 
-/* telefón – balíček a karty väčšie */
+/* telefón – okno odmeny sa musí zmestiť na výšku */
 .bj-compact .bj-reward__box {
-    transform: scale(1.18);
+    min-height: 0;
+    gap: 22px;
 }
 
 /* darček v úzkom okne výsledkov pôvodných hier */

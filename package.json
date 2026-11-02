@@ -16,7 +16,8 @@
     "android:sync": "vite build && cap sync android",
     "android:open": "cap open android",
     "screenshots": "node scripts/screenshots.mjs",
-    "build:voice": "node scripts/build-voice.mjs"
+    "build:voice": "node scripts/build-voice.mjs",
+    "check:center": "node scripts/check-centering.cjs"
   },
   "devDependencies": {
     "@capacitor/android": "^8.6.0",

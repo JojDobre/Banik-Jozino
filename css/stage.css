@@ -31,6 +31,9 @@ body {
        rozmazanie (backdrop-filter) pod modálnymi oknami a zámkami levelov. */
     zoom: var(--stage-scale, 1);
     overflow: hidden;
+    /* clip = obsah sa nedá posunúť ani programovo (fokus, scrollIntoView) –
+       na Androide sa inak obrazovka po ťuknutí mohla „odscrollovať“ */
+    overflow: clip;
     /* Rozloženie preberá z <body> (pôvodné štýly stránok centrovali obsah na body). */
     display: inherit;
     flex-direction: inherit;

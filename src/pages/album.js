@@ -6,7 +6,7 @@
  * URL: album.html?set=world_r (voliteľne)
  */
 import '../bridge.js';
-import { h, topbar, requireProfile, say, modal, ICONS } from '../ui/kit.js';
+import { h, centeredGlyph, topbar, requireProfile, say, modal, ICONS } from '../ui/kit.js';
 import { cardElement, showRewards } from '../ui/cards.js';
 import { SETS, setById } from '../content/cards/index.js';
 import { EXCHANGE_COST } from '../core/rewards.js';
@@ -140,7 +140,7 @@ function render() {
                 h('div.album-stat', {}, [h('span.album-stat__num', { text: `${ownedCount}` }), h('span', { text: ` / ${catalog.length} kariet` })]),
                 h('div.album-stat', {}, [h('span.album-stat__num', { text: `✨ ${col.sparkles || 0}` }), h('span', { text: ` ${sparklesWord(col.sparkles || 0)}` })]),
                 packs.length
-                    ? h('button.bj-btn.bj-btn--primary.album-pack-btn', { type: 'button', onclick: openPack }, [`Otvoriť balíček`, h('span.bj-badge', { text: String(packs.length) })])
+                    ? h('button.bj-btn.bj-btn--primary.album-pack-btn', { type: 'button', onclick: openPack }, [`Otvoriť balíček`, h('span.bj-badge', { 'aria-label': `${packs.length} balíčky` }, [centeredGlyph(packs.length, { size: 62, stroke: 0 })])])
                     : null,
             ]),
         ]),

@@ -53,6 +53,19 @@
         setTimeout(fit, 100);
     });
 
+    // Poistka: hra sa nikdy neposúva (ani keď WebView niečo „doscrolluje“).
+    document.addEventListener('scroll', function (e) {
+        var t = e.target;
+        if (t === document || t === document.documentElement) {
+            if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
+            return;
+        }
+        if (t && t.nodeType === 1 && (t.id === 'bj-stage' || t.classList.contains('bj-screen'))) {
+            t.scrollTop = 0;
+            t.scrollLeft = 0;
+        }
+    }, true);
+
     document.addEventListener('DOMContentLoaded', function () {
         if (document.getElementById('bj-rotate')) return;
         var el = document.createElement('div');

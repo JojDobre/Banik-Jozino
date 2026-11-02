@@ -1718,15 +1718,19 @@ body {
     display: block;
     z-index: 1000;
   }
-  .action-controls {
+  /* joystick vľavo (pohyb), kopanie vpravo – ako v bežných mobilných hrách */
+  .joystick-controls {
     left: 70px;
+    right: auto;
     bottom: 70px;
     scale: 2.4;
     transform-origin: left bottom;
   }
-  .joystick-controls {
+  .action-controls {
     right: 70px;
+    left: auto;
     bottom: 70px;
+    padding: 0;
     scale: 2.4;
     transform-origin: right bottom;
   }

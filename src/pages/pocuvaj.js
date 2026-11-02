@@ -6,7 +6,7 @@
  * URL: pocuvaj.html?level=t1_03
  */
 import '../bridge.js';
-import { h, topbar, requireProfile, say, ICONS, stars, pause } from '../ui/kit.js';
+import { h, centeredGlyph, topbar, requireProfile, say, ICONS, stars, pause } from '../ui/kit.js';
 import { buildTier1Path, TIER1_SET, CHAPTERS } from '../content/tier1.js';
 import { avatarById } from '../core/profiles.js';
 import { makeRounds, starsForScore } from '../games/sameDifferent.js';
@@ -62,7 +62,7 @@ function start(level, path) {
             html: ICONS.speaker,
             onclick: () => !busy && replayOne(side),
         }, []);
-        bubble.append(h('span.miner__num', { text: side === 'a' ? '1' : '2' }));
+        bubble.append(h('span.miner__num', { 'aria-hidden': 'true' }, [centeredGlyph(side === 'a' ? '1' : '2', { size: 62, stroke: 5 })]));
         const el = h(`div.miner.miner--${side}`, {}, [
             bubble,
             h('div.miner__stage', {}, [h('div.miner__spot'), h('div.miner__body', {}, [minerSprite(av)]), h('div.miner__pedestal')]),
@@ -217,7 +217,7 @@ function start(level, path) {
         ]),
         h('div.arena', {}, [
             minerA,
-            h('div.arena__middle', {}, [h('div.arena__q', { text: '?' }), replayBtn]),
+            h('div.arena__middle', {}, [h('div.arena__q', {}, [centeredGlyph('?', { size: 78, stroke: 4.5 })]), replayBtn]),
             minerB,
         ]),
         h('div.answers', {}, [btnSame, btnDiff]),

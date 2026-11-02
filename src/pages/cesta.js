@@ -3,7 +3,7 @@
  * URL: cesta.html?chapter=2 (voliteľne)
  */
 import '../bridge.js';
-import { h, topbar, requireProfile, speakerButton, say, ICONS, stars } from '../ui/kit.js';
+import { h, centeredGlyph, topbar, requireProfile, speakerButton, say, ICONS, stars } from '../ui/kit.js';
 import { buildTier1Path, CHAPTERS, LEVELS_PER_CHAPTER, levelUrl } from '../content/tier1.js';
 import { avatarById } from '../core/profiles.js';
 
@@ -46,6 +46,9 @@ function render(path, prog, chapterId) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('class', 'path-line');
     svg.setAttribute('viewBox', `0 0 ${MAP_W} ${MAP_H}`);
+    // Mapa môže byť na telefóne nižšia (flex ju stlačí) – cestička sa natiahne
+    // presne na plochu mapy a zastávky sú v percentách, takže vždy sedia.
+    svg.setAttribute('preserveAspectRatio', 'none');
     svg.innerHTML = `<path d="${smoothPath(points)}" class="path-line__shadow"/><path d="${smoothPath(points)}" class="path-line__road"/>`;
 
     const avatar = avatarById(profile.avatar);
@@ -57,10 +60,10 @@ function render(path, prog, chapterId) {
         const { x, y } = points[i];
         const cls = ['path-node', unlocked ? (s > 0 ? 'is-done' : 'is-open') : 'is-locked'];
         if (isCurrent) cls.push('is-current');
-        const node = h(`div.${cls.join('.')}`, { style: { left: `${x}px`, top: `${y}px` } }, [
+        const node = h(`div.${cls.join('.')}`, { style: { left: `${(x / MAP_W) * 100}%`, top: `${(y / MAP_H) * 100}%` } }, [
             isCurrent ? h('img.path-node__hero', { src: avatar.image, alt: '' }) : null,
             unlocked
-                ? h('a.path-node__btn', { href: levelUrl(level), 'aria-label': `Level ${level.number}` }, [h('span', { text: String(level.number) })])
+                ? h('a.path-node__btn', { href: levelUrl(level), 'aria-label': `Level ${level.number}` }, [centeredGlyph(level.number, { size: 54, stroke: 3.2 })])
                 : h('span.path-node__btn', { 'aria-label': `Level ${level.number} – zamknutý`, html: ICONS.lock }),
             level.milestone ? h('span.path-node__gift', { title: 'Balíček kariet', text: '🎁' }) : null,
             unlocked ? stars(s) : null,

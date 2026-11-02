@@ -2,7 +2,7 @@
  * Výber úrovne: 1 – Počúvam, 2 – Zvuky a hlásky, 3 – Slová.
  */
 import '../bridge.js';
-import { h, topbar, requireProfile, speakerButton, say, ICONS, stars } from '../ui/kit.js';
+import { h, centeredGlyph, topbar, requireProfile, speakerButton, say, ICONS, stars } from '../ui/kit.js';
 import { buildTier1Path } from '../content/tier1.js';
 import { minigamesFor } from '../core/minigames.js';
 
@@ -26,7 +26,7 @@ function tier3Stars() {
 
 function tierCard({ number, title, text, image, href, starsText, locked, note }) {
     const content = [
-        h('div.tier-card__art', { style: { backgroundImage: `url('${image}')` } }, [h('div.tier-card__number', { text: String(number) })]),
+        h('div.tier-card__art', { style: { backgroundImage: `url('${image}')` } }, [h('div.tier-card__number', { 'aria-hidden': 'true' }, [centeredGlyph(number, { size: 72, stroke: 2.6 })])]),
         h('div.tier-card__body', {}, [
             h('div.tier-card__title', { text: title }),
             h('div.tier-card__text.bj-text', { text }),

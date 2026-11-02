@@ -6,7 +6,7 @@
  */
 import '../bridge.js';
 import { AVATARS, avatarById, needsSetup } from '../core/profiles.js';
-import { h, ICONS, say, speakerButton, modal } from '../ui/kit.js';
+import { h, centeredGlyph, ICONS, say, speakerButton, modal } from '../ui/kit.js';
 
 const BJ = window.BJ;
 const app = document.getElementById('app');
@@ -99,7 +99,6 @@ function renderForm(profile) {
             type: 'button',
             'aria-label': ageLabel(a),
             'aria-pressed': String(state.age === a),
-            text: String(a),
             onclick: (e) => {
                 state.age = a;
                 ageButtons.forEach((b) => {
@@ -109,7 +108,7 @@ function renderForm(profile) {
                 });
                 validate();
             },
-        }),
+        }, [centeredGlyph(a, { size: 58, stroke: 3.4 })]),
     );
 
     const avatarButtons = AVATARS.map((av) =>
