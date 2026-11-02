@@ -16,8 +16,8 @@ Baník Jožino targets 16 problematic Slovak phonemes (R, L, S, Z, C, Š, Ž, Č
 
 ## Tech stack
 
-- **Electron** — cross-platform desktop runtime
 - **HTML5 / CSS3 / JavaScript** — application core
+- **Vite** — local dev server
 - **Web Speech API** — in-browser speech recognition
 - **Howler.js** — audio playback
 - **Canvas API** — game rendering
@@ -34,12 +34,16 @@ Speech-Therapy-Game/
 ├── js/
 │   ├── basics/      # Menu logic
 │   ├── managers/    # ProgressManager, GameRouter, CachePreloader
-│   ├── miner/       # Baník game logic
+│   ├── game.js      # Baník game logic
 │   ├── pexeso/      # Pexeso game logic
-│   └── superjozino/ # Super Jožino game logic
+│   ├── superjozino/ # Super Jožino game logic
+│   └── vendor/      # Third-party libraries (Howler.js)
 ├── css/             # Stylesheets per game
+├── docs/            # Development plan (PLAN.md)
+├── fonts/           # Local fonts (works offline)
 ├── images/          # Sprites, icons, world assets
-├── sounds/          # Audio assets
+├── scripts/         # Tooling (image optimization)
+├── zvuky/           # Audio assets
 ├── index.html       # Main menu
 ├── worldsmenu.html  # World and level selection
 ├── game.html        # Baník entry point
@@ -57,13 +61,22 @@ Speech-Therapy-Game/
 ### Installation
 
 ```bash
-git clone https://github.com/JojDobre/Speech-Therapy-Game.git
-cd Speech-Therapy-Game
+git clone https://github.com/JojDobre/Speech-Therapy-Game-v2.git
+cd Speech-Therapy-Game-v2
 npm install
-npm start
+npm run dev
 ```
 
-You can also open `index.html` directly in a Chromium-based browser (Chrome or Edge recommended) for quick testing.
+Then open the printed URL (e.g. `http://localhost:5173`) in a Chromium-based browser (Chrome or Edge recommended).
+Speech recognition requires a secure context (`localhost` or HTTPS) and an internet connection.
+
+To shrink oversized images (keeps file names and formats):
+
+```bash
+npm run optimize:images
+```
+
+See [docs/PLAN.md](docs/PLAN.md) for the development roadmap.
 
 ## How it works
 

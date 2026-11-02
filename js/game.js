@@ -2646,7 +2646,6 @@ function showInfoDialog() {
 // ====== HLASOVÉ CVIČENIE ======       //
 // Premenné                             //
 //////////////////////////////////////////
-const url = 'slova.txt'; 
 let currentWordIndex = 0; 
 let wordList = []; // Pole slov na vyslovenie
 let pocetcviceni = 2;

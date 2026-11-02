@@ -1,0 +1,18 @@
+{
+  "name": "banik-jozino",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Baník Jožino – logopedická hra pre deti",
+  "author": "Adam Reňak",
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "preview": "vite preview --host",
+    "optimize:images": "node scripts/optimize-images.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5",
+    "vite": "^5.4.21"
+  }
+}

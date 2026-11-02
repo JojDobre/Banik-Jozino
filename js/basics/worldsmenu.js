@@ -837,7 +837,7 @@ function playSelectedLevel() {
             const gameUrls = {
                 'banik': 'game.html',
                 'pexeso': 'pexeso.html', 
-                'mario': 'mario.html'
+                'mario': 'superjozino.html'
             };
             const url = gameUrls[level.gameType];
             if (url) {

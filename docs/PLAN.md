@@ -1,0 +1,167 @@
+# Baník Jožino – plán vývoja
+
+Cieľ: z diplomovej práce spraviť skutočnú logopedickú hru pre deti 3–8 rokov,
+dostupnú ako web aj ako Android appka na Google Play. Dieťa má vedieť cvičiť samo.
+
+Stav: ✅ hotové · 🔄 rozpracované · ⬜ čaká
+
+---
+
+## Štruktúra hry
+
+Hráč si na začiatku vyberie **úroveň**:
+
+| Úroveň | Obsah | Členenie |
+|---|---|---|
+| **1 – Počúvam** | sluchové vnímanie: rozlišovanie slov, zvukov, syčania, bzučania… | žiadne svety, jedna **cesta levelov** (30–50 zastávok, minihry sa striedajú, míľnik každých ~10 levelov) |
+| **2 – Zvuky a hlásky** | fúkanie, rozcvička jazýčka, izolované hlásky (sss, zzz, vrrr, ššš), slabiky | svety podľa skupín hlások: Fúkanie a jazýček · Sykavky S Z C · Šušťavky Š Ž Č · R a L · Ď Ť Ň / D T N · K G |
+| **3 – Slová** | vyslovovanie slov | svety písmen (R, L, S, …), v každom postup: hláska na začiatku → na konci → v strede → zhluky (tr, dr, kr) |
+| *4 – Vety (neskôr)* | riekanky, jazykolamy, doplň vetu | |
+
+### Vekové kategórie
+Rodič zadá vek dieťaťa pri vytvorení profilu: **3–4**, **5–6**, **7–8** rokov.
+Každá minihra má v definícii, pre aký vek je, a obťažnosť (počet kariet, rýchlosť, dĺžka)
+sa nastaví podľa veku. Minihry nevhodné pre vek sa nezobrazia.
+
+```js
+{ id: 'sound-pexeso', title: 'Zvukové pexeso', ages: ['5-6', '7-8'], tiers: [1], exercise: 'listening' }
+```
+
+### Slovník slov
+Jeden zdroj pravdy namiesto zoznamov slov v každom leveli. Levely sa generujú z pravidiel
+(„5 slov s R na začiatku, max. 2 slabiky“), nie ručne.
+
+```js
+{ word: 'ryba', image: 'ryba.png', audio: 'ryba.mp3', phoneme: 'R', position: 'initial', syllables: 2, minAge: 4 }
+```
+
+---
+
+## Zbierka kariet
+
+Motivácia, aby sa dieťa k hre vracalo.
+
+**Ako sa karty získavajú**
+- **Prvé splnenie levelu** (aspoň 1 ★) → 1 karta.
+- **Ťažší / míľnikový level** (napr. každý 4. level vo svete, koniec cesty v úrovni 1) → **balíček** 3–5 kariet.
+- **Denná séria** (napr. 3 dni po sebe) → bonusový balíček.
+- 3 ★ prvýkrát → šanca na vzácnejšiu kartu v odmene.
+
+**Zbierka (album)**
+- Karty sú rozdelené do **sád** (podľa svetov / tém: zvieratá, drahokamy, baníci, postavy zo svetov).
+- Vzácnosť: **bežná / vzácna / zlatá** (rámik, lesk, animácia pri otvorení).
+- Dokončenie sady → odznak a **odomknutie odmeny**, napr. nového baníka. V hre už sú sprity
+  ďalších baníkov (`green_miner`, `old_miner`, `red_head_miner`, `red_shirt_miner`).
+- **Karta je aj cvičenie:** ťuknutím na kartu sa prehrá slovo a dieťa ho môže zopakovať.
+
+**Pravidlá férovosti**
+- Žiadne nákupy za peniaze, nič sa nedá kúpiť (dôležité aj pre pravidlá Google Play pre deti).
+- Duplikáty: kým sada nie je kompletná, padajú prednostne nové karty. Duplikát sa premení
+  na „iskričky“, za ktoré si dieťa môže vybrať konkrétnu chýbajúcu kartu.
+
+**Dáta**
+```js
+// content/cards.json
+{ id: 'r-rak', name: 'Rak', image: 'images/slova/rak.png', set: 'world_r', rarity: 'common', word: 'rak' }
+// v profile dieťaťa
+{ cards: { 'r-rak': 1 }, sparkles: 4, unopenedPacks: 1 }
+```
+Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika kariet môže prísť neskôr.
+
+---
+
+## Cvičenia
+
+- **Úroveň 1:** len prehrávanie a ťukanie (bez mikrofónu, spoľahlivé, offline).
+- **Úroveň 2:** analýza zvuku priamo v zariadení (Web Audio). Kalibrácia pri vytvorení profilu
+  (ticho, „ááá“, „sss“), porovnávajú sa pomery energií namiesto pevných frekvencií,
+  aby fungovalo pre chlapcov aj dievčatá. Najprv prototyp a test na deťoch.
+  - fúkanie, dĺžka a hlasitosť „sss“ / „zzz“ → spoľahlivé
+  - S oproti Š, Z oproti S → dobré, nie dokonalé
+  - vrčanie R → experiment
+  - slabiky → kontrola počtu a rytmu, obsah tolerantne cez rozpoznávanie reči
+- **Úroveň 3:** automatické rozpoznávanie reči (súčasné riešenie z Bane – `js/game.js`).
+- **Pokyny** nahovorené syntézou reči (TTS). **Vzorové slová** vopred vygenerované kvalitným
+  hlasom, skontrolované a pribalené ako súbory (offline, na každom zariadení rovnaké).
+
+## Minihry
+
+| Minihra | Úroveň | Vek | Popis |
+|---|---|---|---|
+| Baňa | 3 (1) | 5+ | existuje |
+| Pexeso | 3 | 5+ | existuje |
+| Super Jožino | 3 | 7+ | existuje, treba zaradiť medzi levely |
+| Kto to robí? | 1 | 3+ | zvuk → ťukni na zviera/predmet |
+| Zvukové pexeso | 1 | 4+ | karty hrajú slovo; pri dvojici dieťa odpovie rovnaké/iné; rovnaké + správne = pár a bod; v balíčku aj podobné slová (rak/lak) |
+| Zvončeky v bani | 1 | 5+ | zopakuj poradie zvukov; vyššia obťažnosť: nájdi dvojice pred zhasnutím lampy |
+| Hláskový vláčik | 1 | 6+ | triedenie obrázkov do vagónov podľa hlásky |
+| Fúkaj na balón | 2 | 3+ | sila fúkania hýbe balónom/loďkou |
+| Had Sykáčik | 2 | 3+ | kým dieťa drží „sss“, had lezie |
+| Včielka Bzzz | 2 | 4+ | kým bzučí „zzz“, včielka letí |
+| Slabiková lavína | 2 | 5+ | opakuj sa-so-su, ra-ro-ru |
+| Zrkadielko | 2 | 3+ | experiment: MediaPipe (offline) kontroluje pery/ústa; jazyk len s ukážkou |
+
+---
+
+## Fázy
+
+### Fáza 0 – Upratovanie ✅
+- ✅ odstránený Electron (`index.js`, `preload.js`)
+- ✅ odstránený mŕtvy kód: `pexeso1.js`, `pexeso-old.css`, `pexesocustom.*`, `menu-pexeso.js`,
+  `pexeso-menu.css`, `text.*`, `levels.js`, `words.json`, `slova.txt`, `js/debug/`
+- ✅ zmazané zálohy a duplikáty: `images/worlds/zaloha/`, `images/slova.zip`, duplicitné `.webp`
+- ✅ obrázky slov, ktoré existovali len ako `.webp` (kód žiada `.png`), prevedené na `.png`
+- ✅ `package.json` + Vite (`npm run dev`)
+- ✅ Howler.js a písmo lokálne (bez CDN)
+- ✅ skript na zmenšenie obrázkov (`npm run optimize:images`)
+- ✅ opravy: `lang="sk"`, favicon, duplicitný text pravidiel, chyba HTML vo `worldsmenu.html`,
+  odkazy na neexistujúce stránky (`mario.html`, `worlds-menu.html`, `level-selector.html`)
+
+### Fáza 1 – Jadro ⬜
+- ⬜ prechod na ES moduly
+- ⬜ `SpeechService` (z Bane), `AudioService`, `TTSService`
+- ⬜ ProgressManager v2: profily detí, vek, úrovne, karty
+- ⬜ slovník slov s údajmi, generátor levelov, zoznam minihier s vekom
+- ⬜ Baňa, Pexeso, Super Jožino prevedené na spoločné služby
+- ⬜ rýchly test Capacitoru: funguje rozpoznávanie reči na reálnom Androide?
+- ⬜ `npm run build` (produkčné zostavenie) a nasadenie webu (GitHub Pages)
+
+### Fáza 2 – Dizajn ⬜
+- ⬜ pevné plátno 1920×1080 škálované na obrazovku (vyzerá rovnako všade)
+- ⬜ oprava posunutých prvkov (logo, loading, čísla levelov, …) podľa referenčných screenshotov
+- ⬜ výzva „otoč telefón“, veľké dotykové tlačidlá
+- ⬜ automatické screenshoty v rôznych rozlíšeniach
+
+### Fáza 3 – Nová štruktúra ⬜
+- ⬜ výber úrovne 1/2/3, cesta levelov (úroveň 1), svety písmen s generovanými levelmi (úroveň 3)
+- ⬜ vytvorenie profilu s vekom
+- ⬜ zbierka kariet: odmeny, balíčky, album
+- ⬜ nahovorené pokyny
+
+### Fáza 4 – Minihry úrovne 1 ⬜
+- ⬜ Kto to robí?, Zvukové pexeso, Zvončeky v bani, Hláskový vláčik
+- ⬜ zvukový obsah: viac dvojíc slov (cieľ 50+), nahrávky pre všetky slová
+
+### Fáza 5 – Úroveň 2 ⬜
+- ⬜ prototyp analýzy zvuku + kalibrácia, test na deťoch
+- ⬜ Fúkaj na balón, Had Sykáčik, Včielka Bzzz, Slabiková lavína
+- ⬜ Zrkadielko (experiment)
+
+### Fáza 6 – Android appka ⬜
+- ⬜ Capacitor, pluginy (rozpoznávanie reči, TTS, mikrofón), orientácia na šírku
+- ⬜ hlásenie pri chýbajúcom internete (rozpoznávanie slovenčiny ho potrebuje)
+- ⬜ testy na viacerých telefónoch
+
+### Fáza 7 – Rodič a Google Play ⬜
+- ⬜ rodičovská brána, štatistiky pre rodiča
+- ⬜ zásady ochrany súkromia, program Families, Data safety
+- ⬜ uzavreté testovanie (osobný účet: 12 testerov / 14 dní), zverejnenie
+
+---
+
+## Známe chyby (nájdené počas fázy 0, na opravu neskôr)
+- Super Jožino: netopier (`Bat`) nemá animáciu `walk` a hra padá na `drawImage` s chýbajúcim obrázkom.
+- Všetkých 260 levelov je typu `banik`; Pexeso a Super Jožino nie sú v postupe.
+- Posluchové cvičenie má len 15 dvojíc zvukov.
+- Opakujúce sa názvy levelov (napr. 24× „Prvé Ď-čka“).
+- Všetky svety sú odomknuté, podmienky odomknutia sú zakomentované.

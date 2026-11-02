@@ -109,7 +109,7 @@ class GameRouter {
         const gameUrls = {
             'banik': this.buildGameUrl('game.html', worldId, levelId),
             'pexeso': this.buildGameUrl('pexeso.html', worldId, levelId),
-            'mario': this.buildGameUrl('mario.html', worldId, levelId)
+            'mario': this.buildGameUrl('superjozino.html', worldId, levelId)
         };
         
         const url = gameUrls[gameType];
@@ -243,7 +243,7 @@ Chceš pokračovať ďalším levelom alebo sa vrátiť na výber levelov?
      */
     returnToLevelSelector(worldId) {
         console.log(`Vraciam sa na level selector pre svet: ${worldId}`);
-        window.location.href = `level-selector.html?world=${worldId}`;
+        window.location.href = 'worldsmenu.html';
     }
 
     /**
@@ -251,7 +251,7 @@ Chceš pokračovať ďalším levelom alebo sa vrátiť na výber levelov?
      */
     returnToWorldsMenu() {
         console.log('Vraciam sa na menu svetov');
-        window.location.href = 'worlds-menu.html';
+        window.location.href = 'worldsmenu.html';
     }
 
     /**
