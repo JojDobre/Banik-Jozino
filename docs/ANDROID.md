@@ -5,11 +5,22 @@ Rozpoznávanie reči a hlasové pokyny idú cez natívne pluginy
 (`@capacitor-community/speech-recognition`, `@capacitor-community/text-to-speech`),
 lebo Android WebView nemá Web Speech API.
 
-## Čo treba mať
+## Najrýchlejšie: hotové APK z GitHubu
+Po každom pushi do `main` sa APK zostaví automaticky:
+1. GitHub → záložka **Actions** → posledný beh **Android APK**.
+2. Dole v časti **Artifacts** stiahni `banik-jozino-debug-apk` (ZIP s APK).
+3. APK prenes do telefónu a otvor ho. Telefón sa spýta, či povoliť inštaláciu
+   z neznámeho zdroja (prehliadač/Súbory) – povoľ.
+
+Ide o testovaciu (debug) verziu – nie je určená na Google Play.
+
+## Zostavenie na vlastnom počítači
+
+### Čo treba mať
 - [Android Studio](https://developer.android.com/studio) (obsahuje Android SDK a JDK 21)
 - Node.js 22
 
-## Prvé spustenie na telefóne
+### Prvé spustenie na telefóne
 1. Na telefóne zapni *Možnosti pre vývojárov* a *Ladenie cez USB*, pripoj ho káblom.
 2. V priečinku projektu:
    ```bash
