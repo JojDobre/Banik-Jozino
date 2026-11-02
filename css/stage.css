@@ -98,3 +98,18 @@ body {
 }
 
 /* Veľkosti ovládacích prvkov sú jednotné – viď „Dizajnový systém“ v css/common.css. */
+
+/* ===== Načítanie bez preblikávania (viď public/js/stage.js) ===== */
+html {
+    background: #1c0f08;
+}
+html.bj-booting #bj-stage {
+    opacity: 0;
+}
+#bj-stage {
+    transition: opacity 0.12s ease-out;
+}
+/* Úvodné „Načítavam…“ v menu len pri prvom spustení appky */
+html.bj-warm .bj-boot-screen {
+    display: none !important;
+}

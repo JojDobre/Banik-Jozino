@@ -50,6 +50,56 @@
     }
 
     fit();
+
+    /*
+     * Bez preblikávania: plátno je skryté, kým nie sú načítané písma
+     * (Luckiest Guy, Nunito aj s diakritikou) a obrázky stránky.
+     * Potom sa naraz zobrazí hotová obrazovka. Poistka: najneskôr po 2,5 s.
+     */
+    var booted = false;
+    try { booted = sessionStorage.getItem('bj.booted') === '1'; } catch (e) {}
+    if (booted) root.classList.add('bj-warm');
+    root.classList.add('bj-booting');
+
+    function whenDom() {
+        return new Promise(function (r) {
+            if (document.readyState !== 'loading') r();
+            else document.addEventListener('DOMContentLoaded', r);
+        });
+    }
+    function whenLoaded(maxMs) {
+        return new Promise(function (r) {
+            if (document.readyState === 'complete') return r();
+            window.addEventListener('load', r);
+            setTimeout(r, maxMs);
+        });
+    }
+    function fontsReady() {
+        if (!document.fonts || !document.fonts.load) return Promise.resolve();
+        var sample = 'AaŽžČčŠšÁáÍíÉéÚúÝýÔôĽľŤťŇňĎď0123';
+        return Promise.all([
+            document.fonts.load('400 40px "Luckiest Guy"', sample),
+            document.fonts.load('800 30px "Nunito"', sample),
+            document.fonts.load('900 30px "Nunito"', sample),
+        ]).catch(function () {});
+    }
+    var revealed = false;
+    function reveal() {
+        if (revealed) return;
+        revealed = true;
+        fit();
+        requestAnimationFrame(function () {
+            root.classList.remove('bj-booting');
+        });
+        try { sessionStorage.setItem('bj.booted', '1'); } catch (e) {}
+    }
+    // písma až po načítaní štýlov (@font-face) – inak by nebolo na čo čakať
+    whenDom()
+        .then(function () { return Promise.all([fontsReady(), whenLoaded(1500)]); })
+        .then(fontsReady)
+        .then(reveal, reveal);
+    setTimeout(reveal, 2500);
+
     window.addEventListener('resize', fit);
     // Android: výška sa mení aj po skrytí systémových líšt (immersive) –
     // nie vždy príde „resize“, preto aj visualViewport a kontrola po načítaní.
