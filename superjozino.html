@@ -8,6 +8,8 @@
     <!-- Svety a levely (slová pre rečové cvičenia, uloženie postupu) -->
     <script src="config/worlds.js"></script>
     <script src="config/levels.js"></script>
+    <!-- zvuky (Howler – rýchle prehrávanie efektov) -->
+    <script src="js/vendor/howler.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/fonts.css" />
     <link rel="icon" type="image/png" href="images/icons/favicon.png">
     <!-- Spoločné služby (reč, zvuk, profily, karty) – window.BJ -->
@@ -64,54 +66,6 @@
 
     </div>
 
-    <!-- POSLUCHOVÉ CVIČENIE MODAL - pred closing </body> tag -->
-    <div id="zvuky" style="display: none;">
-        <div class="info-dialog listening-exercise-dialog">
-            <div class="dialog-header">
-                <h2>Posluchové cvičenie</h2>
-                <div class="progress-indicator">
-                    <span id="listening-progress">1/2</span>
-                </div>
-            </div>
-            
-            <div class="dialog-content">
-                <div class="listening-info">
-                    <p class="instruction-text">Počúvaj pozorne oba zvuky a rozhodní, či sú <strong>rovnaké</strong> alebo <strong>rôzne</strong>.</p>
-                </div>
-                
-                <div class="attempts-display">
-                    Pokus: <span id="listening-attempts">1/3</span>
-                </div>
-                
-                <div class="sound-buttons-container">
-                    <button class="sound-play-btn" id="playSound1">
-                        <span class="sound-icon" aria-hidden="true">🔊</span>
-                        <span>Zvuk 1</span>
-                    </button>
-                    <button class="sound-play-btn" id="playSound2">
-                        <span class="sound-icon" aria-hidden="true">🔊</span>
-                        <span>Zvuk 2</span>
-                    </button>
-                </div>
-                
-                <div class="listening-buttons-container">
-                    <button class="listening-btn listening-btn-same" id="sameButton">
-                        <span class="answer-icon" aria-hidden="true">✔</span>
-                        <span>Rovnaké</span>
-                    </button>
-                    <button class="listening-btn listening-btn-different" id="differentButton">
-                        <span class="answer-icon" aria-hidden="true">✖</span>
-                        <span>Rôzne</span>
-                    </button>
-                </div>
-                
-                <div class="listening-result" id="listeningResult">
-                    <div class="result-container"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div id="blur-background" style="display: none;"></div>
 
   </div><!-- /bj-stage -->
@@ -120,5 +74,10 @@
     <script src="js/superjozino/controls.js"></script>
     <script src="js/superjozino/game.js"></script>
     <script src="js/superjozino/levels.js"></script>
+    <!-- rozšírenia hry: terén po dlaždiciach, efekty a zvuky, cvičenia, nové bloky -->
+    <script src="js/superjozino/sj-terrain.js"></script>
+    <script src="js/superjozino/sj-fx.js"></script>
+    <script src="js/superjozino/sj-exercises.js"></script>
+    <script src="js/superjozino/sj-blocks.js"></script>
 </body>
 </html>

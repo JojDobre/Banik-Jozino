@@ -2021,9 +2021,9 @@ class Game {
         this.bgImage.src = 'images/worlds/world_l.png';
         
         // Herné vlastnosti
-        this.gravity = 0.45;
+        this.gravity = 0.4;
         this.friction = 0.75;
-        this.maxFallSpeed = 15; 
+        this.maxFallSpeed = 12;
         this.currentLevel = SJ.map;
         this.startedAt = Date.now();
         this.gameState = 'playing'; // 'playing', 'paused', 'completed'
@@ -2065,8 +2065,8 @@ class Game {
             
             velocityX: 0,
             velocityY: 0,
-            speed: 5.2,
-            jumpForce: -14,
+            speed: 4.2,
+            jumpForce: -13.2,
             isJumping: false,
             onGround: false,
             facing: 1,
@@ -2160,6 +2160,11 @@ class Game {
         // Exponuj game objekt pre joystick
         window.game = this;
 
+        // Efekty a bloky (sj-fx.js, sj-blocks.js)
+        this.fxInit();
+        this.blocksInit();
+        this.totalCoins += this.bonusCoins;
+
         // Spustenie hernej slučky
         this.lastTime = null;
         this.updateCamera(true);
@@ -2203,75 +2208,6 @@ class Game {
         (document.getElementById('bj-stage') || document.body).appendChild(this.speechModal);
     }
 
-    showSpeechResult(success, exercise) {
-        const modal = document.querySelector('.speech-content');
-        const resultMessage = modal.querySelector('.result-message');
-        const recordButton = document.getElementById('startRecording');
-
-        if (success) {
-            resultMessage.textContent = 'Správne!';
-            resultMessage.style.color = '#4CAF50';
-            modal.classList.add('correct-answer');
-            setTimeout(() => {
-                modal.classList.remove('correct-answer');
-                this.hideSpeechExercise();
-                this.gameState = 'playing';
-            }, 1500);
-        } else {
-            exercise.attempts++;
-            resultMessage.textContent = 'Nesprávne, skús znova.';
-            resultMessage.style.color = '#f44336';
-            modal.classList.add('wrong-answer');
-            
-            // Aktualizácia počtu pokusov
-            modal.querySelector('.attempts-info').textContent = `Počet pokusov: ${exercise.attempts}/5`;
-
-            setTimeout(() => {
-                modal.classList.remove('wrong-answer');
-            }, 500);
-
-            // Kontrola maximálneho počtu pokusov
-            if (exercise.attempts >= 5) {
-                resultMessage.textContent = 'Dosiahol si maximálny počet pokusov.';
-                recordButton.disabled = true;
-                recordButton.style.opacity = '0.5';
-                
-                // Pridanie tlačidla na zatvorenie
-                const closeButton = document.createElement('button');
-                closeButton.className = 'button';
-                closeButton.style.marginTop = '10px';
-                closeButton.textContent = 'Zavrieť';
-                closeButton.onclick = () => {
-                    this.hideSpeechExercise();
-                    this.gameState = 'playing';
-                };
-                modal.appendChild(closeButton);
-            }
-        }
-    }
-
-    showSpeechExercise(exercise) {
-        if (window.SJInput) window.SJInput.reset();
-        this.speechModal.innerHTML = `
-            <div class="speech-content">
-                <h2>${exercise.word}</h2>
-                <div class="speech-image"><img src="${exercise.imageUrl}" alt="${exercise.word}"></div>
-                <div class="attempts-info">Pokus ${Math.min(exercise.attempts + 1, 5)} z 5</div>
-                <button id="startRecording" class="button button--primary">Hovoriť</button>
-                <div class="result-message"></div>
-            </div>
-        `;
-        this.speechModal.style.display = 'flex';
-        
-        // slovo zaznie nahlas (dieťa nemusí vedieť čítať)
-        try { window.BJ && window.BJ.say(exercise.word); } catch (e) { /* bez hlasu */ }
-
-        // Pridanie event listenera pre tlačidlo nahrávania
-        document.getElementById('startRecording').addEventListener('click', () => {
-            this.startSpeechRecognition(exercise);
-        });
-    }
-
     hideSpeechExercise() {
         this.speechModal.style.display = 'none';
     }
@@ -2294,45 +2230,7 @@ class Game {
         this.speechModal.style.display = 'flex';
         this.speechModal.className = 'modal game-over-modal';
 
-        document.getElementById('restartLevel').addEventListener('click', () => {
-            this.restartLevel();
-        });
-    }
-
-    async startSpeechRecognition(exercise) {
-        // Spoločná služba window.BJ.speech (src/core/speech.js) – funguje aj v Android appke.
-        const speech = window.BJ && window.BJ.speech;
-        const recordButton = document.getElementById('startRecording');
-        const resultMessage = document.querySelector('.result-message');
-
-        if (!speech || !speech.isSupported()) {
-            resultMessage.textContent = 'Toto zariadenie nepodporuje rozpoznávanie reči.';
-            resultMessage.style.color = '#f44336';
-            return;
-        }
-
-        recordButton.disabled = true;
-        recordButton.textContent = 'Počúvam...';
-
-        try {
-            const { transcript } = await speech.listen();
-            // Spoločné pravidlo porovnania pre všetky hry (src/core/slovak.js)
-            if (window.BJ.matchesWord(transcript, exercise.word)) {
-                exercise.completed = true;
-                exercise.attempts++;
-                this.showSpeechResult(true, exercise);
-            } else {
-                this.showSpeechResult(false, exercise);
-            }
-        } catch (error) {
-            if (error && error.code === 'busy') return;
-            console.error('Speech recognition error:', error && error.code);
-            resultMessage.textContent = 'Nastala chyba pri rozpoznávaní. Skús znova.';
-            resultMessage.style.color = '#f44336';
-        } finally {
-            recordButton.disabled = false;
-            recordButton.textContent = 'Hovoriť';
-        }
+        document.getElementById('restartLevel').addEventListener('click', () => location.reload());
     }
 
     handleCheckpoints() {
@@ -2376,9 +2274,12 @@ class Game {
         this.player.velocityY = 0;
         this.player.isJumping = false;
         this.player.onGround = false;
+        this.player.standOn = null;
+        this.player.locked = true; // ovládanie až po dopade
         this.player.facing = 1;
         this.isInvulnerable = true;
         this.updateCamera(true);
+        this.burst(this.player.x + this.player.width / 2, this.player.y + this.player.height / 2, ['#FFD900', '#ffffff'], 16, 3, { gravity: 0 });
 
         // Krátka doba nezraniteľnosti po respawne
         clearTimeout(this.invulnTimer);
@@ -2605,28 +2506,11 @@ class Game {
         }
     }
 
-    collectSpecialItem(type) {
-        switch(type) {
-            case 'powerup':
-                // 💚 Zelený diamant - Power-up
-                // TODO: Implementovať power-up efekt (napr. dočasná nezraniteľnosť, rýchlejší beh...)
-                console.log('💚 Power-up aktivovaný!');
-                // Dočasne pridáme body
-                if (!this.score) this.score = 0;
-                this.score += 1000;
-                break;
-                
-            case 'extraLife':
-                // ❤️ Červený diamant - Extra život
-                this.lives++;
-                console.log(`❤️ Extra život! Teraz máš ${this.lives} životov.`);
-                break;
-        }
-        
-        // Ulož do collected items
-        if (!this.currentLevelData.collectedSpecialItems) {
-            this.currentLevelData.collectedSpecialItems = [];
-        }
+    collectSpecialItem(type, block) {
+        const x = block ? block.x + block.width / 2 : this.player.x + this.player.width / 2;
+        const y = block ? block.y + block.height / 2 : this.player.y;
+        this.fxGem(type, x, y);
+        if (!this.currentLevelData.collectedSpecialItems) this.currentLevelData.collectedSpecialItems = [];
         this.currentLevelData.collectedSpecialItems.push(type);
     }
 
@@ -2676,7 +2560,7 @@ class Game {
                     
                     if (isJumpingOnEnemy) {
                         enemy.hit();
-                        this.player.velocityY = (window.SJInput && window.SJInput.jump) ? -12 : -8;
+                        this.player.velocityY = (window.SJInput && window.SJInput.jump) ? -12 : -8; this.fxStomp(enemy);
                         console.log(`💀 Zabil si ${enemy.type}!`);
                     } else {
                         // Dotyk zboku/zdola = damage
@@ -2704,7 +2588,7 @@ class Game {
                             enemy.hit();
                             
                             if (isJumpingOnTop) {
-                                this.player.velocityY = (window.SJInput && window.SJInput.jump) ? -12 : -8;
+                                this.player.velocityY = (window.SJInput && window.SJInput.jump) ? -12 : -8; this.fxStomp(enemy);
                             } else {
                                 this.player.velocityY = 5;
                             }
@@ -2729,7 +2613,7 @@ class Game {
                     if (isJumpingOnEnemy) {
                         if (enemy.killable || enemy.stunnable) {
                             enemy.hit();
-                            this.player.velocityY = (window.SJInput && window.SJInput.jump) ? -12 : -8;
+                            this.player.velocityY = (window.SJInput && window.SJInput.jump) ? -12 : -8; this.fxStomp(enemy);
                             console.log(`💀 Zabil si ${enemy.type}!`);
                         } else {
                             this.hitByEnemy(enemy);
@@ -2743,55 +2627,53 @@ class Game {
     }
 
     handleCoinCollection() {
-        // Zbieranie normálnych mincí (gold, silver)
+        const p = this.player;
+        const near = (o) => Math.abs(o.x - p.x) < 120;
+        // mince (zlatá = +1, strieborná = posluchové cvičenie)
         for (let coin of this.currentLevelData.coins) {
-            if (!coin.collected && this.checkCollision(this.player, coin)) {
-                coin.collected = true;
-                
-                if (coin.type === 'gold') {
-                    // Normálna zlatá minca
-                    this.collectedCoins++;
-                    // TODO: Pridať zvuk zbierania mince
-                    
-                } else if (coin.type === 'silver') {
-                    // Strieborná minca - posluchové cvičenie
-                    if (!coin.listeningExercise.completed) {
-                        this.gameState = 'listening';
-                        // TODO: Spustiť posluchové cvičenie
-                        console.log('🎧 Posluchové cvičenie!');
-                        coin.listeningExercise.completed = true;
-                        this.collectedCoins++;
-                    }
-                }
-            }
+            if (coin.collected || !near(coin) || !this.checkCollision(p, coin)) continue;
+            coin.collected = true;
+            this.collectedCoins++;
+            this.fxCoin(coin);
+            if (coin.type === 'silver') this.startListening(coin);
         }
 
-        // Zbieranie diamantov (blue, green, red)
+        // drahokamy (modrý = rečové cvičenie, zelený = super skok, červený = život)
         for (let diamond of this.currentLevelData.diamonds) {
-            if (!diamond.collected && this.checkCollision(this.player, diamond)) {
-                diamond.collected = true;
-                
-                if (diamond.type === 'blueDiamond') {
-                    // Modrý diamant - rečové cvičenie
-                    if (!diamond.speechExercise.completed) {
-                        this.gameState = 'speech';
-                        this.showSpeechExercise(diamond.speechExercise);
-                        this.collectedDiamonds++;
-                    }
-                    
-                } else if (diamond.type === 'greenDiamond') {
-                    // Zelený diamant - power-up
-                    this.collectSpecialItem('powerup');
-                    console.log('💚 Power-up získaný!');
-                    // TODO: Implementovať power-up efekt
-                    
-                } else if (diamond.type === 'redDiamond') {
-                    // Červený diamant - extra život
-                    this.collectSpecialItem('extraLife');
-                    console.log('❤️ Extra život získaný!');
-                }
+            if (diamond.collected || !near(diamond) || !this.checkCollision(p, diamond)) continue;
+            diamond.collected = true;
+            const cx = diamond.x + diamond.width / 2;
+            const cy = diamond.y + diamond.height / 2;
+            if (diamond.type === 'blueDiamond') {
+                this.fxGem('blueDiamond', cx, cy);
+                this.collectedDiamonds++;
+                this.flyToHud(cx, cy, 'hudDiamonds', 'blueDiamond');
+                if (!diamond.speechExercise.completed) this.showSpeechExercise(diamond.speechExercise);
+            } else if (diamond.type === 'silver') {
+                this.fxCoin(diamond);
+                this.startListening(diamond);
+            } else {
+                this.fxGem(diamond.type, cx, cy);
             }
         }
+    }
+
+    /** Strieborná minca: posluchové cvičenie „Rovnaké alebo iné?“. */
+    startListening(coin) {
+        // malé oneskorenie – dieťa vidí, že mincu zobralo
+        this.gameState = 'listening';
+        if (window.SJInput) window.SJInput.reset();
+        setTimeout(() => this.showListeningExercise((ok) => {
+            coin.listeningOk = ok;
+        }), 350);
+    }
+
+    /** Skok na nepriateľa. */
+    fxStomp(enemy) {
+        if (window.SJSound) window.SJSound('stomp');
+        const x = enemy.x + enemy.width / 2;
+        this.burst(x, enemy.y, ['#ffffff', '#FFD900'], 10, 2.8, { gravity: 0.05 });
+        this.floatText(x, enemy.y - 10, 'BUM!', '#ffffff');
     }
 
     async handleDiamondCollection(coin) {
@@ -2838,6 +2720,7 @@ class Game {
         this.speechModal.style.display = 'flex';
         document.getElementById('sjAgain').onclick = () => location.reload();
         document.getElementById('sjNext').onclick = () => { location.href = SJ.backUrl; };
+        if (window.SJSound) window.SJSound('win');
         try { window.BJ && window.BJ.say('Výborne! Level je hotový.'); } catch (e) { /* bez hlasu */ }
 
         if (SJ.inWorld && window.progressManager) {
@@ -2911,6 +2794,10 @@ class Game {
             return;
         }
         const p = this.player;
+        if (window.SJSound) window.SJSound('hit');
+        this.shake = 12;
+        this.burst(p.x + p.width / 2, p.y + p.height / 2, ['#ff4d5e', '#ffffff'], 12, 3.4);
+        this.floatText(p.x + p.width / 2, p.y - 6, '-1', '#ff4d5e');
         const from = enemy ? enemy.x + enemy.width / 2 : p.x + p.width / 2 - p.facing;
         const away = p.x + p.width / 2 < from ? -1 : 1;
         p.velocityX = away * 7;
@@ -3006,9 +2893,7 @@ class Game {
         this.speechModal.style.display = 'flex';
 
         // Pridanie event listenera pre reštart levelu
-        document.getElementById('restartLevel').addEventListener('click', () => {
-            this.restartLevel();
-        });
+        document.getElementById('restartLevel').addEventListener('click', () => location.reload());
     }
 
     restartLevel() {
@@ -3040,6 +2925,7 @@ class Game {
      */
     update() {
         if (this.gameState !== 'playing') return;
+        this.fxUpdate();
 
         if (this.deathAnimation.active) {
             this.updateDeathAnimation(1);
@@ -3047,10 +2933,11 @@ class Game {
             return;
         }
 
+        this.blocksUpdate();
         this.updatePlayer();
 
         // Aktualizácia nepriateľov
-        this.updateEnemies(1);
+        this.updateEnemies(0.8); // nepriatelia o niečo pomalší
 
         // Ostatné kontroly
         this.handleEnemyCollisions();
@@ -3097,7 +2984,14 @@ class Game {
     updatePlayer() {
         const p = this.player;
         const inp = window.SJInput || {};
-        const dir = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+        // po oživení sa postava neovláda, kým nedopadne na zem
+        if (p.locked) {
+            if (p.onGround) p.locked = false;
+            inp.jumpPressed = false;
+            p.jumpBuffer = 0;
+            p.coyote = 0;
+        }
+        const dir = p.locked ? 0 : (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
 
         if (dir !== 0) {
             const accel = p.onGround ? 0.75 : 0.5;
@@ -3112,15 +3006,17 @@ class Game {
         }
 
         // skok
-        p.coyote = p.onGround ? 7 : Math.max(0, p.coyote - 1);
+        p.coyote = p.onGround && !p.locked ? 7 : Math.max(0, p.coyote - 1);
         if (inp.jumpPressed) {
             p.jumpBuffer = 9;
             inp.jumpPressed = false;
         } else {
             p.jumpBuffer = Math.max(0, p.jumpBuffer - 1);
         }
-        if (p.jumpBuffer > 0 && p.coyote > 0) {
-            p.velocityY = p.jumpForce;
+        if (!p.locked && p.jumpBuffer > 0 && p.coyote > 0) {
+            p.velocityY = p.jumpForce * (this.power && this.power.superJump > 0 ? 1.28 : 1);
+            if (window.SJSound) window.SJSound('jump');
+            this.dust(p.x + p.width / 2, p.y + p.height, 4);
             p.isJumping = true;
             p.onGround = false;
             p.coyote = 0;
@@ -3509,7 +3405,11 @@ drawPlatform(tileName, x, y, width, height) {
         
         // Mierka (priblíženie) + posun podľa kamery, zaokrúhlené na pixely
         const sc = this.scale;
-        this.ctx.setTransform(sc, 0, 0, sc, -Math.round(this.camera.x * sc), -Math.round(this.camera.y * sc));
+        // otras obrazovky pri zásahu / rozbití tehly
+        const sh = this.shake > 0 ? this.shake * 0.6 : 0;
+        const shx = sh ? (Math.random() - 0.5) * sh * sc : 0;
+        const shy = sh ? (Math.random() - 0.5) * sh * sc : 0;
+        this.ctx.setTransform(sc, 0, 0, sc, -Math.round(this.camera.x * sc) + shx, -Math.round(this.camera.y * sc) + shy);
         // viditeľná časť sveta (kreslí sa len to, čo je na obrazovke)
         const vx0 = this.camera.x - 80, vx1 = this.camera.x + this.viewW + 80;
         const visible = (o) => o.x + (o.width || 0) > vx0 && o.x < vx1;
@@ -3530,11 +3430,6 @@ for (let platform of this.currentLevelData.platforms) {
         
         // Zem - horizontálne opakuje tile, vertikálne natiahne
         this.drawGroundTerrain('ground', platform.x, platform.y, platform.width, groundHeight);
-        
-        // Pridaj čierny okraj okolo celej platformy zeme
-        this.ctx.strokeStyle = '#000000'; // Čierna farba
-        this.ctx.lineWidth = 1; // Hrúbka okraja (2px)
-        this.ctx.strokeRect(platform.x, platform.y, platform.width, groundHeight);
     } else {
         // Platformy - vykresli pomocou sprite sheetu
         // Automatický výber typu platformy podľa veľkosti
@@ -3550,11 +3445,6 @@ for (let platform of this.currentLevelData.platforms) {
         
         // Vykresli platformu
         this.drawPlatform(platformType, platform.x, platform.y, platform.width, platform.height);
-        
-        // Pridaj čierny okraj aj okolo platforiem
-        this.ctx.strokeStyle = '#000000'; // Čierna farba
-        this.ctx.lineWidth = 1;
-        this.ctx.strokeRect(platform.x, platform.y, platform.width, platform.height);
     }
 }
 
@@ -3596,10 +3486,10 @@ for (let platform of this.currentLevelData.platforms) {
         for (let wall of this.currentLevelData.walls) {
             if (!visible(wall)) continue;
             this.drawPlatform('platform4', wall.x, wall.y, wall.width, wall.height);
-            this.ctx.strokeStyle = '#000';
-            this.ctx.lineWidth = 1;
-            this.ctx.strokeRect(wall.x, wall.y, wall.width, wall.height);
         }
+
+        // nové bloky (sj-blocks.js)
+        this.drawBlocks(visible);
 
 
         // Vykreslenie všetkých mincí (gold, silver)
@@ -3635,19 +3525,33 @@ for (let platform of this.currentLevelData.platforms) {
         }
 
         // Vykresli sprite s offsetom relatívne k collision boxu
-        this.animationManager.draw(
-            this.ctx,
-            this.player.x + this.player.spriteOffsetX,  // Použije offset z player objektu
-            this.player.y + this.player.spriteOffsetY,
-            this.player.spriteWidth,                     // Použije sprite rozmery
-            this.player.spriteHeight
-        );
+        {
+            const p = this.player;
+            let sx = 1, sy = 1;
+            if (p.squash > 0) {
+                const k = Math.sin((p.squash / 8) * Math.PI);
+                sx = 1 + k * 0.18;
+                sy = 1 - k * 0.16;
+                p.squash -= 0.5;
+            } else if (!p.onGround && p.velocityY < -4) {
+                sx = 0.92;
+                sy = 1.08;
+            }
+            const w = p.spriteWidth * sx;
+            const h = p.spriteHeight * sy;
+            const feetY = p.y + p.spriteOffsetY + p.spriteHeight;
+            const cx = p.x + p.spriteOffsetX + p.spriteWidth / 2;
+            this.animationManager.draw(this.ctx, cx - w / 2, feetY - h, w, h);
+        }
 
         // Reset alpha
         this.ctx.globalAlpha = 1;
 
         // Reset alpha
         this.ctx.globalAlpha = 1;
+
+        // efekty vo svete (častice, „+1“, žiara power-upu)
+        this.fxDrawWorld();
 
         // Vykreslenie cieľa (finish flag)
         const endPoint = this.currentLevelData.endPoint;
@@ -3671,6 +3575,9 @@ for (let platform of this.currentLevelData.platforms) {
 
         // Obnovenie kontextu
         this.ctx.restore();
+
+        // mince letiace do počítadla (na obrazovke)
+        this.fxDrawScreen();
 
         // Vykreslenie UI elementov (ak nejaké máme)
         this.drawUI();

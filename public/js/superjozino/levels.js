@@ -578,3 +578,38 @@ const LEVELS = {
         )
     }
 };
+/**
+ * Nové bloky (js/superjozino/sj-blocks.js):
+ *  bonus  – zlatá kocka s mincou (úder hlavou zdola)
+ *  brick  – rozbitná tehla
+ *  spring – pružina (vysoký skok)
+ *  mover  – pohyblivá plošina (dxRange = vodorovne, dyRange = zvislo)
+ *  faller – padajúca plošina (spadne chvíľu po tom, čo na ňu postava stúpi)
+ */
+const SJ_BLOCKS_A = [
+    // nad dierou 800–1000: padajúca plošina
+    { type: 'faller', x: 845, y: 690, width: 110 },
+    // úsek 1000–1600
+    { type: 'bonus', x: 1330, y: 600 },
+    // nad dierou 1600–1800: plošina hore-dole vodorovne
+    { type: 'mover', x: 1645, y: 690, width: 110, dxRange: 45, speed: 0.02 },
+    // pred vysokou stenou pri 2200: pružina
+    { type: 'spring', x: 2140, y: 724 },
+    // úsek 2500–3200
+    { type: 'bonus', x: 2830, y: 610 },
+    // nad dierou 3200–3400: padajúca plošina
+    { type: 'faller', x: 3245, y: 680, width: 110 },
+    // úsek 3400–4000: tehly s bonusom v strede
+    { type: 'brick', x: 3680, y: 600 },
+    { type: 'bonus', x: 3720, y: 600 },
+    { type: 'brick', x: 3760, y: 600 },
+    // nad dierou 4000–4200: plošina zvislo
+    { type: 'mover', x: 4045, y: 650, width: 110, dyRange: 70, speed: 0.018 },
+    // úsek 4200–5000
+    { type: 'brick', x: 4520, y: 620 },
+    { type: 'brick', x: 4560, y: 620 },
+    // posledný úsek: pružina
+    { type: 'spring', x: 5230, y: 724 },
+];
+LEVELS[1].data.blocks = SJ_BLOCKS_A.map((b) => ({ ...b }));
+LEVELS[2].data.blocks = SJ_BLOCKS_A.map((b) => ({ ...b }));
