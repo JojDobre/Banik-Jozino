@@ -17,7 +17,8 @@ class Level {
 }
 
 const LEVELS = {
-    1: {
+    // pôvodné mapy (101, 102); nové dlaždicové mapy 1–3 sú v sj-levels.js
+    101: {
         name: "Baníkova výprava",
         unlocked: true,
         stars: 0,
@@ -273,7 +274,7 @@ const LEVELS = {
             }
         )
     },
-    2: {
+    102: {
         name: "Baníkova výprava",
         unlocked: true,
         stars: 0,
@@ -611,5 +612,5 @@ const SJ_BLOCKS_A = [
     // posledný úsek: pružina
     { type: 'spring', x: 5230, y: 724 },
 ];
-LEVELS[1].data.blocks = SJ_BLOCKS_A.map((b) => ({ ...b }));
-LEVELS[2].data.blocks = SJ_BLOCKS_A.map((b) => ({ ...b }));
+LEVELS[101].data.blocks = SJ_BLOCKS_A.map((b) => ({ ...b }));
+LEVELS[102].data.blocks = SJ_BLOCKS_A.map((b) => ({ ...b }));

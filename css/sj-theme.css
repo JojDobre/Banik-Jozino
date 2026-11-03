@@ -649,3 +649,14 @@
     width: 160px;
     height: 160px;
 }
+
+/* ikona ovocia v počítadle (prvá snímka jablka z Pixel Adventure) */
+.bj-staged .sj-hud__fruit {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('../images/superjozino/pa/items/fruits/apple.png') 0 0 / 1700% 100% no-repeat;
+    image-rendering: pixelated;
+    transform: scale(1.5);
+    margin: 0 6px;
+}

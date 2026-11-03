@@ -281,3 +281,156 @@
         }
     };
 })();
+
+/**
+ * Pixel Adventure: ovocie (namiesto mincí), štart, trofej v cieli, konfety,
+ * efekt zberu ovocia a prach zo sprite-u balíka.
+ */
+(function () {
+    const proto = Game.prototype;
+    const SP = () => window.SJSprites;
+
+    /** Ovocie sa mierne vznáša; vráti false, ak sprite ešte nie je načítaný. */
+    proto.drawFruit = function (coin) {
+        const sp = SP();
+        if (!sp || !sp.ready(coin.fruit)) return false;
+        const t = (this.tick || 0) + coin.x * 0.13;
+        const y = coin.y + coin.height / 2 - 32 + Math.sin(t * 0.06) * 3;
+        return sp.draw(this.ctx, coin.fruit, t / 3, coin.x + coin.width / 2 - 32, y, 64, 64);
+    };
+
+    proto.drawStart = function () {
+        const L = this.currentLevelData;
+        const sp = SP();
+        if (!L.spawn || !L.tilemap || !sp) return;
+        const x = L.spawn.x + 16 - 64 - 70;
+        const y = L.spawn.y + 64 - 128;
+        sp.draw(this.ctx, 'start', (this.tick || 0) / 3, x, y, 128, 128);
+    };
+
+    proto.drawTrophy = function (e) {
+        const sp = SP();
+        if (!sp) return;
+        if (e.pressedT != null) {
+            e.pressedT++;
+            sp.draw(this.ctx, 'endPressed', Math.min(7, e.pressedT / 3), e.x, e.y, e.width, e.height);
+        } else {
+            sp.draw(this.ctx, 'endIdle', 0, e.x, e.y + Math.sin((this.tick || 0) * 0.05) * 2, e.width, e.height);
+        }
+    };
+
+    /** Konfety pri výhre (snímky sprite-u Confetti ako častice). */
+    proto.confetti = function (x, y, n = 40) {
+        for (let i = 0; i < n; i++) {
+            this.particles.push({
+                x, y,
+                vx: (Math.random() - 0.5) * 9,
+                vy: -5 - Math.random() * 7,
+                g: 0.18,
+                life: 90 + Math.random() * 40,
+                max: 0,
+                size: 20,
+                sprite: 'confetti',
+                frame: Math.floor(Math.random() * 6),
+                spin: (Math.random() - 0.5) * 0.3,
+            });
+        }
+    };
+
+    // zber ovocia: efekt „Collected“, „+1“ a let do počítadla
+    const origCoin = proto.fxCoin;
+    proto.fxCoin = function (coin) {
+        if (!coin.fruit) return origCoin.call(this, coin);
+        const cx = coin.x + coin.width / 2;
+        const cy = coin.y + coin.height / 2;
+        window.SJSound && window.SJSound('coin');
+        this.sprites.push({ kind: 'pa:collected', x: cx, y: cy, size: 64, t: 0 });
+        this.floatText(cx, cy - 20, '+1');
+        this.flyToHud(cx, cy, 'hudCoins', 'fruit:' + coin.fruit);
+    };
+
+    // prach zo sprite-u balíka
+    proto.dust = function (x, y, n = 6) {
+        for (let i = 0; i < n; i++) {
+            this.particles.push({
+                x: x + (Math.random() - 0.5) * 20, y: y - 6,
+                vx: (Math.random() - 0.5) * 2.2, vy: -Math.random() * 1.2,
+                g: 0.01, life: 22 + Math.random() * 10, max: 0,
+                size: 18 + Math.random() * 10, sprite: 'dustParticle', frame: 0,
+            });
+        }
+    };
+
+    // kreslenie: sprite efekty a častice zo sprite-ov
+    const origWorld = proto.fxDrawWorld;
+    proto.fxDrawWorld = function () {
+        const sp = SP();
+        const ctx = this.ctx;
+        // efekty zo sprite-ov PA (pa:názov) – ostatné kreslí pôvodná funkcia
+        const pa = this.sprites.filter((s) => s.kind.startsWith('pa:'));
+        this.sprites = this.sprites.filter((s) => !s.kind.startsWith('pa:'));
+        const spriteParts = this.particles.filter((p) => p.sprite);
+        this.particles = this.particles.filter((p) => !p.sprite);
+        origWorld.call(this);
+        this.particles.push(...spriteParts);
+        this.sprites.push(...pa);
+        if (!sp) return;
+        for (const s of pa) {
+            const name = s.kind.slice(3);
+            const n = sp.frames(name);
+            sp.draw(ctx, name, Math.min(n - 1, (s.t / 24) * n), s.x - s.size / 2, s.y - s.size / 2, s.size, s.size);
+        }
+        for (const p of spriteParts) {
+            ctx.globalAlpha = Math.max(0, Math.min(1, p.life / ((p.max || p.life) * 0.6)));
+            if (p.spin) {
+                p.rot = (p.rot || 0) + p.spin;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rot);
+                sp.draw(ctx, p.sprite, p.frame, -p.size / 2, -p.size / 2, p.size, p.size);
+                ctx.restore();
+            } else {
+                sp.draw(ctx, p.sprite, p.frame, p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+            }
+        }
+        ctx.globalAlpha = 1;
+    };
+
+    // ovocie letiace do počítadla
+    const origScreen = proto.fxDrawScreen;
+    proto.fxDrawScreen = function () {
+        const sp = SP();
+        const fruits = this.flyers.filter((f) => f.kind.startsWith('fruit:'));
+        this.flyers = this.flyers.filter((f) => !f.kind.startsWith('fruit:'));
+        origScreen.call(this);
+        this.flyers.push(...fruits);
+        if (!sp) return;
+        for (const f of fruits) {
+            const t = f.t;
+            const e = t * t * (3 - 2 * t);
+            const x = f.sx + (f.tx - f.sx) * e;
+            const y = f.sy + (f.ty - f.sy) * e - Math.sin(t * Math.PI) * 120;
+            const size = (70 - 26 * t) * (this.scale / 1.6);
+            sp.draw(this.ctx, f.kind.slice(6), (this.tick || 0) / 3, x - size / 2, y - size / 2, size, size);
+        }
+    };
+})();
+
+/** Cieľ s trofejou: stlačenie trofeje, konfety, potom okno s výsledkom. */
+(function () {
+    const proto = Game.prototype;
+    const origFinish = proto.checkFinish;
+    proto.checkFinish = function () {
+        if (this.finishing) return;
+        const e = this.currentLevelData.endPoint;
+        if (e && e.paEnd && this.collectedDiamonds >= this.requiredDiamonds && this.checkCollision(this.player, e)) {
+            this.finishing = true;
+            e.pressedT = 0;
+            this.confetti(e.x + e.width / 2, e.y + 40, 50);
+            window.SJSound && window.SJSound('correct');
+            setTimeout(() => this.showLevelComplete(), 1400);
+            return;
+        }
+        return origFinish.call(this);
+    };
+})();
