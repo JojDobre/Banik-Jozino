@@ -303,6 +303,7 @@
         const L = this.currentLevelData;
         const sp = SP();
         if (!L.spawn || !L.tilemap || !sp) return;
+        if (!L.tilemap.def.objects.some((o) => o.t === 'P')) return;
         const x = L.spawn.x + 16 - 64 - 70;
         const y = L.spawn.y + 64 - 128;
         sp.draw(this.ctx, 'start', (this.tick || 0) / 3, x, y, 128, 128);

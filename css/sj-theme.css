@@ -660,3 +660,24 @@
     transform: scale(1.5);
     margin: 0 6px;
 }
+
+/* tlačidlo „Upraviť level“ (vlastný level z buildera) – vedľa nastavení */
+html.bj-staged .sj-topbar .sj-edit {
+    position: absolute;
+    top: 0;
+    right: calc(var(--bj-round, 88px) + 20px);
+    color: #FFD900;
+}
+html.bj-staged .sj-topbar .sj-edit {
+    width: var(--bj-round, 88px);
+    height: var(--bj-round, 88px);
+    border-radius: 50%;
+    border: var(--bj-border, 5px) solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+html.bj-staged .sj-topbar .sj-edit svg { width: 56%; height: 56%; }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Builder levelov – Super Jožino</title>
+    <link rel="icon" type="image/png" href="images/icons/favicon.png">
+    <link rel="preload" href="fonts/luckiest-guy-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/builder.css">
+    <!-- sprite-y a svet z dlaždíc (rovnaké ako v hre) -->
+    <script src="js/superjozino/sj-sprites.js"></script>
+    <script src="js/superjozino/sj-world.js"></script>
+    <script src="js/superjozino/sj-levels.js"></script>
+</head>
+<body class="bld">
+    <header class="bld-top">
+        <a class="bld-btn bld-btn--icon" href="index.html" aria-label="Späť do menu" title="Späť do menu">‹</a>
+        <input class="bld-name" id="bldName" type="text" maxlength="40" placeholder="Názov levelu" aria-label="Názov levelu">
+        <nav class="bld-tabs" id="bldTabs" aria-label="Level a miestnosti"></nav>
+        <div class="bld-top__spacer"></div>
+        <button class="bld-btn" id="bldUndo" title="Späť (Ctrl+Z)">↶</button>
+        <button class="bld-btn" id="bldRedo" title="Znova (Ctrl+Y)">↷</button>
+        <button class="bld-btn" id="bldSettings" title="Veľkosť, štýl, pozadie, rámik">Nastavenia</button>
+        <button class="bld-btn" id="bldLevels" title="Moje levely a predlohy">Levely</button>
+        <button class="bld-btn" id="bldSave" title="Uložiť (Ctrl+S)">Uložiť</button>
+        <button class="bld-btn bld-btn--play" id="bldPlay" title="Uložiť a hrať">▶ Hrať</button>
+    </header>
+
+    <aside class="bld-side" id="bldSide">
+        <div class="bld-layers" role="radiogroup" aria-label="Vrstva">
+            <button data-layer="back" title="Zadná vrstva – len vzhľad, nedá sa na ňu stúpiť">Zadná</button>
+            <button data-layer="main" class="is-on" title="Hlavná vrstva – pevná">Hlavná</button>
+            <button data-layer="front" title="Predná vrstva – pevná, kreslí sa cez hlavnú">Predná</button>
+        </div>
+        <div class="bld-modes">
+            <button data-mode="paint" class="is-on" title="Kresliť (ťahaním)">✎ Kresliť</button>
+            <button data-mode="rect" title="Vyplniť obdĺžnik (aj Shift + ťahanie)">▭ Obdĺžnik</button>
+            <button data-mode="erase" title="Guma (aj pravé tlačidlo myši)">⌫ Guma</button>
+            <button data-mode="select" title="Vybrať objekt a upraviť jeho nastavenia">☝ Vybrať</button>
+            <button data-mode="pan" title="Posúvať plochu (aj stredné tlačidlo / medzerník)">✋ Posun</button>
+        </div>
+        <div class="bld-palette" id="bldPalette"></div>
+    </aside>
+
+    <main class="bld-main">
+        <canvas id="bldCanvas" class="bld-canvas"></canvas>
+        <div class="bld-zoom">
+            <button class="bld-btn bld-btn--icon" id="bldZoomOut" aria-label="Oddialiť">−</button>
+            <button class="bld-btn bld-btn--icon" id="bldZoomIn" aria-label="Priblížiť">+</button>
+            <label class="bld-check"><input type="checkbox" id="bldGrid" checked> Mriežka</label>
+            <label class="bld-check"><input type="checkbox" id="bldOnly"> Len vybraná vrstva</label>
+        </div>
+        <div class="bld-props" id="bldProps" hidden></div>
+        <div class="bld-status" id="bldStatus" aria-live="polite"></div>
+    </main>
+
+    <dialog class="bld-dialog" id="bldDialog"></dialog>
+    <input type="file" id="bldFile" accept=".json,application/json" hidden>
+
+    <script type="module" src="src/pages/builder.js"></script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+/* Builder levelov Super Jožina (builder.html) – nástroj pre dospelých,
+   bežná stránka (bez herného plátna), farby a písmo appky. */
+
+:root {
+    --wood: #5a2a0e;
+    --wood-2: #4a1f08;
+    --wood-3: #2d1306;
+    --gold: #ECCF17;
+    --gold-2: #FFD900;
+    --ink: #fff;
+    --muted: #e7cfae;
+    --navy: #211f30;
+    --green: #15981E;
+    --top: 64px;
+    --side: 300px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--navy);
+    color: var(--ink);
+    font-family: "Nunito", system-ui, sans-serif;
+    font-weight: 700;
+    overflow: hidden;
+}
+
+button, input, select { font: inherit; }
+
+/* ===== horná lišta ===== */
+.bld-top {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: var(--top);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    background: url('../images/pozadie_button_mobile_2.png') var(--wood) 50% / cover;
+    border-bottom: 3px solid var(--gold);
+    z-index: 20;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.bld-top::-webkit-scrollbar { display: none; }
+.bld-top__spacer { flex: 1; }
+
+.bld-name {
+    width: 200px;
+    flex-shrink: 0;
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 20px;
+    border: 2px solid var(--gold);
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--ink);
+    font-family: "Luckiest Guy", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+}
+
+.bld-btn {
+    flex-shrink: 0;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 20px;
+    border: 2px solid var(--gold);
+    background: var(--wood-2);
+    color: var(--ink);
+    cursor: pointer;
+    font-family: "Luckiest Guy", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: 0.4px;
+    padding-top: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.bld-btn:hover { filter: brightness(1.15); }
+.bld-btn:disabled { opacity: 0.45; cursor: default; }
+.bld-btn--icon { width: 40px; padding: 0; font-size: 26px; }
+.bld-btn--play { background: linear-gradient(0deg, #15981E, #0F1); border-color: #1A511D; color: var(--gold-2); }
+.bld-btn--danger { background: #8e1d14; border-color: #ff8a80; }
+
+.bld-tabs { display: flex; gap: 6px; flex-shrink: 0; }
+.bld-tab {
+    height: 36px;
+    padding: 4px 12px 0;
+    border-radius: 18px;
+    border: 2px solid transparent;
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--muted);
+    cursor: pointer;
+    font-family: "Luckiest Guy", sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    white-space: nowrap;
+}
+.bld-tab.is-on { border-color: var(--gold); color: var(--gold-2); background: rgba(236, 207, 23, 0.18); }
+.bld-tab--add { color: #b9ffc6; }
+
+/* ===== bočný panel ===== */
+.bld-side {
+    position: fixed;
+    top: var(--top);
+    left: 0;
+    bottom: 0;
+    width: var(--side);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    background: url('../images/pozadie_button.png') var(--wood-3) 50% / cover;
+    border-right: 3px solid var(--gold);
+    z-index: 15;
+}
+
+.bld-layers, .bld-modes { display: flex; flex-wrap: wrap; gap: 6px; }
+.bld-layers button, .bld-modes button {
+    flex: 1 1 auto;
+    height: 34px;
+    border-radius: 10px;
+    border: 2px solid rgba(236, 207, 23, 0.35);
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.bld-layers button.is-on, .bld-modes button.is-on { border-color: var(--gold); color: var(--gold-2); background: rgba(236, 207, 23, 0.2); }
+
+.bld-palette {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) rgba(0, 0, 0, 0.3);
+}
+.bld-group { margin-bottom: 10px; }
+.bld-group h3 {
+    margin: 6px 0 6px;
+    font-family: "Luckiest Guy", sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--gold-2);
+    letter-spacing: 0.5px;
+}
+.bld-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.bld-item {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bld-item canvas { width: 100%; height: 100%; image-rendering: pixelated; }
+.bld-item:hover { background: rgba(255, 255, 255, 0.16); }
+.bld-item.is-on { border-color: var(--gold); background: rgba(236, 207, 23, 0.25); }
+
+/* ===== plocha ===== */
+.bld-main {
+    position: fixed;
+    top: var(--top);
+    left: var(--side);
+    right: 0;
+    bottom: 0;
+}
+.bld-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: none;
+    cursor: crosshair;
+}
+.bld-canvas.is-pan { cursor: grab; }
+
+.bld-zoom {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 24px;
+    background: rgba(33, 31, 48, 0.85);
+    border: 2px solid rgba(236, 207, 23, 0.5);
+}
+.bld-check { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); cursor: pointer; white-space: nowrap; }
+
+.bld-status {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    max-width: min(560px, 70%);
+    padding: 8px 14px;
+    border-radius: 16px;
+    background: rgba(33, 31, 48, 0.85);
+    border: 2px solid rgba(236, 207, 23, 0.5);
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--muted);
+}
+.bld-status b { color: var(--gold-2); }
+.bld-status .bad { color: #ff8a80; }
+.bld-status .ok { color: #9cff9c; }
+
+.bld-props {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 260px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: url('../images/pozadie_button_mobile_2.png') var(--wood) 50% / cover;
+    border: 3px solid var(--gold);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+.bld-props h3 { margin: 0 0 10px; font-family: "Luckiest Guy", sans-serif; font-weight: 400; color: var(--gold-2); font-size: 18px; }
+.bld-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; font-size: 14px; color: var(--muted); }
+.bld-field input, .bld-field select {
+    height: 36px;
+    border-radius: 10px;
+    border: 2px solid rgba(236, 207, 23, 0.6);
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--ink);
+    padding: 0 10px;
+}
+.bld-field input[type="checkbox"] { height: 20px; width: 20px; }
+.bld-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ===== dialóg ===== */
+.bld-dialog {
+    width: min(620px, 94vw);
+    max-height: 86vh;
+    overflow: auto;
+    padding: 20px 22px;
+    border-radius: 22px;
+    border: 4px solid var(--gold);
+    background: url('../images/pozadie_button_mobile_2.png') var(--wood) 50% / cover;
+    color: var(--ink);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+.bld-dialog::backdrop { background: rgba(10, 8, 20, 0.7); backdrop-filter: blur(4px); }
+.bld-dialog h2 { margin: 0 0 14px; font-family: "Luckiest Guy", sans-serif; font-weight: 400; color: var(--gold-2); font-size: 26px; }
+.bld-dialog h3 { margin: 16px 0 8px; font-family: "Luckiest Guy", sans-serif; font-weight: 400; color: var(--gold-2); font-size: 18px; }
+.bld-dialog p { color: var(--muted); font-size: 14px; line-height: 1.45; margin: 6px 0; }
+.bld-list { display: flex; flex-direction: column; gap: 8px; }
+.bld-list__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.3);
+}
+.bld-list__name { flex: 1; font-size: 16px; }
+.bld-list__name small { display: block; color: var(--muted); font-size: 12px; }
+.bld-dialog__actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 16px; }
+.bld-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bld-swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+.bld-swatch {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 3px solid transparent;
+    cursor: pointer;
+    background-size: 200% 200%;
+    image-rendering: pixelated;
+}
+.bld-swatch.is-on { border-color: var(--gold); }
+.bld-swatch--none { background: linear-gradient(180deg, #5fb8ff, #fff3c9); }
+
+/* ===== menšie obrazovky (tablet, telefón na šírku) ===== */
+@media (max-width: 900px) {
+    :root { --side: 230px; --top: 56px; }
+    .bld-items { grid-template-columns: repeat(3, 1fr); }
+    .bld-name { width: 140px; }
+    .bld-btn { padding: 0 10px; font-size: 14px; height: 36px; }
+    .bld-btn--icon { width: 36px; }
+    .bld-props { width: 220px; }
+}
+
+/* nízka obrazovka (telefón na šírku): ovládanie priblíženia hore, stav dole */
+@media (max-height: 520px) {
+    .bld-zoom { top: 8px; bottom: auto; }
+    .bld-props { top: 60px; }
+    .bld-status { left: 12px; right: 12px; max-width: none; bottom: 8px; padding: 6px 12px; font-size: 13px; }
+}

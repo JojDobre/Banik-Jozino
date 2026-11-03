@@ -2168,6 +2168,8 @@ class Game {
         this.fxInit();
         this.blocksInit();
         this.totalCoins += this.bonusCoins;
+        // teleportačné miestnosti (sj-tilemap.js): ich ovocie a diamanty sa rátajú tiež
+        if (this.prepareRooms) this.prepareRooms();
 
         // Spustenie hernej slučky
         this.lastTime = null;
@@ -2708,7 +2710,9 @@ class Game {
         if (window.SJInput) window.SJInput.reset();
 
         const coinShare = this.totalCoins ? this.collectedCoins / this.totalCoins : 1;
-        const speech = this.currentLevelData.diamonds.filter((d) => d.speechExercise);
+        const main = this.currentLevelData.mainLevel || this.currentLevelData;
+        const allGems = [main, ...Object.values(main.rooms || {})].flatMap((l) => l.diamonds);
+        const speech = allGems.filter((d) => d.speechExercise);
         const spokenOk = speech.filter((d) => d.speechExercise.completed).length;
         const speechShare = speech.length ? spokenOk / speech.length : 1;
         let stars = 1;
