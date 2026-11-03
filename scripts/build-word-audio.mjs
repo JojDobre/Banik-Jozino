@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Nahrávky slov zo slovníka (src/content/words.js) slovenským neurónovým hlasom
+ * Nahrávky slov zo slovníka (src/content/words.js) a minimálnych dvojíc
+ * (src/content/pairs.js) slovenským neurónovým hlasom
  * Piper (sk_SK-lili-medium) → public/hlas/slova/<id>.mp3
  * a zoznam src/content/wordAudio.generated.js (slovo → súbor).
  *
@@ -17,6 +18,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import generated from '../src/content/words.generated.js';
+import { PAIR_WORDS } from '../src/content/pairs.js';
 import { lineId } from './lib/line-id.mjs';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
@@ -38,7 +40,8 @@ mkdirSync(OUT, { recursive: true });
 
 const manifest = {};
 const todo = [];
-for (const { word } of generated) {
+const allWords = [...new Set([...generated.map((g) => g.word), ...PAIR_WORDS])];
+for (const word of allWords) {
     const id = lineId(word);
     manifest[word] = `hlas/slova/${id}.mp3`;
     if (ALL || !existsSync(path.join(OUT, `${id}.mp3`))) todo.push([id, `${word}.`]); // bodka = prirodzená intonácia
@@ -65,4 +68,4 @@ writeFileSync(
     path.join(ROOT, 'src', 'content', 'wordAudio.generated.js'),
     `// VYGENEROVANÉ skriptom scripts/build-word-audio.mjs – neupravovať ručne.\n// Hlas: Piper sk_SK-lili-medium (licencia – viď docs/PLAN.md, fáza 7).\nexport default ${JSON.stringify(manifest, null, 1)};\n`,
 );
-console.log(`Slov: ${generated.length}, nových nahrávok: ${made} → public/hlas/slova/`);
+console.log(`Slov: ${allWords.length}, nových nahrávok: ${made} → public/hlas/slova/`);

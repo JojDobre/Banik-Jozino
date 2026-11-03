@@ -16,6 +16,7 @@ export default {
  "Počúvaj slovo a ťukni na obrázok, ktorý počuješ.": "hlas/pocuvaj-slovo-a-tukni-na-obrazok-ktory-p-da9899.mp3",
  "Ťukni na kartu a počúvaj. Nájdi dve karty, ktoré povedia rovnaké slovo.": "hlas/tukni-na-kartu-a-pocuvaj-najdi-dve-karty-af90a9.mp3",
  "Zvončeky zahrajú pesničku. Počúvaj a potom ju zopakuj.": "hlas/zvonceky-zahraju-pesnicku-pocuvaj-a-poto-3c97e8.mp3",
+ "Počúvaj slovo. Na akú hlásku začína? Ťukni na správny vozík.": "hlas/pocuvaj-slovo-na-aku-hlasku-zacina-tukni-4b8c3e.mp3",
  "Nevadí, ideme ďalej!": "hlas/nevadi-ideme-dalej-6fcfa7.mp3",
  "Dobrá práca!": "hlas/dobra-praca-f0d514.mp3",
  "Skúsime znova?": "hlas/skusime-znova-8eb85b.mp3",

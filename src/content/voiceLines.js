@@ -27,6 +27,7 @@ export const LINES = [
     'Počúvaj slovo a ťukni na obrázok, ktorý počuješ.',
     'Ťukni na kartu a počúvaj. Nájdi dve karty, ktoré povedia rovnaké slovo.',
     'Zvončeky zahrajú pesničku. Počúvaj a potom ju zopakuj.',
+    'Počúvaj slovo. Na akú hlásku začína? Ťukni na správny vozík.',
     'Nevadí, ideme ďalej!',
     'Dobrá práca!',
     'Skúsime znova?',

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildTier1Path, roundsFor, CHAPTERS, LEVELS_PER_CHAPTER, levelUrl } from '../src/content/tier1.js';
 import { createTierProgress } from '../src/core/tierProgress.js';
-import { makeRounds, starsForScore, PAIR_FOLDERS } from '../src/games/sameDifferent.js';
+import { makeRounds, starsForScore, PAIR_FOLDERS, pairSources } from '../src/games/sameDifferent.js';
 import { seededRandom } from '../src/core/levelGenerator.js';
 import { createProfileStore, AVATARS, needsSetup, avatarById } from '../src/core/profiles.js';
 
@@ -58,11 +58,12 @@ test('Rovnaké alebo iné: kolá sú vyvážené a z rôznych dvojíc', () => {
     const rounds = makeRounds(6, seededRandom(7));
     assert.equal(rounds.length, 6);
     assert.equal(rounds.filter((r) => r.same).length, 3);
-    assert.equal(new Set(rounds.map((r) => r.folder)).size, 6);
+    assert.equal(new Set(rounds.map((r) => r.folder || r.words.join('/'))).size, 6);
     for (const r of rounds) {
-        assert.ok(r.folder >= 1 && r.folder <= PAIR_FOLDERS);
+        assert.ok((r.folder >= 1 && r.folder <= PAIR_FOLDERS) || (r.words && r.words.length === 2));
+        assert.ok(r.a && r.b);
         assert.equal(r.same, r.a === r.b);
-        assert.match(r.a, /^zvuky\/\d+\/[12]\.wav$/);
+        assert.match(r.a, /^(zvuky\/\d+\/[12]\.wav|hlas\/slova\/.+\.mp3)$/);
     }
 });
 
@@ -82,4 +83,10 @@ test('profil: avatar a potreba nastaviť vek', () => {
     assert.equal(needsSetup(store.active()), false);
     assert.equal(avatarById(store.active().avatar).name, 'Dedko');
     assert.equal(avatarById('neexistuje').id, AVATARS[0].id);
+});
+
+test('Rovnaké alebo iné? má ľudské aj nové minimálne dvojice', () => {
+    const src = pairSources();
+    assert.ok(src.length >= 30);
+    assert.ok(src.some((p) => p.folder) && src.some((p) => p.words));
 });

@@ -159,3 +159,67 @@
     text-align: center;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.45);
 }
+
+/* ===== Hláskový vláčik ===== */
+.t1-stage--train { gap: 30px; justify-content: space-between; padding: 10px 0 40px; }
+.t1-train__top { display: flex; align-items: center; gap: 50px; }
+.t1-card--word { width: 300px; height: 300px; transition: transform 0.5s cubic-bezier(0.5, 0, 0.6, 1), opacity 0.3s ease 0.3s; }
+.t1-card--word.is-loading { opacity: 0; pointer-events: none; }
+.t1-train { position: relative; display: flex; gap: 220px; align-items: flex-end; justify-content: center; padding: 0 60px 22px; }
+.t1-rails {
+    position: absolute;
+    left: -200px; right: -200px; bottom: 0;
+    height: 26px;
+    background:
+        repeating-linear-gradient(90deg, #5a3418 0 22px, transparent 22px 70px) 0 8px / 100% 18px no-repeat,
+        linear-gradient(#9aa3ab, #5e666d) 0 0 / 100% 9px no-repeat;
+    z-index: 0;
+}
+.t1-cart {
+    position: relative;
+    z-index: 1;
+    width: 340px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.45));
+}
+.t1-cart__wrap { position: relative; width: 340px; height: 193px; }
+.t1-cart__body { position: absolute; inset: 0; width: 100%; height: 100%; }
+.t1-cart__letter {
+    position: absolute;
+    left: 50%; top: 26px;
+    translate: -50% 0;
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 104px;
+    line-height: 1;
+    color: #FFD900;
+    -webkit-text-stroke: 3px #000;
+    text-shadow: 0 5px 0 #000;
+}
+.t1-cart__example {
+    position: absolute;
+    right: -26px; top: -40px;
+    width: 104px; height: 104px;
+    padding: 8px;
+    border-radius: 50%;
+    border: 5px solid #ECCF17;
+    background: radial-gradient(circle at 50% 40%, #fff7e0 0%, #f1d9a6 100%);
+    display: flex; align-items: center; justify-content: center;
+}
+.t1-cart__example img, .t1-cart__load img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; }
+.t1-cart__load { height: 96px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: -18px; }
+.t1-cart__load img { width: 90px; height: 90px; margin: 0 -14px; filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.4)); animation: t1-drop 0.35s ease-out; }
+@keyframes t1-drop { from { translate: 0 -40px; opacity: 0; } }
+.t1-cart:active .t1-cart__wrap { transform: scale(0.96); }
+.t1-cart.is-right .t1-cart__wrap { animation: t1-roll 0.6s ease-in-out; }
+.t1-cart.is-wrong .t1-cart__wrap { animation: t1-shake 0.45s ease; }
+@keyframes t1-roll {
+    0%, 100% { translate: 0; }
+    40% { translate: 40px; rotate: 2deg; }
+    70% { translate: -10px; }
+}

@@ -48,6 +48,23 @@ test('cesta úrovne 1 strieda minihry, zvončeky až od 5 rokov', () => {
     const big = buildTier1Path('5-6');
     assert.ok(!small.some((l) => l.game === 'mine-bells'));
     assert.ok(big.some((l) => l.game === 'mine-bells'));
-    assert.deepEqual(big.slice(0, 4).map((l) => l.game), gamesFor('5-6').map((g) => g.id));
+    assert.deepEqual(big.slice(0, gamesFor('5-6').length).map((l) => l.game), gamesFor('5-6').map((g) => g.id));
+    assert.ok(!small.some((l) => l.game === 'phoneme-train') && big.some((l) => l.game === 'phoneme-train'));
     assert.equal(new Set(big.map((l) => l.id)).size, big.length);
+});
+
+test('Hláskový vláčik: dve hlásky, vyvážené kolá, slová začínajú správnou hláskou', async () => {
+    const { makeTrainRounds } = await import('../src/games/tier1Games.js');
+    for (const levelNumber of [1, 5, 9, 13, 17, 21]) {
+        const plan = makeTrainRounds({ count: 6, levelNumber, seed: 'x' });
+        assert.equal(plan.letters.length, 2);
+        assert.ok(plan.examples.every(Boolean));
+        assert.equal(plan.rounds.length, 6);
+        assert.equal(plan.rounds.filter((r) => r.answer === 0).length, 3);
+        for (const r of plan.rounds) {
+            assert.ok(r.word.startsWith(plan.letters[r.answer].toLowerCase()), r.word);
+            assert.ok(!plan.examples.includes(r.word));
+        }
+    }
+    assert.notDeepEqual(makeTrainRounds({ levelNumber: 1 }).letters, makeTrainRounds({ levelNumber: 5 }).letters);
 });

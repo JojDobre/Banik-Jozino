@@ -3,8 +3,7 @@
  *
  * Cesta je rozdelená na kapitoly po 10 leveloch. Každý 4. level je míľnik
  * (truhlica = balíček kariet, viď rewards.MILESTONE_EVERY).
- * Minihry sa v ceste striedajú – zatiaľ je hotová len „Rovnaké alebo iné?“,
- * ďalšie pribudnú vo fáze 4 (stačí ich pridať do GAMES).
+ * Minihry sa v ceste striedajú (nové stačí pridať do GAMES).
  */
 import { MILESTONE_EVERY } from '../core/rewards.js';
 
@@ -27,6 +26,7 @@ export const GAMES = [
     { id: 'find-picture', page: 'obrazky.html' },
     { id: 'sound-pexeso', page: 'zvpexeso.html' },
     { id: 'mine-bells', page: 'zvoncky.html', minAge: 5 },
+    { id: 'phoneme-train', page: 'vlacik.html', minAge: 5 },
 ];
 
 const AGE_MIN = { '3-4': 3, '5-6': 5, '7-8': 7 };

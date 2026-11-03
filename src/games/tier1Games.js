@@ -4,6 +4,7 @@
  *  - Čo počuješ? (find-picture): zaznie slovo, dieťa ťukne na správny obrázok
  *  - Zvukové pexeso (sound-pexeso): karty hrajú slová, hľadajú sa dvojice podľa sluchu
  *  - Zvončeky v bani (mine-bells): zvončeky zahrajú poradie, dieťa ho zopakuje
+ *  - Hláskový vláčik (phoneme-train): slovo patrí do vozíka s hláskou, na ktorú začína
  *
  * Slová: zo slovníka (obrázok + nahrávka), primerané veku.
  */
@@ -113,4 +114,44 @@ export function makeBellsPlan({ ageGroup = '5-6', levelNumber = 1, seed = 'b' })
         rounds.push(seq);
     }
     return { bells, rounds };
+}
+
+/** Dvojice hlások pre Hláskový vláčik (poradie = postup v cestách). */
+export const TRAIN_CONTRASTS = [['R', 'L'], ['S', 'Š'], ['K', 'G'], ['Z', 'Ž'], ['T', 'D'], ['C', 'Č']];
+
+function startsWithLetter(w, letter) {
+    const l = letter.toLowerCase();
+    if (!w.word.startsWith(l)) return false;
+    if (l === 'c' && w.word.startsWith('ch')) return false;
+    if (l === 'd' && /^d[zž]/.test(w.word)) return false;
+    return !!(w.phonemes && w.phonemes[letter] && w.phonemes[letter].positions.includes('initial'));
+}
+
+/**
+ * Plán hry „Hláskový vláčik“: dve hlásky (vozíky), každý s ukážkovým obrázkom,
+ * a kolá so slovom, ktoré treba naložiť do vozíka podľa prvej hlásky.
+ * @returns { letters: [A, B], examples: [slovo, slovo], rounds: [{ word, answer }] }
+ */
+export function makeTrainRounds({ count = 6, ageGroup = '5-6', levelNumber = 1, seed = 't', words = WORDS }) {
+    const rng = seededRandom(`pt:${seed}:${levelNumber}:${ageGroup}`);
+    // bez abstraktných slov (cnosť, šťastie…) – na obrázku ťažko spoznať
+    const pool = listeningWords(ageGroup, words).filter((w) => !w.word.includes('.') && !/(sť|stie)$/.test(w.word));
+    const usable = TRAIN_CONTRASTS.filter((pair) => pair.every((L) => pool.filter((w) => startsWithLetter(w, L)).length >= 3));
+    const list = usable.length ? usable : TRAIN_CONTRASTS.slice(0, 1);
+    // vláčik je v ceste zhruba každý 4. level – každý ďalší má nové hlásky
+    const letters = list[Math.floor((levelNumber - 1) / 4) % list.length];
+    const byLetter = letters.map((L) => shuffle(pool.filter((w) => startsWithLetter(w, L)), rng));
+    // ukážka na vozíku = najkratšie (najznámejšie) slovo
+    const examples = byLetter.map((ws) => {
+        const best = [...ws].sort((x, y) => x.syllables - y.syllables || x.minAge - y.minAge)[0];
+        return best ? best.word : null;
+    });
+    const half = Math.ceil(count / 2);
+    const rounds = [];
+    [0, 1].forEach((side) => {
+        const ws = byLetter[side].filter((w) => w.word !== examples[side]);
+        const n = side === 0 ? half : count - half;
+        for (let i = 0; i < n; i++) rounds.push({ word: (ws[i % ws.length] || byLetter[side][0]).word, answer: side });
+    });
+    return { letters, examples, rounds: shuffle(rounds, rng) };
 }

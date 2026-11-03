@@ -23,7 +23,7 @@ export const MINIGAMES = [
     { id: 'who-makes-it', title: 'Kto to robí?', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], status: 'planned' }, // chýbajú zvuky zvierat/predmetov
     { id: 'sound-pexeso', title: 'Zvukové pexeso', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], page: 'zvpexeso.html', status: 'ready' },
     { id: 'mine-bells', title: 'Zvončeky v bani', tiers: [1], ages: ['5-6', '7-8'], exercise: ['listening'], page: 'zvoncky.html', status: 'ready' },
-    { id: 'phoneme-train', title: 'Hláskový vláčik', tiers: [1], ages: ['5-6', '7-8'], exercise: ['listening'], status: 'planned' },
+    { id: 'phoneme-train', title: 'Hláskový vláčik', tiers: [1], ages: ['5-6', '7-8'], exercise: ['listening'], page: 'vlacik.html', status: 'ready' },
 
     // úroveň 2 – Zvuky a hlásky
     { id: 'blow-balloon', title: 'Fúkaj na balón', tiers: [2], ages: ['3-4', '5-6', '7-8'], exercise: ['breath'], status: 'planned' },

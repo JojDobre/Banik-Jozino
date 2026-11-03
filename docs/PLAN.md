@@ -94,7 +94,7 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 | Kto to robí? | 1 | 3+ | zvuk → ťukni na zviera/predmet |
 | Zvukové pexeso | 1 | 4+ | karty hrajú slovo; pri dvojici dieťa odpovie rovnaké/iné; rovnaké + správne = pár a bod; v balíčku aj podobné slová (rak/lak) |
 | Zvončeky v bani | 1 | 5+ | zopakuj poradie zvukov; vyššia obťažnosť: nájdi dvojice pred zhasnutím lampy |
-| Hláskový vláčik | 1 | 6+ | triedenie obrázkov do vagónov podľa hlásky |
+| Hláskový vláčik | 1 | 5+ | triedenie obrázkov do vagónov podľa hlásky |
 | Fúkaj na balón | 2 | 3+ | sila fúkania hýbe balónom/loďkou |
 | Had Sykáčik | 2 | 3+ | kým dieťa drží „sss“, had lezie |
 | Včielka Bzzz | 2 | 4+ | kým bzučí „zzz“, včielka letí |
@@ -258,8 +258,10 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
 - ✅ cesta úrovne 1 strieda 4 minihry (3–4 roky bez zvončekov); „Ďalej“ vedie na správnu hru
 - ✅ logika minihier v `src/games/tier1Games.js` + testy
 - ⬜ Kto to robí? – treba zvuky zvierat a predmetov (napr. Freesound / Kenney, CC0)
-- ⬜ Hláskový vláčik (triedenie obrázkov podľa hlásky)
-- ⬜ viac dvojíc pre „Rovnaké alebo iné?“ (teraz 15; dali by sa vytvoriť z Piperu – rak/lak…)
+- ✅ Hláskový vláčik (vlacik.html, od 5 rokov) – slovo s obrázkom sa naloží do vozíka s hláskou,
+  na ktorú začína; dvojice R–L, S–Š, K–G, Z–Ž, T–D, C–Č sa striedajú po leveloch, na vozíku ukážka
+- ✅ viac dvojíc pre „Rovnaké alebo iné?“ – 15 ľudských + 21 minimálnych dvojíc (src/content/pairs.js,
+  hlas Piper: rak/lak, kasa/kaša, koza/koža, kúra/túra…)
 
 ### Fáza 5 – Úroveň 2 ⬜
 - ⬜ prototyp analýzy zvuku + kalibrácia, test na deťoch
@@ -301,8 +303,8 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
 2. **Baňa pre mobil (fáza 3c)** – prvá verzia hotová, čaká na test na telefóne.
 3. **Svety písmen z generátora (úroveň 3)** ✅ – hotové; ďalej viac máp Super Jožina
    (z buildera) a kontrola slovníka logopédom (niektoré priradenia hlások).
-4. **Minihry úrovne 1 (fáza 4)** 🔄 – Čo počuješ?, Zvukové pexeso a Zvončeky hotové;
-   zostáva Kto to robí? (zvuky), Hláskový vláčik, viac dvojíc pre Rovnaké alebo iné?
+4. **Minihry úrovne 1 (fáza 4)** 🔄 – Čo počuješ?, Zvukové pexeso, Zvončeky, Hláskový vláčik
+   a nové dvojice hotové; zostáva len Kto to robí? (chýbajú zvuky zvierat a predmetov)
 5. **Obťažnosť podľa veku** naprieč hrami (Super Jožino, Baňa, Pexeso).
 6. **Ikona appky a úvodná obrazovka**, potom **fáza 7** (rodičovská brána, licencia hlasu,
    zásady súkromia, uzavreté testovanie na Google Play).
