@@ -189,7 +189,15 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
   `npm run audit:ui` (mierka, tlačidlá, najmenší text, prvky mimo obrazovky)
 - ✅ bez preblikávania: písma vopred (`preload`, `font-display: block`), obrazovka sa ukáže
   až keď sú písma a obrázky pripravené, „Načítavam…“ len pri prvom spustení
-- ⬜ svety písmen (úroveň 3) s levelmi z generátora slov – zatiaľ ostávajú pôvodné levely
+- ✅ svety písmen (úroveň 3) z generátora slov: `npm run build:levels` vytvorí
+  `public/config/levels.js` (pravidlá `src/core/worldLevels.js`, testy `tests/worldLevels.test.js`)
+  - 16 svetov × 16 levelov, etapy: hláska na začiatku → na konci → v strede → zhluky;
+    etapa bez dosť slov sa vynechá (napr. Z a G na konci)
+  - hry sa striedajú (cyklus 8): na svet 10× Baňa, 4× Pexeso, 2× Super Jožino;
+    deti 3–4 roky hrajú namiesto Super Jožina Baňu
+  - počty predmetov a slov stúpajú s levelom, susedné levely majú iné slová,
+    jedinečné názvy, odomykanie postupne; id levelov ostali (postup sa nestratil)
+  - karta levelu ukazuje ikonu hry, okno levelu etapu („R na začiatku slova“)
 - ⬜ ikona a úvodná obrazovka appky
 
 ### Fáza 3b – Super Jožino ✅
@@ -266,10 +274,10 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
 ## Známe chyby (na opravu neskôr)
 - ~~Baňa padala po zobrazení výsledkov (`showUnlockNotificationsInGame` neexistuje)~~ – opravené vo fáze 3.
 - Super Jožino (pôvodné mapy 101/102): netopier (`Bat`) nemá animáciu `walk` (len varovanie v konzole).
-- Levely sú takmer všetky typu `banik`; Super Jožino je len R-3, Pexeso nie je v postupe.
+- ~~Levely boli takmer všetky typu `banik`~~ – svety sa generujú, hry sa striedajú.
 - Builder: levely sú len v zariadení (localStorage) – pri vymazaní dát appky sa stratia, treba exportovať.
 - Posluchové cvičenie má len 15 dvojíc zvukov.
-- Opakujúce sa názvy levelov (napr. 24× „Prvé Ď-čka“).
+- ~~Opakujúce sa názvy levelov~~ – opravené generátorom.
 - Všetky svety sú odomknuté, podmienky odomknutia sú zakomentované.
 - Pexeso stále používa vlastné zvukové efekty (nie `AudioService`).
 - ~~Pexeso volalo neexistujúcu metódu `saveLevelProgress`, postup sa neukladal~~ – opravené vo fáze 1.
@@ -281,8 +289,8 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
 1. **Test na telefóne (APK)** – Super Jožino (ovládanie, obťažnosť, výkon), rozpoznávanie reči
    v appke, celý postup profil → úroveň → level → odmena.
 2. **Baňa pre mobil (fáza 3c)** – prvá verzia hotová, čaká na test na telefóne.
-3. **Svety písmen z generátora (úroveň 3)** – levely z pravidiel slovníka namiesto 260 ručných
-   levelov; striedanie Baňa / Pexeso / Super Jožino v rámci sveta, jedinečné názvy levelov.
+3. **Svety písmen z generátora (úroveň 3)** ✅ – hotové; ďalej viac máp Super Jožina
+   (z buildera) a kontrola slovníka logopédom (niektoré priradenia hlások).
 4. **Minihry úrovne 1 (fáza 4)** – Kto to robí?, Zvukové pexeso, Zvončeky v bani; viac dvojíc
    zvukov (cieľ 50+) – teraz je len 15.
 5. **Obťažnosť podľa veku** naprieč hrami (Super Jožino, Baňa, Pexeso).

@@ -112,7 +112,7 @@ class GameRouter {
             'mario': this.buildGameUrl('superjozino.html', worldId, levelId)
         };
         
-        const url = gameUrls[gameType];
+        const url = window.BJRoute ? this.buildGameUrl(BJRoute.pageFor(gameType), worldId, levelId) : gameUrls[gameType];
         if (url) {
             console.log(`Presmerovávam na: ${url}`);
             window.location.href = url;

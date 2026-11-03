@@ -632,6 +632,7 @@ function createLevelCard(level, levelNumber) {
             <div class="level-stars">
                 ${generateStarsHTML(stars)}
             </div>
+            <span class="level-type level-type--${level.gameType}" title="${getGameTypeName(level.gameType)}" aria-label="${getGameTypeName(level.gameType)}"></span>
         `;
         
         // Event listener na otvorenie modalu
@@ -731,6 +732,7 @@ function createLevelModalIfNotExists() {
                     <div class="level-info">
                         <p><strong>Svet:</strong> <span id="modal-world-name">-</span></p>
                         <p><strong>Typ hry:</strong> <span id="modal-game-type">-</span></p>
+                        <p id="modal-stage-row"><strong>Precvičuje:</strong> <span id="modal-stage">-</span></p>
                         <p><strong>Slová na precvičovanie:</strong></p>
                         <div id="modal-words" class="words-list"></div>
                     </div>
@@ -761,6 +763,12 @@ function populateLevelModal(level, levelNumber) {
     document.getElementById('modal-level-name').textContent = `Level ${levelNumber}`;
     document.getElementById('modal-world-name').textContent = currentSelectedWorld.title || currentSelectedWorld.name;
     document.getElementById('modal-game-type').textContent = getGameTypeName(level.gameType);
+    const stageRow = document.getElementById('modal-stage-row');
+    if (stageRow) {
+        const name = currentSelectedWorld.name || '';
+        stageRow.style.display = level.stage ? '' : 'none';
+        document.getElementById('modal-stage').textContent = level.stage ? `${name} ${level.stage}` : '';
+    }
     
     // Slová
     const wordsContainer = document.getElementById('modal-words');
@@ -839,7 +847,7 @@ function playSelectedLevel() {
                 'pexeso': 'pexeso.html', 
                 'mario': 'superjozino.html'
             };
-            const url = gameUrls[level.gameType];
+            const url = window.BJRoute ? BJRoute.pageFor(level.gameType) : gameUrls[level.gameType];
             if (url) {
                 // OPRAVENÉ: worldId namiesto world, levelId namiesto level
                 window.location.href = `${url}?worldId=${currentSelectedWorld.id}&levelId=${levelId}`;

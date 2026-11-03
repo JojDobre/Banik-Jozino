@@ -31,6 +31,8 @@
             return ageGroup() === '3-4' ? 'game.html' : 'bana.html';
         },
         pageFor(gameType) {
+            // Super Jožino je od 5 rokov – najmenšie deti hrajú namiesto neho Baňu
+            if (gameType === 'mario' && ageGroup() === '3-4') return 'game.html';
             return { banik: this.banikPage(), pexeso: 'pexeso.html', mario: 'superjozino.html' }[gameType] || this.banikPage();
         },
         levelUrl(worldId, levelId) {

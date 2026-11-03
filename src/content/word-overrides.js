@@ -6,4 +6,7 @@
  *   'krokodíl': { minAge: 5 },
  *   'syr': { exclude: true },   // slovo sa nebude ponúkať v generovaných leveloch
  */
-export default {};
+export default {
+    rocket: { exclude: true }, // anglické slovo (obrázok rakety) – po slovensky „raketa“
+    facka: { exclude: true }, // nevhodné pre deti
+};

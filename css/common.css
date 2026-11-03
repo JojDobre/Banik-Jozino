@@ -845,3 +845,30 @@ html.bj-staged .execise-window > .close {
 }
 .bj-compact #endgame .gameend .main-menu li { margin: 0 !important; }
 .bj-compact #endgame .gameend .menu-button { width: 370px !important; }
+
+/* ===== Výber svetov: ikona hry na karte levelu (Baňa / Pexeso / Super Jožino) ===== */
+.bj-staged .level-card .level-type {
+    position: absolute;
+    right: -14px;
+    top: -14px;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    border: 4px solid #ECCF17;
+    background: #5a2a0e no-repeat center / 72%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
+    z-index: 2;
+    pointer-events: none;
+}
+.bj-staged .level-card .level-type--banik {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 9.5C7 4.5 15 3.5 21 6.5c-5-.6-9.3.3-13 3.2z' fill='%23cfd8dc' stroke='%23000' stroke-width='1.2' stroke-linejoin='round'/%3E%3Cpath d='M11.8 7.6 6 21' stroke='%23000' stroke-width='4.2' stroke-linecap='round'/%3E%3Cpath d='M11.8 7.6 6 21' stroke='%23a0682f' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.bj-staged .level-card .level-type--pexeso {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3' y='5' width='11' height='15' rx='2' fill='%234FC3F7' stroke='%23000' stroke-width='1.2' transform='rotate(-10 8.5 12.5)'/%3E%3Crect x='9' y='3.5' width='11' height='15' rx='2' fill='%23FFD54F' stroke='%23000' stroke-width='1.2' transform='rotate(8 14.5 11)'/%3E%3C/svg%3E");
+}
+.bj-staged .level-card .level-type--mario {
+    background-image: url('../images/superjozino/pa/items/fruits/apple.png');
+    background-size: 1700% 100%, auto;
+    background-position: 0 0;
+    image-rendering: pixelated;
+}
