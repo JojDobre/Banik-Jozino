@@ -88,7 +88,7 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 
 | Minihra | Úroveň | Vek | Popis |
 |---|---|---|---|
-| Baňa | 3 (1) | 5+ | existuje |
+| Baňa | 3 (1) | 5+ | existuje – prerobí sa na mobilnú hru s preskúmavaním bane (fáza 3c) |
 | Pexeso | 3 | 5+ | existuje |
 | Super Jožino | 3 | 5+ | hotové v štýle Pixel Adventure, zaradené ako typ levelu `mario` (R-3), builder levelov |
 | Kto to robí? | 1 | 3+ | zvuk → ťukni na zviera/predmet |
@@ -218,6 +218,25 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 - ⬜ obťažnosť podľa veku (3–4: viac životov, bez dier, pomalší nepriatelia)
 - ⬜ uloženie levelov z buildera do repa (teraz len v zariadení; export JSON → repo)
 
+### Fáza 3c – Baňa pre mobil ⬜
+Dnes: pevná mriežka 16×16 kociek na plátne 800×800 (štvorec v strede obrazovky), celá mapa
+je vidieť naraz, pozície predmetov sú ručne v 260 leveloch (`config/levels.js`).
+- ⬜ hra na celú obrazovku (ako Super Jožino) – plátno v rozlíšení displeja, horná lišta
+  so skóre v rámčekoch, bez bočného panelu
+- ⬜ **preskúmavanie bane**: väčšia mapa (napr. 40×28), kamera sleduje baníka,
+  tma a svetlo lampy (vidí okolie, odkryté miesta ostanú viditeľné), predmety sú
+  ukryté v hornine a treba ich nájsť
+- ⬜ mapa sa generuje (chodby, jaskyne, tvrdé kamene, ktoré sa nedajú prekopať) podľa
+  počtu predmetov v leveli – už žiadne ručné pozície; rovnaký level = rovnaká mapa (seed)
+- ⬜ pomocník pre malé deti: šípka / iskričky ukazujú smer k najbližšiemu pokladu,
+  mini-mapa odkrytej časti
+- ⬜ ovládanie pre mobil: plynulý pohyb po mriežke, ľavá strana pohyb (smerový kríž),
+  pravá krompáč; kopanie aj automaticky pri pohybe do horniny (pre najmenších)
+- ⬜ efekty a zvuky ako v Super Jožinovi (prach pri kopaní, iskry pri poklade, let do
+  počítadla), rečové a posluchové cvičenie v rovnakom okne a spätnej väzbe
+- ⬜ zachovať hodnotenie, ukladanie postupu a odmeny (karty) ako teraz
+- ⬜ obťažnosť podľa veku: veľkosť bane, počet predmetov, polomer lampy
+
 ### Fáza 4 – Minihry úrovne 1 ⬜
 - ⬜ Kto to robí?, Zvukové pexeso, Zvončeky v bani, Hláskový vláčik
 - ⬜ zvukový obsah: viac dvojíc slov (cieľ 50+), nahrávky pre všetky slová
@@ -258,12 +277,15 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 ## Čo ďalej (poradie)
 
 1. **Test na telefóne (APK)** – Super Jožino (ovládanie, obťažnosť, výkon), rozpoznávanie reči
-   v appke, celý postup profil → úroveň → level → odmena. Bez toho nemá zmysel ladiť ďalej naslepo.
-2. **Svety písmen z generátora (úroveň 3)** – levely z pravidiel slovníka namiesto 260 ručných
+   v appke, celý postup profil → úroveň → level → odmena.
+2. **Baňa pre mobil (fáza 3c)** – pred svetmi písmen, lebo generátor svetov bude vyrábať
+   hlavne levely Bane: najprv treba nový formát (generovaná baňa + počty predmetov),
+   aby sa generátor nerobil dvakrát.
+3. **Svety písmen z generátora (úroveň 3)** – levely z pravidiel slovníka namiesto 260 ručných
    levelov; striedanie Baňa / Pexeso / Super Jožino v rámci sveta, jedinečné názvy levelov.
-3. **Minihry úrovne 1 (fáza 4)** – Kto to robí?, Zvukové pexeso, Zvončeky v bani; viac dvojíc
+4. **Minihry úrovne 1 (fáza 4)** – Kto to robí?, Zvukové pexeso, Zvončeky v bani; viac dvojíc
    zvukov (cieľ 50+) – teraz je len 15.
-4. **Obťažnosť podľa veku** naprieč hrami (Super Jožino, Baňa, Pexeso).
-5. **Ikona appky a úvodná obrazovka**, potom **fáza 7** (rodičovská brána, licencia hlasu,
+5. **Obťažnosť podľa veku** naprieč hrami (Super Jožino, Baňa, Pexeso).
+6. **Ikona appky a úvodná obrazovka**, potom **fáza 7** (rodičovská brána, licencia hlasu,
    zásady súkromia, uzavreté testovanie na Google Play).
-6. **Úroveň 2 (fáza 5)** – najprv prototyp analýzy zvuku a test na deťoch.
+7. **Úroveň 2 (fáza 5)** – najprv prototyp analýzy zvuku a test na deťoch.
