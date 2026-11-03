@@ -12,7 +12,7 @@ logger.warnOnce = (msg, opts) => {
     warnOnce(msg, opts);
 };
 
-const pages = ['index', 'profil', 'urovne', 'cesta', 'pocuvaj', 'album', 'worldsmenu', 'game', 'pexeso', 'superjozino', 'builder'];
+const pages = ['index', 'profil', 'urovne', 'cesta', 'pocuvaj', 'album', 'worldsmenu', 'game', 'pexeso', 'superjozino', 'builder', 'bana'];
 
 export default defineConfig({
     // Relatívne cesty – funguje na GitHub Pages (podpriečinok) aj v Capacitor appke.

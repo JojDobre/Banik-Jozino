@@ -820,3 +820,28 @@ html.bj-staged .execise-window > .close {
 .bj-staged #level-detail-modal .modal-stars { margin-top: 0; padding-bottom: 12px; }
 .bj-staged #level-detail-modal .modal-stars img { width: 44px; height: 44px; }
 .bj-staged #level-detail-modal .level-modal-body strong { font-size: 26px; }
+
+/* ===== Koniec hry (Baňa – pôvodná aj nová) na telefóne: na šírku, nech sa zmestí ===== */
+.bj-compact #endgame .execise-window {
+    width: 1320px !important;
+    max-height: calc(100% - 60px) !important;
+    padding: 40px 50px 44px !important;
+    overflow: hidden;
+}
+.bj-compact #endgame .cvicenie-content-2 { gap: 14px; }
+.bj-compact #endgame .stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 40px;
+}
+.bj-compact #endgame .stats > div { display: flex; align-items: center; gap: 10px; }
+.bj-compact #endgame .gameend .main-menu ul {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+.bj-compact #endgame .gameend .main-menu li { margin: 0 !important; }
+.bj-compact #endgame .gameend .menu-button { width: 370px !important; }

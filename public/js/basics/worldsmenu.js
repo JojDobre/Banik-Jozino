@@ -835,7 +835,7 @@ function playSelectedLevel() {
         const level = getLevelConfig(levelId);
         if (level) {
             const gameUrls = {
-                'banik': 'game.html',
+                'banik': window.BJRoute ? BJRoute.banikPage() : 'game.html',
                 'pexeso': 'pexeso.html', 
                 'mario': 'superjozino.html'
             };
@@ -1213,7 +1213,7 @@ function startTrainingLevel() {
     };
     
     // Spusti hru s tréningovým levelom
-    const gameUrl = `game.html?training=true&config=${encodeURIComponent(JSON.stringify(trainingLevelConfig))}`;
+    const gameUrl = `${window.BJRoute ? BJRoute.banikPage() : 'game.html'}?training=true&config=${encodeURIComponent(JSON.stringify(trainingLevelConfig))}`;
     window.location.href = gameUrl;
 }
 

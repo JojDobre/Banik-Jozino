@@ -107,7 +107,7 @@ class GameRouter {
         console.log(`Presmerovávam na hru typu: ${gameType}`);
         
         const gameUrls = {
-            'banik': this.buildGameUrl('game.html', worldId, levelId),
+            'banik': this.buildGameUrl(window.BJRoute ? BJRoute.banikPage() : 'game.html', worldId, levelId),
             'pexeso': this.buildGameUrl('pexeso.html', worldId, levelId),
             'mario': this.buildGameUrl('superjozino.html', worldId, levelId)
         };

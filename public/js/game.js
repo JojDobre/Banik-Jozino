@@ -3300,7 +3300,7 @@ function updateEndGameDialog(worldId, levelId, isTraining) {
         return;
     }
     
-    let restartUrl = 'game.html'; // fallback
+    let restartUrl = window.BJRoute ? BJRoute.currentPage() : 'game.html'; // fallback
     let backUrl = 'worldsmenu.html'; // fallback
     
     if (isTraining) {
@@ -3309,7 +3309,7 @@ function updateEndGameDialog(worldId, levelId, isTraining) {
         backUrl = 'worldsmenu.html';
     } else if (worldId && levelId) {
         // Pre normálne levely - zachovaj URL parametre
-        restartUrl = `game.html?worldId=${worldId}&levelId=${levelId}`;
+        restartUrl = `${window.BJRoute ? BJRoute.currentPage() : 'game.html'}?worldId=${worldId}&levelId=${levelId}`;
         backUrl = `worldsmenu.html`; // Späť na worlds menu
     }
     
@@ -3333,14 +3333,14 @@ function updateMenuDialog(worldId, levelId, isTraining) {
         return;
     }
     
-    let restartUrl = 'game.html';
+    let restartUrl = window.BJRoute ? BJRoute.currentPage() : 'game.html';
     let backUrl = 'worldsmenu.html';
     
     if (isTraining) {
         restartUrl = window.location.href;
         backUrl = 'worldsmenu.html';
     } else if (worldId && levelId) {
-        restartUrl = `game.html?worldId=${worldId}&levelId=${levelId}`;
+        restartUrl = `${window.BJRoute ? BJRoute.currentPage() : 'game.html'}?worldId=${worldId}&levelId=${levelId}`;
         backUrl = `worldsmenu.html`;
     }
     
@@ -3413,7 +3413,7 @@ function goToNextLevel() {
                 
                 if (nextLevel) {
                     closeAllDialogs();
-                    window.location.href = `game.html?worldId=${worldId}&levelId=${nextLevelId}`;
+                    window.location.href = window.BJRoute ? BJRoute.levelUrl(worldId, nextLevelId) : `game.html?worldId=${worldId}&levelId=${nextLevelId}`;
                 } else {
                     console.log('Ďalší level neexistuje, vraciam sa do menu');
                     returnToMenu();

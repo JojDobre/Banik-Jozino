@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="sk">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="Logopedická hra pre najmenších">
+    <meta name="author" content="Adam Reňak">
+    <meta name="keywords" content="Adam Reňak, Joj_Dobre, Diplomová práca, Logopedická hra, TUKE">
+    <title>Baňa – Baník Jožino</title>
+    <link rel="stylesheet" type="text/css" href="css/miner.css" />
+
+    <!-- Písmo Luckiest Guy (lokálne, funguje offline) -->
+    <link rel="stylesheet" type="text/css" href="css/fonts.css" />
+
+    <link rel="icon" type="image/png" href="images/icons/favicon.png">
+    <script src="js/vendor/howler.min.js"></script>
+
+    <script src="config/worlds.js"></script>
+    <script src="config/levels.js"></script>
+    <!-- výber stránky hry podľa veku (pôvodná / nová Baňa) -->
+    <script src="js/bana-route.js"></script>
+    <!-- Spoločné služby (reč, zvuk, profily, karty) – window.BJ -->
+    <script type="module" src="src/bridge.js"></script>
+    <!-- Herné plátno 1920×1080 – škálovanie na každú obrazovku -->
+    <link rel="stylesheet" type="text/css" href="css/stage.css" />
+    <link rel="stylesheet" type="text/css" href="css/common.css" />
+    <link rel="stylesheet" type="text/css" href="css/cards.css" />
+    <link rel="stylesheet" type="text/css" href="css/settings.css" />
+    <link rel="stylesheet" type="text/css" href="css/bana.css" />
+    <!-- Písma vopred (bez preblikávania) -->
+    <link rel="preload" href="fonts/luckiest-guy-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/luckiest-guy-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/nunito-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+    <script src="js/stage.js"></script>
+</head>
+
+  <body>
+  <div id="bj-stage">
+
+    <!-- LOADING -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <!-- Logo -->
+            <div class="loading-logo">
+                <div class="loading-text-jozino">JOŽINO</div>
+                <div class="loading-text-banik">BANÍK</div>
+            </div>
+            
+            <!-- Spinner -->
+            <div class="loading-spinner"></div>
+            
+            <!-- NOVÉ: Progress Bar -->
+            <div class="loading-progress-container">
+                <div class="loading-progress-bar">
+                    <div class="loading-progress-fill" id="loading-progress-fill"></div>
+                </div>
+                
+                <div class="loading-progress-text">
+                    <span id="loading-progress-percentage">0%</span>
+                    <span id="loading-progress-details">Pripravujem hru...</span>
+                </div>
+            </div>
+            
+            <!-- Loading Message -->
+            <div class="loading-message" id="loading-message">Načítavam zdroje...</div>
+        </div>
+    </div>
+
+    
+    <div class="menu-hra">
+      <button onclick="openDialog1()" class="kruhove-tlacidlo" id="menuButton"></button>
+    </div>
+
+    <!-- HRA: baňa na celú obrazovku (js/bana/explore.js) -->
+    <div class="hra bx">
+      <canvas id="gameCanvas" width="800" height="800"></canvas>
+
+      <!-- horná lišta: počty v rámčekoch (čas len pri leveloch s časovým limitom) -->
+      <div class="bx-hud">
+        <div class="bx-chip"><img src="images/gold.png" alt=""><span id="bxGold">0/0</span></div>
+        <div class="bx-chip"><img src="images/diamond.png" alt=""><span id="bxDia">0/0</span></div>
+        <div class="bx-chip"><img src="images/kov.png" alt=""><span id="bxKov">0/0</span></div>
+        <div class="bx-chip bx-chip--time" id="bxTimeChip" hidden><span id="bxTime">0:00</span></div>
+      </div>
+
+      <!-- mini-mapa (ťuknutie = celá mapa) a šípka k pokladu -->
+      <button class="bx-mini" id="bxMiniBtn" type="button" aria-label="Mapa bane"><canvas id="bxMini"></canvas></button>
+      <div class="bx-compass" id="bxCompass" aria-hidden="true"></div>
+      <div class="bx-toast" id="bxToast" role="status" aria-live="polite"></div>
+
+      <!-- ovládanie: smerový kríž vľavo, krompáč vpravo -->
+      <div class="bx-pad" aria-label="Pohyb">
+        <button class="bx-arrow bx-arrow--up" data-dir="up" type="button" aria-label="Hore"></button>
+        <button class="bx-arrow bx-arrow--left" data-dir="left" type="button" aria-label="Doľava"></button>
+        <button class="bx-arrow bx-arrow--right" data-dir="right" type="button" aria-label="Doprava"></button>
+        <button class="bx-arrow bx-arrow--down" data-dir="down" type="button" aria-label="Dole"></button>
+      </div>
+      <button class="bx-pick" id="bxPick" type="button" aria-label="Kopať krompáčom"></button>
+
+      <!-- celá mapa bane -->
+      <div class="bx-map" id="bxMap" hidden>
+        <div class="bx-map__box">
+          <h2>Mapa bane</h2>
+          <canvas id="bxMapCanvas"></canvas>
+          <div class="bx-map__legend">
+            <span><i style="background:#c08a52"></i>chodby</span>
+            <span><i style="background:#777"></i>tvrdý kameň</span>
+            <span><i style="background:#ffe066"></i>zlato</span>
+            <span><i style="background:#7fd6ff"></i>diamant</span>
+            <span><i style="background:#d7a8ff"></i>kryštál</span>
+            <span><i style="background:#ff9800"></i>lampa</span>
+          </div>
+          <button class="menu-button bx-map__close" id="bxMapClose" type="button">Zavrieť</button>
+        </div>
+      </div>
+
+      <!-- pôvodný bočný panel – skrytý, game.js doň zapisuje počty a čas -->
+      <div class="bx-legacy" hidden>
+      <div class="stats-menu">
+        <div class="window">
+          <div class="logo-container">
+            <div class="logo-text">
+              <div class="text-jozino">JOŽINO</div>
+              <div class="text-banik">BANÍK</div>
+            </div>
+          </div>
+          <div class="stats">
+            <div>
+              <a>Čas: </a>
+              <span id="game-timer">00:00</span>
+            </div>
+            <div>
+              <a>Slová: </a>
+              <span id="correct-words">0 <img src="images/spravne.png"></span>
+              <span> / </span>
+              <span id="incorrect-words">0 <img src="images/nespravne.png"></span>
+            </div>
+          </div>
+        </div>
+        <div class="menu-golds">
+          <h1>Zlato</h1>
+          <div class="golds-container"></div>
+        </div>
+        <div class="menu-diamonds">
+          <h1>Diamanty</h1>
+          <div class="diamonds-container"></div>
+        </div>
+        <div class="menu-kov">
+          <h1>Kryštály</h1>
+          <div class="kov-container"></div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+
+    <div id="cvicenie" class="modal">
+      <div class="execise-window">
+        <div id="vysledok" class="vysledok"></div>
+        <div class="cvicenie-content">
+          <div class="cvicenie-text"><p id="word-display">TRAKTOR</p></div>
+          <div class="cvicenie-text"><img id="cvicenie-image" src="images/slova/traktor.png"></div>
+          <div class="tlacidlo"><button id="rozpoznanie"><a>HOVORIŤ</a></button></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="zvuky" class="cvicenie">
+      <div class="execise-window">
+        <div class="cvicenie-content-2">
+          <h1>ROZPOZNAJ SLOVÁ</h1>
+          <p>Sú slová rovnaké?</p>
+          <div id="buttonsContainer"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="endgame" class="cvicenie">
+      <div class="execise-window" style="max-height: 550px;">
+        <div class="cvicenie-content-2">
+          <h1>Prešiel si level!</h1>
+          <div class="stats">
+            <div>
+              <a>Čas: </a>
+              <span>02:43</span>
+            </div>
+            <div>
+              <a>Slová: </a>
+              <span>4</span> <img src="images/spravne.png">
+              <span> / </span>
+              <span>4 </span> <img src="images/nespravne.png">
+            </div>
+          </div>
+          <div id="modal-stars" class="modal-stars"></div>
+          <div class="gameend">
+            <nav class="main-menu">
+              <ul>
+                <li><button onclick="restartCurrentLevel()" class="menu-button">Hrať znova</button></li>
+                <li><button onclick="goToNextLevel()" class="menu-button">Ďalší level</button></li>
+                <li><button onclick="returnToMenu()" class="menu-button">Späť do menu</button></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="dialogove-okno" class="dialogove-okno">
+      <div class="execise-window">
+        <span class="close" onclick="closeDialog1()">&times;</span>
+        <nav class="main-menu">
+            <ul>
+                <li><a href="#" onclick="location.reload(); return false;" alt="Reštart" class="menu-button">Reštart</a></li>
+                <li><a href="worldsmenu.html" alt="Koniec" class="menu-button">Koniec</a></li>
+                <li><a href="index.html" alt="Menu" class="menu-button">Menu</a></li>
+                <li><button onclick="window.BJ && window.BJ.openSettings()" class="menu-button">Nastavenia</button></li>
+            </ul>
+        </nav>
+      </div>
+    </div>
+
+  <div id="blur-background"></div>
+  </div><!-- /bj-stage -->
+
+  <script src="js/managers/progressManager.js"></script>
+
+  <script src="js/game.js"></script>
+  <!-- nová Baňa: preskúmavanie, tma, celá obrazovka -->
+  <script src="js/bana/explore.js"></script>
+  <script>
+    function openDialog1() {
+    document.getElementById("dialogove-okno").style.display = "block";
+    document.getElementById("blur-background").style.display = "block";
+    document.body.classList.add("dialog-open");
+    document.body.style.overflow = "hidden"; // Zabrániť posúvaniu stránky
+  }
+
+  function closeDialog1() {
+    document.getElementById("dialogove-okno").style.display = "none";
+    document.getElementById("blur-background").style.display = "none";
+    document.body.classList.remove("dialog-open");
+    document.body.style.overflow = "auto"; // Povoliť posúvanie stránky
+  }
+  </script>
+  </body>
+</html>
