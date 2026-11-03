@@ -22,6 +22,48 @@ function hideLoadingScreen() {
 }
 
 /**
+ * Kontext hry: ak sa spustí zo sveta (superjozino.html?worldId=…&levelId=…),
+ * slová pre rečové cvičenia sú z levelu (config/levels.js, gameType 'mario')
+ * a výsledok sa uloží do postupu sveta. Bez parametrov = skúšobná hra.
+ */
+const SJ = (() => {
+    const q = new URLSearchParams(location.search);
+    const worldId = q.get('worldId') || q.get('world');
+    const levelId = q.get('levelId') || q.get('level');
+    let config = null;
+    try {
+        if (levelId && typeof getLevelConfig === 'function') config = getLevelConfig(levelId);
+    } catch (e) { /* bez konfigurácie */ }
+    const words = (config && config.words && config.words.length)
+        ? config.words.slice()
+        : ['auto', 'dom', 'strom', 'slnko', 'ruka', 'ryba', 'rak', 'lopta'];
+    // zamiešať, aby diamanty nemali vždy rovnaké poradie slov
+    for (let i = words.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [words[i], words[j]] = [words[j], words[i]];
+    }
+    let next = 0;
+    const inWorld = !!(worldId && levelId && config);
+    return {
+        worldId,
+        levelId,
+        config,
+        inWorld,
+        /** číslo mapy v js/superjozino/levels.js */
+        map: (config && config.gameConfig && config.gameConfig.sjLevel) || 1,
+        backUrl: inWorld ? 'worldsmenu.html' : 'urovne.html',
+        /** slová postupne (každý diamant iné slovo) */
+        nextWord() { return words[next++ % words.length]; },
+    };
+})();
+window.SJ = SJ;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const back = document.querySelector('.sj-topbar .back-button a');
+    if (back) back.href = SJ.backUrl;
+});
+
+/**
  * ANIMATION MANAGER
  * Správa animácií postavy - načítavanie a prehrávanie frame-ov
  */
@@ -1968,7 +2010,9 @@ class Game {
         this.ctx = this.canvas.getContext('2d');
         // Svet je vysoký 800 px; šírka plátna podľa pomeru strán obrazovky,
         // takže hra vyplní celú plochu (na širokom telefóne vidno viac sveta).
-        this.height = 800;
+        this.worldH = 800;
+        this.belowWorld = 160; // koľko hliny pod svetom môže kamera ukázať
+        this.camera = { x: 0, y: 0, look: 0 };
         this.fitCanvas();
         window.addEventListener('resize', () => this.fitCanvas());
 
@@ -1980,7 +2024,8 @@ class Game {
         this.gravity = 0.45;
         this.friction = 0.75;
         this.maxFallSpeed = 15; 
-        this.currentLevel = 1;
+        this.currentLevel = SJ.map;
+        this.startedAt = Date.now();
         this.gameState = 'playing'; // 'playing', 'paused', 'completed'
         this.lives = 3;
         this.isInvulnerable = false;
@@ -2020,9 +2065,14 @@ class Game {
             
             velocityX: 0,
             velocityY: 0,
-            speed: 6,
+            speed: 5.2,
             jumpForce: -14,
-            isJumping: false
+            isJumping: false,
+            onGround: false,
+            facing: 1,
+            coyote: 0,
+            jumpBuffer: 0,
+            prevBottom: 0
         };
         this.animationManager = new AnimationManager();
         this.coinAnimationManager = new CoinAnimationManager();
@@ -2101,19 +2151,19 @@ class Game {
         this.deathAnimation = {
             active: false,
             timer: 0,
-            duration: 1000, // 1 sekunda na animáciu smrti
+            duration: 70, // počet krokov hry (~1,2 s)
             type: null // 'gap' alebo 'enemy'
         };
 
         // Ovládanie
-        this.keys = {};
-        this.setupControls();
 
         // Exponuj game objekt pre joystick
         window.game = this;
 
         // Spustenie hernej slučky
-        this.gameLoop();
+        this.lastTime = null;
+        this.updateCamera(true);
+        requestAnimationFrame((ts) => this.gameLoop(ts));
     }
 
     setupDebugControls() {
@@ -2153,7 +2203,7 @@ class Game {
         (document.getElementById('bj-stage') || document.body).appendChild(this.speechModal);
     }
 
-    showSpeechResult(success) {
+    showSpeechResult(success, exercise) {
         const modal = document.querySelector('.speech-content');
         const resultMessage = modal.querySelector('.result-message');
         const recordButton = document.getElementById('startRecording');
@@ -2201,6 +2251,7 @@ class Game {
     }
 
     showSpeechExercise(exercise) {
+        if (window.SJInput) window.SJInput.reset();
         this.speechModal.innerHTML = `
             <div class="speech-content">
                 <h2>${exercise.word}</h2>
@@ -2212,6 +2263,9 @@ class Game {
         `;
         this.speechModal.style.display = 'flex';
         
+        // slovo zaznie nahlas (dieťa nemusí vedieť čítať)
+        try { window.BJ && window.BJ.say(exercise.word); } catch (e) { /* bez hlasu */ }
+
         // Pridanie event listenera pre tlačidlo nahrávania
         document.getElementById('startRecording').addEventListener('click', () => {
             this.startSpeechRecognition(exercise);
@@ -2230,7 +2284,7 @@ class Game {
                 <p>Zozbierané mince: ${this.collectedCoins}/${this.totalCoins}</p>
                 <p>Zozbierané diamanty: ${this.collectedDiamonds}/${this.requiredDiamonds}</p>
                 <div class="game-over-buttons">
-                    <button class="button" onclick="location.href='urovne.html'">Menu</button>
+                    <button class="button" onclick="location.href=SJ.backUrl">Späť</button>
                     <button class="button button--primary" id="restartLevel">Znova</button>
                 </div>
             </div>
@@ -2265,7 +2319,7 @@ class Game {
             // Spoločné pravidlo porovnania pre všetky hry (src/core/slovak.js)
             if (window.BJ.matchesWord(transcript, exercise.word)) {
                 exercise.completed = true;
-                this.collectedDiamonds++;
+                exercise.attempts++;
                 this.showSpeechResult(true, exercise);
             } else {
                 this.showSpeechResult(false, exercise);
@@ -2285,46 +2339,6 @@ class Game {
         for (let checkpoint of this.currentLevelData.checkpoints) {
             if (!checkpoint.active && this.checkCollision(this.player, checkpoint)) {
                 this.activateCheckpoint(checkpoint);
-            }
-        }
-    }
-
-    handleWallCollisions() {
-        for (let wall of this.currentLevelData.walls) {
-            const nextPositionX = {
-                x: this.player.x + this.player.velocityX,
-                y: this.player.y,
-                width: this.player.width,
-                height: this.player.height
-            };
-
-            const nextPositionY = {
-                x: this.player.x,
-                y: this.player.y + this.player.velocityY,
-                width: this.player.width,
-                height: this.player.height
-            };
-
-            // Horizontálna kolízia
-            if (this.checkCollision(nextPositionX, wall)) {
-                if (this.player.velocityX > 0) {
-                    this.player.x = wall.x - this.player.width;
-                } else if (this.player.velocityX < 0) {
-                    this.player.x = wall.x + wall.width;
-                }
-                this.player.velocityX = 0;
-            }
-
-            // Vertikálna kolízia
-            if (this.checkCollision(nextPositionY, wall)) {
-                if (this.player.velocityY > 0) { // Padá dole
-                    this.player.y = wall.y - this.player.height;
-                    this.player.velocityY = 0;
-                    this.player.isJumping = false;
-                } else if (this.player.velocityY < 0) { // Skáče hore
-                    this.player.y = wall.y + wall.height;
-                    this.player.velocityY = 0;
-                }
             }
         }
     }
@@ -2361,10 +2375,14 @@ class Game {
         this.player.velocityX = 0;
         this.player.velocityY = 0;
         this.player.isJumping = false;
+        this.player.onGround = false;
+        this.player.facing = 1;
         this.isInvulnerable = true;
-        
+        this.updateCamera(true);
+
         // Krátka doba nezraniteľnosti po respawne
-        setTimeout(() => {
+        clearTimeout(this.invulnTimer);
+        this.invulnTimer = setTimeout(() => {
             this.isInvulnerable = false;
         }, this.invulnerableTime);
     }
@@ -2374,7 +2392,6 @@ class Game {
         if (!this.debug) return;
     
         this.ctx.save();
-        this.ctx.translate(-this.camera.x, 0);
 
         this.drawDebugGrid();
         this.drawCollisionBoxes();
@@ -2404,12 +2421,12 @@ class Game {
         for (let x = 0; x < this.currentLevelData.width; x += 100) {
             this.ctx.beginPath();
             this.ctx.moveTo(x, 0);
-            this.ctx.lineTo(x, this.height);
+            this.ctx.lineTo(x, this.worldH);
             this.ctx.stroke();
         }
 
         // Horizontálne čiary
-        for (let y = 0; y < this.height; y += 100) {
+        for (let y = 0; y < this.worldH; y += 100) {
             this.ctx.beginPath();
             this.ctx.moveTo(0, y);
             this.ctx.lineTo(this.currentLevelData.width, y);
@@ -2563,7 +2580,8 @@ class Game {
         this.totalCoins = this.currentLevelData.coins.length;
         this.collectedCoins = 0;
         this.collectedDiamonds = 0;
-        this.requiredDiamonds = this.currentLevelData.diamonds.length;
+        // do cieľa treba modré diamanty (rečové cvičenia); zelený a červený sú bonus
+        this.requiredDiamonds = this.currentLevelData.diamonds.filter((d) => d.type === 'blueDiamond').length;
     }
 
 
@@ -2626,7 +2644,7 @@ class Game {
                 // Kontrola kolízie jazyka s hráčom
                 if (this.checkCollision(this.player, enemy.tongueHitbox)) {
                     console.log('👅 Chameleon ťa trafil jazykom!');
-                    this.hitByEnemy();
+                    this.hitByEnemy(enemy);
                     // Deaktivuj jazyk aby neudieral opakovane
                     enemy.tongueActive = false;
                     enemy.tongueHitbox = null;
@@ -2643,7 +2661,7 @@ class Game {
                 
                 // Ghost je nezabiteľný
                 if (enemy.behaviorType === 'ghost') {
-                    this.hitByEnemy();
+                    this.hitByEnemy(enemy);
                     continue;
                 }
                 
@@ -2651,18 +2669,18 @@ class Game {
                 if (enemy.behaviorType === 'chameleon') {
                     const playerBottom = this.player.y + this.player.height;
                     const enemyTop = enemy.y;
-                    const jumpTolerance = 10;
+                    const jumpTolerance = 14;
                     
                     const isJumpingOnEnemy = this.player.velocityY > 0 &&
-                                            playerBottom <= enemyTop + jumpTolerance;
+                                            this.player.prevBottom <= enemyTop + jumpTolerance;
                     
                     if (isJumpingOnEnemy) {
                         enemy.hit();
-                        this.player.velocityY = -5;
+                        this.player.velocityY = (window.SJInput && window.SJInput.jump) ? -12 : -8;
                         console.log(`💀 Zabil si ${enemy.type}!`);
                     } else {
                         // Dotyk zboku/zdola = damage
-                        this.hitByEnemy();
+                        this.hitByEnemy(enemy);
                     }
                     continue;
                 }
@@ -2673,10 +2691,10 @@ class Game {
                     const playerTop = this.player.y;
                     const enemyTop = enemy.y;
                     const enemyBottom = enemy.y + enemy.height;
-                    const jumpTolerance = 10;
+                    const jumpTolerance = 14;
                     
                     const isJumpingOnTop = this.player.velocityY > 0 &&
-                                        playerBottom <= enemyTop + jumpTolerance;
+                                        this.player.prevBottom <= enemyTop + jumpTolerance;
                     
                     const isJumpingFromBelow = this.player.velocityY < 0 &&
                                             playerTop >= enemyBottom - jumpTolerance;
@@ -2686,38 +2704,38 @@ class Game {
                             enemy.hit();
                             
                             if (isJumpingOnTop) {
-                                this.player.velocityY = -5;
+                                this.player.velocityY = (window.SJInput && window.SJInput.jump) ? -12 : -8;
                             } else {
                                 this.player.velocityY = 5;
                             }
                             
                             console.log(`💀 Zabil si ${enemy.type}!`);
                         } else {
-                            this.hitByEnemy();
+                            this.hitByEnemy(enemy);
                         }
                     } else {
-                        this.hitByEnemy();
+                        this.hitByEnemy(enemy);
                     }
                     
                 } else {
                     // Pozemný nepriateľ (Pig) - len zhora
                     const playerBottom = this.player.y + this.player.height;
                     const enemyTop = enemy.y;
-                    const jumpTolerance = 10;
+                    const jumpTolerance = 14;
                     
                     const isJumpingOnEnemy = this.player.velocityY > 0 &&
-                                            playerBottom <= enemyTop + jumpTolerance;
+                                            this.player.prevBottom <= enemyTop + jumpTolerance;
                     
                     if (isJumpingOnEnemy) {
                         if (enemy.killable || enemy.stunnable) {
                             enemy.hit();
-                            this.player.velocityY = -5;
+                            this.player.velocityY = (window.SJInput && window.SJInput.jump) ? -12 : -8;
                             console.log(`💀 Zabil si ${enemy.type}!`);
                         } else {
-                            this.hitByEnemy();
+                            this.hitByEnemy(enemy);
                         }
                     } else {
-                        this.hitByEnemy();
+                        this.hitByEnemy(enemy);
                     }
                 }
             }
@@ -2783,146 +2801,124 @@ class Game {
         }
     }
 
+    /**
+     * Koniec levelu: hviezdy podľa mincí a vyslovených slov, uloženie postupu
+     * sveta (odomkne ďalší level, udelí karty) a okno s výsledkom.
+     */
     showLevelComplete() {
-        const coinPercentage = (this.collectedCoins / this.totalCoins) * 100;
-        const stars = coinPercentage >= 90 ? 3 : coinPercentage >= 60 ? 2 : 1;
-        
-        const modalContent = `
+        if (this.gameState === 'completed') return;
+        this.gameState = 'completed';
+        if (window.SJInput) window.SJInput.reset();
+
+        const coinShare = this.totalCoins ? this.collectedCoins / this.totalCoins : 1;
+        const speech = this.currentLevelData.diamonds.filter((d) => d.speechExercise);
+        const spokenOk = speech.filter((d) => d.speechExercise.completed).length;
+        const speechShare = speech.length ? spokenOk / speech.length : 1;
+        let stars = 1;
+        if (coinShare >= 0.5 && speechShare >= 0.5) stars = 2;
+        if (coinShare >= 0.85 && speechShare >= 0.99) stars = 3;
+        const time = Math.round((Date.now() - this.startedAt) / 1000);
+
+        this.speechModal.innerHTML = `
             <div class="level-complete-content">
-                <h2>Level ${this.currentLevel} dokončený!</h2>
+                <h2>Výborne!</h2>
                 <div class="stars">
                     ${[0, 1, 2].map((i) => `<img src="images/star_active.png" alt="" class="${i < stars ? '' : 'off'}">`).join('')}
                 </div>
-                <p>Zozbierané mince: ${this.collectedCoins}/${this.totalCoins} (${coinPercentage.toFixed(1)}%)</p>
-                <p>Zozbierané diamanty: ${this.collectedDiamonds}/${this.requiredDiamonds}</p>
-                <h3>Rečové cvičenia:</h3>
-                ${this.currentLevelData.diamonds
-                    .filter(diamond => diamond.speechExercise)
-                    .map(diamond => `
-                        <p>${diamond.speechExercise.word}: ${diamond.speechExercise.attempts} pokusov</p>
-                    `).join('')}
+                <p>Mince: ${this.collectedCoins} / ${this.totalCoins}</p>
+                <p>Slová: ${spokenOk} / ${speech.length}</p>
+                <div data-reward-slot></div>
                 <div class="game-over-buttons">
-                    <button class="button" onclick="location.href='urovne.html'">Menu</button>
-                    <button class="button button--primary" id="nextLevel">Ďalší level</button>
+                    <button class="button" id="sjAgain">Znova</button>
+                    <button class="button button--primary" id="sjNext">${SJ.inWorld ? 'Ďalej' : 'Späť'}</button>
                 </div>
             </div>
         `;
-        
-        this.speechModal.innerHTML = modalContent;
+        this.speechModal.className = 'speech-modal modal level-complete-modal';
         this.speechModal.style.display = 'flex';
-        this.speechModal.className = 'modal level-complete-modal';
-    }
+        document.getElementById('sjAgain').onclick = () => location.reload();
+        document.getElementById('sjNext').onclick = () => { location.href = SJ.backUrl; };
+        try { window.BJ && window.BJ.say('Výborne! Level je hotový.'); } catch (e) { /* bez hlasu */ }
 
-    handlePlatformCollisions() {
-        const player = {
-            x: this.player.x,
-            y: this.player.y + this.player.velocityY,
-            width: this.player.width,
-            height: this.player.height
-        };
-
-        for (let block of this.currentLevelData.specialBlocks) {
-            if (!block.hit && 
-                this.player.velocityY < 0 && 
-                this.checkCollision({
-                    x: this.player.x,
-                    y: this.player.y,
-                    width: this.player.width,
-                    height: this.player.height
-                }, block)) {
-                block.hit = true;
-                this.collectSpecialItem(block.itemType);
+        if (SJ.inWorld && window.progressManager) {
+            try {
+                window.progressManager.saveLevelProgress(SJ.worldId, SJ.levelId, stars, {
+                    time,
+                    completion: Math.round(coinShare * 100),
+                });
+            } catch (e) {
+                console.error('Uloženie postupu zlyhalo:', e);
             }
         }
+    }
 
-        for (let platform of this.currentLevelData.platforms) {
-            if (this.checkCollision(player, platform)) {
-                if (this.player.velocityY > 0) { // Padá dole
-                    this.player.y = platform.y - this.player.height;
-                    this.player.velocityY = 0;
-                    this.player.isJumping = false;
-                } else if (this.player.velocityY < 0) { // Skáče hore
-                    this.player.y = platform.y + platform.height;
-                    this.player.velocityY = 0;
-                }
-                return true;
-            }
+    /**
+     * Kamera sleduje hráča vodorovne aj zvislo.
+     *  - vodorovne: hráč mierne za stredom, kamera sa pozerá dopredu v smere behu,
+     *  - zvislo: pokojná zóna v strede obrazovky; keď hráč stojí, kamera sa
+     *    plynulo zarovná tak, aby bolo vidno zem pod ním aj priestor nad ním.
+     * @param {boolean} snap – nastaviť hneď (štart, oživenie)
+     */
+    updateCamera(snap) {
+        const p = this.player;
+        const L = this.currentLevelData;
+        if (!L || !this.viewW) return;
+        const vw = this.viewW;
+        const vh = this.viewH;
+        const cam = this.camera;
+
+        const lookTarget = (p.facing || 1) * vw * 0.12;
+        cam.look = snap ? lookTarget : cam.look + (lookTarget - cam.look) * 0.03;
+        const tx = p.x + p.width / 2 - vw / 2 + cam.look;
+
+        let ty = cam.ty == null ? p.y + p.height - vh * this.feetAt : cam.ty;
+        const feet = p.y + p.height;
+        if (p.onGround || snap) {
+            ty = feet - vh * this.feetAt;
+        } else {
+            const top = ty + vh * 0.25;
+            const bottom = ty + vh * 0.8;
+            if (p.y < top) ty = p.y - vh * 0.25;
+            else if (feet > bottom) ty = feet - vh * 0.8;
         }
-        return false;
-    }
+        // kamera smie ísť kúsok pred začiatok levelu a pod spodok sveta
+        // (dokreslená zem/hlina) – postava tak nie je pod dotykovými tlačidlami
+        const minX = -vw * 0.18;
+        const maxX = Math.max(minX, L.width - vw * 0.82);
+        const maxY = Math.max(0, this.worldH + this.belowWorld - vh);
+        const clampX = Math.max(minX, Math.min(maxX, tx));
+        ty = Math.max(0, Math.min(maxY, ty));
+        cam.ty = ty;
 
-    checkLevelCompletion() {
-        if (this.checkCollision(this.player, this.currentLevelData.endPoint)) {
-            this.gameState = 'completed';
-            this.completeLevel();
+        if (snap) {
+            cam.x = clampX;
+            cam.y = ty;
+        } else {
+            cam.x += (clampX - cam.x) * 0.15;
+            cam.y += (ty - cam.y) * (p.onGround ? 0.07 : 0.12);
         }
     }
 
-    completeLevel() {
-        const level = LEVELS[this.currentLevel];
-        const completion = (this.currentLevelData.collected / this.currentLevelData.totalCoins) * 100;
-        
-        // Výpočet hviezd
-        let stars = 0;
-        if (completion >= 90) stars = 3;
-        else if (completion >= 60) stars = 2;
-        else if (completion >= 30) stars = 1;
-
-        // Uloženie progresu
-        level.stars = Math.max(level.stars, stars);
-        level.completion = Math.max(level.completion, completion);
-
-        // Odomknutie ďalšieho levelu
-        if (LEVELS[this.currentLevel + 1] && stars === 3) {
-            LEVELS[this.currentLevel + 1].unlocked = true;
-        }
-
-        // Tu môžeme pridať zobrazenie výsledkovej obrazovky
-        console.log(`Level ${this.currentLevel} dokončený! Hviezdy: ${stars}, Completion: ${completion}%`);
-    }
-
-    setupControls() {
-        // Klávesnica
-        window.addEventListener('keydown', (e) => {
-            this.keys[e.code] = true;
-        });
-
-        window.addEventListener('keyup', (e) => {
-            this.keys[e.code] = false;
-        });
-
-    }
-
-    updateCamera() {
-        // Sledovanie hráča kamerou
-        const targetX = this.player.x - this.width / 3; // kamera sleduje hráča v prvej tretine obrazovky
-        
-        // Plynulý pohyb kamery
-        this.camera.x += (targetX - this.camera.x) * 0.1;
-
-        // Obmedzenia kamery
-        if (this.camera.x < 0) this.camera.x = 0;
-        if (this.camera.x > this.currentLevelData.width - this.width) {
-            this.camera.x = this.currentLevelData.width - this.width;
-        }
-        
-        // KRITICKÉ: Zaokrúhli kameru na celé pixely (eliminuje biele čiary)
-        this.camera.x = Math.round(this.camera.x);
-        this.camera.y = Math.round(this.camera.y);
-    }
-
-    hitByEnemy() {
+    /**
+     * Zásah nepriateľom: stratí život, odhodí ho dozadu a chvíľu bliká
+     * (nezraniteľný). Na checkpoint sa vracia len po páde do diery.
+     */
+    hitByEnemy(enemy) {
+        if (this.isInvulnerable) return;
         this.lives--;
-        this.isInvulnerable = true;
-        setTimeout(() => {
-            this.isInvulnerable = false;
-        }, this.invulnerableTime);
-
         if (this.lives <= 0) {
             this.gameOver();
-        } else {
-            this.respawnAtCheckpoint();
+            return;
         }
+        const p = this.player;
+        const from = enemy ? enemy.x + enemy.width / 2 : p.x + p.width / 2 - p.facing;
+        const away = p.x + p.width / 2 < from ? -1 : 1;
+        p.velocityX = away * 7;
+        p.velocityY = -8;
+        p.onGround = false;
+        this.isInvulnerable = true;
+        clearTimeout(this.invulnTimer);
+        this.invulnTimer = setTimeout(() => { this.isInvulnerable = false; }, this.invulnerableTime);
     }
 
     /**
@@ -2952,6 +2948,11 @@ class Game {
     }
 
     checkGapCollision() {
+        // pád pod svet (aj mimo definovanej diery)
+        if (this.player.y > this.worldH + 20 && !this.deathAnimation.active) {
+            this.startDeathAnimation('gap');
+            return true;
+        }
         for (let gap of this.currentLevelData.gaps) {
             if (this.checkCollision(this.player, gap)) {
                 if (!this.deathAnimation.active) {
@@ -2975,7 +2976,7 @@ class Game {
         }
 
         // Keď hráč spadne dostatočne hlboko alebo uplynie čas animácie
-        if (this.player.y > this.height + 100 || this.deathAnimation.timer >= this.deathAnimation.duration) {
+        if (this.player.y > this.worldH + 100 || this.deathAnimation.timer >= this.deathAnimation.duration) {
             this.deathAnimation.active = false;
             if (this.lives <= 0) {
                 this.gameOver();
@@ -2995,7 +2996,7 @@ class Game {
                 <p>Mince: ${this.collectedCoins}/${this.totalCoins}</p>
                 <p>Diamanty: ${this.collectedDiamonds}/${this.requiredDiamonds}</p>
                 <div class="game-over-buttons">
-                    <button class="button" onclick="location.href='urovne.html'">Menu</button>
+                    <button class="button" onclick="location.href=SJ.backUrl">Späť</button>
                     <button class="button button--primary" id="restartLevel">Znova</button>
                 </div>
             </div>
@@ -3033,144 +3034,194 @@ class Game {
      * Aktualizácia hernej logiky
      * @param {number} timestamp - Aktuálny čas v milisekundách
      */
-    update(timestamp) {
+    /**
+     * Jeden krok hry (vždy 1/60 s – viď gameLoop). Pevný krok = rovnaké
+     * správanie na rýchlom aj pomalom telefóne a kolízie sedia s pohybom.
+     */
+    update() {
         if (this.gameState !== 'playing') return;
 
-    // 🧪 TESTOVACÍ KÓD - spomalí hru na ~20 FPS
-    const now = performance.now();
-    while (performance.now() - now < 20) {
-        // Umelé spomalenie - čaká 30ms
-    }
-
-        // ✅ NOVÝ SYSTÉM: Výpočet delta time
-        // Ak toto je prvý frame, nastav lastTimestamp
-        if (!this.lastTimestamp) {
-            this.lastTimestamp = timestamp;
-            return; // Preskočíme prvý frame
-        }
-        
-        // Vypočítaj čas od posledného frame-u v milisekundách
-        const deltaTimeMs = timestamp - this.lastTimestamp;
-        this.lastTimestamp = timestamp;
-        
-        // Vypočítaj deltaTime ako multiplikátor oproti 60 FPS
-        // Pri 60 FPS (16.67ms) = 1.0 (normálna rýchlosť)
-        // Pri 30 FPS (33.33ms) = 2.0 (dvojnásobná rýchlosť, aby sa vyrovnala)
-        const targetFrameTime = 1000 / 60; // 16.67ms (60 FPS)
-        const deltaTime = deltaTimeMs / targetFrameTime;
-        
-        // Obmedzíme deltaTime aby pri veľkých lagoch nepreskočila hra príliš veľa
-        const clampedDeltaTime = Math.min(deltaTime, 3); // Max 3x rýchlosť (20 FPS minimum)
-
         if (this.deathAnimation.active) {
-            this.updateDeathAnimation(deltaTime);
+            this.updateDeathAnimation(1);
+            this.updateCamera();
             return;
         }
 
-        // Pohyb hráča
-        if (this.keys['ArrowLeft']) {
-            this.player.velocityX = -this.player.speed;  // ✅ BEZ deltaTime
-        }
-        if (this.keys['ArrowRight']) {
-            this.player.velocityX = this.player.speed;   // ✅ BEZ deltaTime
-        }
-        if (this.keys['Space'] && !this.player.isJumping) {
-            this.player.velocityY = this.player.jumpForce;  // ✅ BEZ deltaTime (okamžitý impulz)
-            this.player.isJumping = true;
-        }
-
-        // Aplikácia fyziky
-        this.player.velocityY += this.gravity * clampedDeltaTime; 
-
-        // Obmedzenie maximálnej rýchlosť padania (terminal velocity)
-        if (this.player.velocityY > this.maxFallSpeed) {
-            this.player.velocityY = this.maxFallSpeed;  // ✅ BEZ deltaTime
-        }
-
-        this.player.velocityX *= this.friction;
-
-        // Aktualizácia pozície a kolízie
-        this.handleWallCollisions();
-        this.handlePlatformCollisions();
-
-        // Aktualizácia pozície
-        this.player.x += this.player.velocityX * clampedDeltaTime;  // ✅ S deltaTime
-        this.player.y += this.player.velocityY * clampedDeltaTime;
-
-        // Kontrola dokončenia levelu
-        this.checkLevelCompletion();
+        this.updatePlayer();
 
         // Aktualizácia nepriateľov
-        this.updateEnemies(clampedDeltaTime);
+        this.updateEnemies(1);
 
         // Ostatné kontroly
-        this.handleSpecialBlockCollision();
         this.handleEnemyCollisions();
         this.handleCheckpoints();
         this.checkGapCollision();
         this.handleCoinCollection();
-
-        // Kontrola dokončenia levelu
-        const coinPercentage = (this.collectedCoins / this.totalCoins) * 100;
-        const hasAllDiamonds = this.collectedDiamonds >= this.requiredDiamonds;
-        
-        if (coinPercentage >= 80 && hasAllDiamonds && 
-            this.checkCollision(this.player, this.currentLevelData.endPoint)) {
-            this.showLevelComplete();
-        }
-
-        // Hranice levelu (nie obrazovky)
-        if (this.player.x < 0) this.player.x = 0;
-        if (this.player.x + this.player.width > this.currentLevelData.width) {
-            this.player.x = this.currentLevelData.width - this.player.width;
-        }
-
-
+        this.checkFinish();
 
         // === ANIMÁCIE POSTAVY ===
-        // Určenie smeru
-        if (this.player.velocityX > 0.1) {
-            this.animationManager.setDirection('right');
-        } else if (this.player.velocityX < -0.1) {
-            this.animationManager.setDirection('left');
-        }
+        const p = this.player;
+        if (p.facing > 0) this.animationManager.setDirection('right');
+        else if (p.facing < 0) this.animationManager.setDirection('left');
 
-        // Určenie animácie podľa stavu
-        if (this.player.isJumping && this.player.velocityY < 0) {
-            // Skáče hore
+        if (!p.onGround && p.velocityY < 0) {
             this.animationManager.setAnimation('jump');
-        } else if (this.player.velocityY > 1) {
-            // Padá dole
+        } else if (!p.onGround && p.velocityY > 1.5) {
             this.animationManager.setAnimation('falling');
-        } else if (Math.abs(this.player.velocityX) > 2) {
-            // Beží
+        } else if (Math.abs(p.velocityX) > 3) {
             this.animationManager.setAnimation('run');
-        } else if (Math.abs(this.player.velocityX) > 0.1) {
-            // Chodí
+        } else if (Math.abs(p.velocityX) > 0.3) {
             this.animationManager.setAnimation('walk');
         } else {
-            // Stojí
             this.animationManager.setAnimation('idle');
         }
 
-        // Update animácie
-        this.animationManager.update(clampedDeltaTime);
-        // Update animácií odmien (mince, diamanty)
-        this.coinAnimationManager.update(clampedDeltaTime);
-
-        // Update animácií checkpointov - pošli deltaTime
+        this.animationManager.update(1);
+        this.coinAnimationManager.update(1);
         for (let checkpoint of this.currentLevelData.checkpoints) {
-            this.checkpointAnimationManager.updateCheckpoint(checkpoint, clampedDeltaTime);
+            this.checkpointAnimationManager.updateCheckpoint(checkpoint, 1);
         }
-
-        // Update animácie finish flag - pošli deltaTime
         if (this.currentLevelData.endPoint) {
-            this.checkpointAnimationManager.updateCheckpoint(this.currentLevelData.endPoint, clampedDeltaTime);
+            this.checkpointAnimationManager.updateCheckpoint(this.currentLevelData.endPoint, 1);
         }
 
-
-        // Aktualizácia pozície kamery
         this.updateCamera();
+    }
+
+    /**
+     * Pohyb hráča: zrýchľovanie a brzdenie (nie skokom na plnú rýchlosť),
+     * skok s toleranciou pre deti:
+     *  - „coyote time“: skok ide ešte chvíľu po zídení z okraja,
+     *  - „jump buffer“: ťuk na skok tesne pred dopadom sa nestratí.
+     */
+    updatePlayer() {
+        const p = this.player;
+        const inp = window.SJInput || {};
+        const dir = (inp.right ? 1 : 0) - (inp.left ? 1 : 0);
+
+        if (dir !== 0) {
+            const accel = p.onGround ? 0.75 : 0.5;
+            // otočenie na zemi je rýchlejšie (postava „nekĺže“)
+            const turning = Math.sign(p.velocityX) === -dir;
+            p.velocityX += dir * accel * (turning && p.onGround ? 2 : 1);
+            if (Math.abs(p.velocityX) > p.speed) p.velocityX = Math.sign(p.velocityX) * p.speed;
+            p.facing = dir;
+        } else {
+            p.velocityX *= p.onGround ? 0.7 : 0.9;
+            if (Math.abs(p.velocityX) < 0.05) p.velocityX = 0;
+        }
+
+        // skok
+        p.coyote = p.onGround ? 7 : Math.max(0, p.coyote - 1);
+        if (inp.jumpPressed) {
+            p.jumpBuffer = 9;
+            inp.jumpPressed = false;
+        } else {
+            p.jumpBuffer = Math.max(0, p.jumpBuffer - 1);
+        }
+        if (p.jumpBuffer > 0 && p.coyote > 0) {
+            p.velocityY = p.jumpForce;
+            p.isJumping = true;
+            p.onGround = false;
+            p.coyote = 0;
+            p.jumpBuffer = 0;
+        }
+
+        // gravitácia (pri páde o niečo silnejšia – skok pôsobí pevnejšie)
+        p.velocityY += p.velocityY > 0 ? this.gravity * 1.15 : this.gravity;
+        if (p.velocityY > this.maxFallSpeed) p.velocityY = this.maxFallSpeed;
+
+        this.moveAndCollide();
+
+        // hranice levelu
+        if (p.x < 0) { p.x = 0; p.velocityX = 0; }
+        if (p.x + p.width > this.currentLevelData.width) {
+            p.x = this.currentLevelData.width - p.width;
+            p.velocityX = 0;
+        }
+    }
+
+    /**
+     * Kolízie po osiach: najprv vodorovne, potom zvislo.
+     * Zem a steny sú pevné zo všetkých strán, tenké plošiny sú „priechodné“
+     * zdola (dá sa na ne vyskočiť cez ne) – pre deti oveľa jednoduchšie.
+     */
+    moveAndCollide() {
+        const p = this.player;
+        const L = this.currentLevelData;
+        const near = (r) => r.x < p.x + p.width + 40 && r.x + r.width > p.x - 40;
+        const solids = [];
+        for (const pl of L.platforms) if (near(pl)) solids.push(pl);
+        for (const w of L.walls) if (near(w)) solids.push(w);
+        const oneWay = (r) => r.type === 'platform';
+        const overlap = (r) => p.x < r.x + r.width && p.x + p.width > r.x && p.y < r.y + r.height && p.y + p.height > r.y;
+
+        // vodorovne
+        p.x += p.velocityX;
+        for (const r of solids) {
+            if (oneWay(r) || !overlap(r)) continue;
+            // ak stojí takmer na vrchu (schodík), nekoliduje bokom
+            if (p.y + p.height - r.y <= 6) continue;
+            if (p.velocityX > 0) p.x = r.x - p.width;
+            else if (p.velocityX < 0) p.x = r.x + r.width;
+            p.velocityX = 0;
+        }
+
+        // zvislo
+        const prevBottom = p.y + p.height;
+        const prevTop = p.y;
+        p.prevBottom = prevBottom;
+        p.y += p.velocityY;
+        p.onGround = false;
+        for (const r of solids) {
+            if (!overlap(r)) continue;
+            if (p.velocityY >= 0 && prevBottom <= r.y + 2) {
+                p.y = r.y - p.height;
+                p.velocityY = 0;
+                p.onGround = true;
+                p.isJumping = false;
+            } else if (!oneWay(r) && p.velocityY < 0 && prevTop >= r.y + r.height - 2) {
+                p.y = r.y + r.height;
+                p.velocityY = 0;
+            }
+        }
+
+        // špeciálne bloky (náraz hlavou zdola)
+        if (p.velocityY < 0) {
+            for (const block of L.specialBlocks) {
+                if (!block.hit && overlap(block)) {
+                    block.hit = true;
+                    this.collectSpecialItem(block.itemType);
+                }
+            }
+        }
+    }
+
+    /** Cieľ: level končí, keď má hráč všetky diamanty so slovami. */
+    checkFinish() {
+        const end = this.currentLevelData.endPoint;
+        if (!end || !this.checkCollision(this.player, end)) {
+            this.finishHintShown = false;
+            return;
+        }
+        if (this.collectedDiamonds >= this.requiredDiamonds) {
+            this.showLevelComplete();
+        } else if (!this.finishHintShown) {
+            this.finishHintShown = true;
+            const left = this.requiredDiamonds - this.collectedDiamonds;
+            this.toast(left === 1 ? 'Ešte 1 modrý diamant!' : `Ešte ${left} modré diamanty!`);
+        }
+    }
+
+    /** Krátka správa nad hrou. */
+    toast(text) {
+        const el = document.getElementById('sjToast');
+        if (!el) return;
+        el.textContent = text;
+        el.classList.add('is-visible');
+        clearTimeout(this.toastTimer);
+        this.toastTimer = setTimeout(() => el.classList.remove('is-visible'), 2200);
+        try { window.BJ && window.BJ.say(text); } catch (e) { /* bez hlasu */ }
     }
 
 
@@ -3381,12 +3432,44 @@ drawPlatform(tileName, x, y, width, height) {
 
 
     /** Šírka plátna podľa obrazovky (výška sveta ostáva 800). */
+    /**
+     * Plátno v rozlíšení obrazovky (ostré aj na telefóne) a priblíženie sveta.
+     * Svet je vysoký 800 px; na obrazovke je vidno `viewH` = 800 / zoom,
+     * kamera sa preto pohybuje vodorovne aj zvislo.
+     */
     fitCanvas() {
         const vw = window.innerWidth || 1600;
         const vh = window.innerHeight || 900;
-        this.width = Math.round(Math.min(2000, Math.max(800, this.height * (vw / vh))));
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const ch = Math.round(Math.min(1200, Math.max(400, vh * dpr)));
+        const cw = Math.round(ch * (vw / vh));
+        if (this.canvas.width !== cw) this.canvas.width = cw;
+        if (this.canvas.height !== ch) this.canvas.height = ch;
+        this.width = cw;
+        this.height = ch;
+        const phone = document.documentElement.classList.contains('bj-compact');
+        this.zoom = phone ? 1.55 : 1.3;
+        // kde na obrazovke sú nohy postavy (na telefóne vyššie – dole sú tlačidlá)
+        this.feetAt = phone ? 0.64 : 0.78;
+        this.viewH = this.worldH / this.zoom;
+        this.scale = ch / this.viewH;
+        this.viewW = cw / this.scale;
+        if (this.currentLevelData) this.updateCamera(true);
+    }
+
+    /** Kúsky zeme na okrajoch levelu (kamera ich môže ukázať). */
+    edgeGrounds() {
+        const L = this.currentLevelData;
+        if (this._edgeFor === L) return this._edges;
+        const grounds = L.platforms.filter((p) => p.type === 'ground');
+        const out = [];
+        const first = grounds.reduce((a, g) => (!a || g.x < a.x ? g : a), null);
+        const last = grounds.reduce((a, g) => (!a || g.x + g.width > a.x + a.width ? g : a), null);
+        if (first && first.x <= 0) out.push({ x: -1200, y: first.y, width: 1200, height: first.height });
+        if (last && last.x + last.width >= L.width) out.push({ x: L.width, y: last.y, width: 1200, height: last.height });
+        this._edgeFor = L;
+        this._edges = out;
+        return out;
     }
 
     /** Obloha + les s paralaxou (pohybuje sa pomalšie ako svet). */
@@ -3400,11 +3483,16 @@ drawPlatform(tileName, x, y, width, height) {
         ctx.fillRect(0, 0, this.width, this.height);
         const img = this.bgImage;
         if (img && img.complete && img.naturalWidth) {
-            const h = this.height;
+            // les je o niečo vyšší ako obrazovka – pri pohybe kamery hore/dole
+            // sa posúva pomalšie (paralaxa aj zvislo)
+            const h = this.height * 1.15;
             const w = img.naturalWidth * (h / img.naturalHeight);
-            const off = -((this.camera.x * 0.3) % w);
+            const off = -((((this.camera.x * this.scale * 0.3) % w) + w) % w);
+            const range = Math.max(1, this.worldH + this.belowWorld - this.viewH);
+            const t = Math.max(0, Math.min(1, this.camera.y / range));
+            const oy = -t * (h - this.height);
             ctx.imageSmoothingEnabled = true;
-            for (let x = off - w; x < this.width; x += w) ctx.drawImage(img, x, 0, w, h);
+            for (let x = off - w; x < this.width; x += w) ctx.drawImage(img, x, oy, w, h);
         }
         // jemný opar – pozadie ustúpi, platformy a postavy vyniknú
         ctx.fillStyle = 'rgba(255, 246, 225, 0.45)';
@@ -3419,17 +3507,26 @@ drawPlatform(tileName, x, y, width, height) {
         // Uloženie kontextu pred transformáciou
         this.ctx.save();
         
-        // Posun všetkého podľa pozície kamery
-        this.ctx.translate(-this.camera.x, 0);
+        // Mierka (priblíženie) + posun podľa kamery, zaokrúhlené na pixely
+        const sc = this.scale;
+        this.ctx.setTransform(sc, 0, 0, sc, -Math.round(this.camera.x * sc), -Math.round(this.camera.y * sc));
+        // viditeľná časť sveta (kreslí sa len to, čo je na obrazovke)
+        const vx0 = this.camera.x - 80, vx1 = this.camera.x + this.viewW + 80;
+        const visible = (o) => o.x + (o.width || 0) > vx0 && o.x < vx1;
 
 
         // Vykreslenie platforiem a zeme
 this.ctx.imageSmoothingEnabled = false;
 
+// zem pred začiatkom a za koncom levelu (len vzhľad – hráč tam nedôjde)
+for (const edge of this.edgeGrounds()) {
+    if (visible(edge)) this.drawGroundTerrain('ground', edge.x, edge.y, edge.width, this.worldH + this.belowWorld - edge.y);
+}
 for (let platform of this.currentLevelData.platforms) {
+    if (!visible(platform)) continue;
     if (platform.type === 'ground') {
         // Automaticky predĺž zem až po spodný okraj canvasu
-        const groundHeight = this.height - platform.y; // Výška od platformy po spodok
+        const groundHeight = this.worldH + this.belowWorld - platform.y; // Výška od platformy po spodok
         
         // Zem - horizontálne opakuje tile, vertikálne natiahne
         this.drawGroundTerrain('ground', platform.x, platform.y, platform.width, groundHeight);
@@ -3490,21 +3587,24 @@ for (let platform of this.currentLevelData.platforms) {
 
         // Vykreslenie nepriateľov (animované sprite-y)
         for (let enemy of this.currentLevelData.enemies) {
-            if (enemy.visible) {  // ⬅️ Vykreslí všetkých viditeľných, vrátane dying
+            if (enemy.visible && visible(enemy)) {  // ⬅️ Vykreslí všetkých viditeľných, vrátane dying
                 this.enemyAnimationManager.draw(this.ctx, enemy);
             }
         }
 
-        // Vykreslenie stien
-        this.ctx.fillStyle = '#666';
+        // Vykreslenie stien (v štýle terénu, nie sivý obdĺžnik)
         for (let wall of this.currentLevelData.walls) {
-            this.ctx.fillRect(wall.x, wall.y, wall.width, wall.height);
+            if (!visible(wall)) continue;
+            this.drawPlatform('platform4', wall.x, wall.y, wall.width, wall.height);
+            this.ctx.strokeStyle = '#000';
+            this.ctx.lineWidth = 1;
+            this.ctx.strokeRect(wall.x, wall.y, wall.width, wall.height);
         }
 
 
         // Vykreslenie všetkých mincí (gold, silver)
         for (let coin of this.currentLevelData.coins) {
-            if (!coin.collected) {
+            if (!coin.collected && visible(coin)) {
                 this.coinAnimationManager.draw(
                     this.ctx,
                     coin.getAnimationType(),  // 'gold' alebo 'silver'
@@ -3517,7 +3617,7 @@ for (let platform of this.currentLevelData.platforms) {
 
         // Vykreslenie všetkých diamantov (blue, green, red)
         for (let diamond of this.currentLevelData.diamonds) {
-            if (!diamond.collected) {
+            if (!diamond.collected && visible(diamond)) {
                 this.coinAnimationManager.draw(
                     this.ctx,
                     diamond.getAnimationType(),  // 'blueDiamond', 'greenDiamond', 'redDiamond'
@@ -3611,17 +3711,22 @@ for (let platform of this.currentLevelData.platforms) {
      * @param {number} timestamp - Čas od spustenia stránky v milisekundách
      */
     gameLoop(timestamp) {
-        // Výpočet FPS (len pre debug)
-        if (this.lastTime) {
-            this.fps = 1000 / (timestamp - this.lastTime);
-        }
+        const STEP = 1000 / 60;
+        if (this.lastTime == null) this.lastTime = timestamp;
+        const elapsed = Math.min(100, Math.max(0, timestamp - this.lastTime));
         this.lastTime = timestamp;
+        if (elapsed) this.fps = this.fps * 0.9 + (1000 / elapsed) * 0.1;
 
-        // ✅ OPRAVENÉ: Posielame timestamp do update()
-        this.update(timestamp);
+        this.accumulator = (this.accumulator || 0) + elapsed;
+        let steps = 0;
+        while (this.accumulator >= STEP && steps < 5) {
+            this.update();
+            this.accumulator -= STEP;
+            steps++;
+        }
+        if (steps === 5) this.accumulator = 0; // po dlhej pauze nedobiehať
+
         this.draw();
-        
-        // Požiadaj prehliadač o ďalší frame
         requestAnimationFrame((ts) => this.gameLoop(ts));
     }
 }
@@ -3666,8 +3771,7 @@ class Coin {
      * Získanie náhodného slova pre rečové cvičenie
      */
     getRandomWord() {
-        const words = ['auto', 'dom', 'strom', 'slnko', 'ruka', 'ryba', 'rak', 'lopta'];
-        return words[Math.floor(Math.random() * words.length)];
+        return SJ.nextWord();
     }
     
     /**

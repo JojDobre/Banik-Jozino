@@ -7,7 +7,8 @@
  * - worldId: ID sveta, do ktorého level patří
  * - levelNumber: poradové číslo levelu v rámci sveta (1-20)
  * - name: názov levelu
- * - gameType: typ hry ('banik', 'pexeso', 'mario')
+ * - gameType: typ hry ('banik', 'pexeso', 'mario' = Super Jožino)
+ *   pri 'mario' určuje gameConfig.sjLevel mapu z js/superjozino/levels.js
  * - difficulty: obtiažnosť levelu (1-5)
  * - words: pole slov na precvičovanie v tomto leveli
  * - gameConfig: špecifické nastavenia pre daný typ hry
@@ -101,10 +102,11 @@ const LEVELS_CONFIG = {
             worldId: 'world_r',
             levelNumber: 3,
             name: 'Prvé R-ka',
-            gameType: 'banik',
+            gameType: 'mario', // Super Jožino (superjozino.html)
             difficulty: 1,
             words: ['rak', 'ryba', 'ruka', 'rosa', 'rád', 'drak'],
             gameConfig: {
+                sjLevel: 1, // mapa Super Jožina (js/superjozino/levels.js)
                 diamonds: 3,
                 golds: 5,
                 crystals: 1,

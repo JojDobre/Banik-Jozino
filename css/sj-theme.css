@@ -122,25 +122,111 @@
     top: 130px;
 }
 
-/* ===== Dotykové ovládanie: joystick vľavo, skok vpravo (ako v Bani) ===== */
+/* ===== Dotykové ovládanie (js/superjozino/controls.js) =====
+ * Ľavá polovica obrazovky = pohyb (šípky), pravá = skok.
+ * Zobrazí sa len na dotykových zariadeniach. */
+.bj-staged .sj-controls {
+    display: none;
+}
+
 @media (pointer: coarse) {
-    .bj-staged .joystick-controls {
-        left: 70px !important;
-        right: auto !important;
-        bottom: 70px !important;
-        transform-origin: left bottom !important;
-    }
-    .bj-staged .action-controls {
-        right: 70px !important;
-        left: auto !important;
-        bottom: 70px !important;
-        padding: 0 !important;
-        transform-origin: right bottom !important;
+    .bj-staged .sj-controls {
+        display: block;
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        pointer-events: none;
     }
 }
 
-.bj-staged .action-button {
+/* neviditeľná vrstva, ktorá zachytáva prsty (celá plocha pod hornou lištou) */
+.bj-staged .sj-touch-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: auto;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.bj-staged .sj-pad {
+    position: absolute;
+    bottom: 50px;
+    display: flex;
+    gap: 34px;
+    pointer-events: none;
+}
+
+.bj-staged .sj-pad--move {
+    left: 60px;
+}
+
+.bj-staged .sj-pad--jump {
+    right: 60px;
+}
+
+.bj-staged .sj-btn {
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    border: 6px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    color: #FFD900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.4);
+    opacity: 0.82;
+    transition: transform 0.08s ease, opacity 0.08s ease, filter 0.08s ease;
+}
+
+.bj-staged .sj-btn svg {
+    width: 56%;
+    height: 56%;
+    filter: drop-shadow(0 3px 0 #000);
+}
+
+.bj-staged .sj-btn--jump {
+    width: 230px;
+    height: 230px;
+    border-color: #1A511D;
+    background: linear-gradient(0deg, #15981E 0%, #0F1 100%);
+    color: #FFF;
+}
+
+.bj-staged .sj-btn.is-active {
+    transform: scale(0.92);
+    opacity: 1;
+    filter: brightness(1.15);
+}
+
+/* ===== Krátka správa v hre ===== */
+.bj-staged .sj-toast {
+    position: absolute;
+    top: calc(var(--bj-edge, 24px) + var(--bj-round, 88px) + 30px);
+    left: 50%;
+    transform: translate(-50%, -20px);
+    padding: 22px 44px 16px;
+    border-radius: 40px;
+    border: 5px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.45);
     font-family: "Luckiest Guy", sans-serif;
+    font-size: 42px;
+    line-height: 1;
+    color: #FFD900;
+    -webkit-text-stroke: 1px #000;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 40;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.bj-staged .sj-toast.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
 }
 
 /* ===== Okná (rečové cvičenie, koniec hry, level dokončený) ===== */

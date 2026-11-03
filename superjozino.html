@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>SuperJozino</title>
     <link rel="stylesheet" href="css/superjozino.css">
+    <!-- Svety a levely (slová pre rečové cvičenia, uloženie postupu) -->
+    <script src="config/worlds.js"></script>
+    <script src="config/levels.js"></script>
     <link rel="stylesheet" type="text/css" href="css/fonts.css" />
     <link rel="icon" type="image/png" href="images/icons/favicon.png">
     <!-- Spoločné služby (reč, zvuk, profily, karty) – window.BJ -->
@@ -44,21 +47,20 @@
             <div id="debugInfo"></div>
         </div>
 
-        <!-- VIRTUAL JOYSTICK PRE MOBILY -->
-        <!-- Akčné tlačidlo (JUMP) - vľavo -->
-        <div class="action-controls">
-            <button class="action-button" id="jumpButton" aria-label="Skok">
-                ↑
-            </button>
-        </div>
-
-        <!-- Virtual Joystick - vpravo -->
-        <div class="joystick-controls">
-            <div class="virtual-joystick" id="virtualJoystick">
-                <div class="joystick-base"></div>
-                <div class="joystick-knob" id="joystickKnob"></div>
+        <!-- Dotykové ovládanie: ľavá polovica = pohyb, pravá = skok (js/superjozino/controls.js) -->
+        <div class="sj-controls" id="sjControls">
+            <div class="sj-touch-layer" id="sjTouchLayer"></div>
+            <div class="sj-pad sj-pad--move" aria-hidden="true">
+                <div class="sj-btn" id="sjLeft"><svg viewBox="0 0 24 24"><path d="M15 4.5 7.5 12l7.5 7.5" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="sj-btn" id="sjRight"><svg viewBox="0 0 24 24"><path d="M9 4.5 16.5 12 9 19.5" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            </div>
+            <div class="sj-pad sj-pad--jump" aria-hidden="true">
+                <div class="sj-btn sj-btn--jump" id="sjJump"><svg viewBox="0 0 24 24"><path d="M4.5 15 12 7.5l7.5 7.5" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             </div>
         </div>
+
+        <!-- krátka správa v hre (napr. „Najprv pozbieraj diamanty“) -->
+        <div class="sj-toast" id="sjToast" role="status" aria-live="polite"></div>
 
     </div>
 
@@ -114,7 +116,8 @@
 
   </div><!-- /bj-stage -->
 
-    <script src="js/superjozino/joystick.js"></script>
+    <script src="js/managers/progressManager.js"></script>
+    <script src="js/superjozino/controls.js"></script>
     <script src="js/superjozino/game.js"></script>
     <script src="js/superjozino/levels.js"></script>
 </body>

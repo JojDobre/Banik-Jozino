@@ -791,7 +791,7 @@ function getGameTypeName(gameType) {
     const names = {
         'banik': 'Baník',
         'pexeso': 'Pexeso', 
-        'mario': 'Super Mario'
+        'mario': 'Super Jožino'
     };
     return names[gameType] || gameType;
 }
