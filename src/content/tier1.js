@@ -18,8 +18,22 @@ export const CHAPTERS = [
 
 export const LEVELS_PER_CHAPTER = 10;
 
-/** Minihry úrovne 1, ktoré sú hotové (poradie = striedanie v ceste). */
-export const GAMES = [{ id: 'same-different', page: 'pocuvaj.html' }];
+/**
+ * Minihry úrovne 1 (poradie = striedanie v ceste). minAge = od koľkých rokov
+ * (mladšie deti hru preskočia).
+ */
+export const GAMES = [
+    { id: 'same-different', page: 'pocuvaj.html' },
+    { id: 'find-picture', page: 'obrazky.html' },
+    { id: 'sound-pexeso', page: 'zvpexeso.html' },
+    { id: 'mine-bells', page: 'zvoncky.html', minAge: 5 },
+];
+
+const AGE_MIN = { '3-4': 3, '5-6': 5, '7-8': 7 };
+export function gamesFor(ageGroup) {
+    const age = AGE_MIN[ageGroup] ?? 5;
+    return GAMES.filter((g) => !g.minAge || age >= g.minAge);
+}
 
 /**
  * Počet kôl v leveli podľa veku a poradia levelu.
@@ -39,7 +53,8 @@ export function buildTier1Path(ageGroup) {
     const total = CHAPTERS.length * LEVELS_PER_CHAPTER;
     return Array.from({ length: total }, (_, i) => {
         const number = i + 1;
-        const game = GAMES[i % GAMES.length];
+        const games = gamesFor(ageGroup);
+        const game = games[i % games.length];
         return {
             id: `t1_${String(number).padStart(2, '0')}`,
             number,

@@ -247,9 +247,19 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
 - ⬜ test na telefóne a doladenie (rýchlosť pohybu, veľkosť bane, obťažnosť)
 - ⬜ zvuky a okná cvičení v štýle Super Jožina (zatiaľ pôvodné okná z Bane)
 
-### Fáza 4 – Minihry úrovne 1 ⬜
-- ⬜ Kto to robí?, Zvukové pexeso, Zvončeky v bani, Hláskový vláčik
-- ⬜ zvukový obsah: viac dvojíc slov (cieľ 50+), nahrávky pre všetky slová
+### Fáza 4 – Minihry úrovne 1 🔄
+- ✅ nahrávky všetkých 425 slov hlasom Piper (`npm run build:word-audio` → `public/hlas/slova/`);
+  ľudské nahrávky (`public/zvuky/`) majú prednosť
+- ✅ **Čo počuješ?** (`obrazky.html`) – zaznie slovo, ťukni na obrázok; 2–4 obrázky podľa veku,
+  starší dostanú podobné slová; 2 pokusy (namiesto „Kto to robí?“ – na to chýbajú zvuky zvierat)
+- ✅ **Zvukové pexeso** (`zvpexeso.html`) – karty hrajú slová, dvojice podľa sluchu;
+  3–6 dvojíc podľa veku, hviezdy podľa počtu pokusov
+- ✅ **Zvončeky v bani** (`zvoncky.html`, od 5 rokov) – zopakuj poradie tónov, predlžuje sa
+- ✅ cesta úrovne 1 strieda 4 minihry (3–4 roky bez zvončekov); „Ďalej“ vedie na správnu hru
+- ✅ logika minihier v `src/games/tier1Games.js` + testy
+- ⬜ Kto to robí? – treba zvuky zvierat a predmetov (napr. Freesound / Kenney, CC0)
+- ⬜ Hláskový vláčik (triedenie obrázkov podľa hlásky)
+- ⬜ viac dvojíc pre „Rovnaké alebo iné?“ (teraz 15; dali by sa vytvoriť z Piperu – rak/lak…)
 
 ### Fáza 5 – Úroveň 2 ⬜
 - ⬜ prototyp analýzy zvuku + kalibrácia, test na deťoch
@@ -276,7 +286,7 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
 - Super Jožino (pôvodné mapy 101/102): netopier (`Bat`) nemá animáciu `walk` (len varovanie v konzole).
 - ~~Levely boli takmer všetky typu `banik`~~ – svety sa generujú, hry sa striedajú.
 - Builder: levely sú len v zariadení (localStorage) – pri vymazaní dát appky sa stratia, treba exportovať.
-- Posluchové cvičenie má len 15 dvojíc zvukov.
+- Posluchové cvičenie „Rovnaké alebo iné?“ má len 15 dvojíc zvukov.
 - ~~Opakujúce sa názvy levelov~~ – opravené generátorom.
 - Všetky svety sú odomknuté, podmienky odomknutia sú zakomentované.
 - Pexeso stále používa vlastné zvukové efekty (nie `AudioService`).
@@ -291,8 +301,8 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
 2. **Baňa pre mobil (fáza 3c)** – prvá verzia hotová, čaká na test na telefóne.
 3. **Svety písmen z generátora (úroveň 3)** ✅ – hotové; ďalej viac máp Super Jožina
    (z buildera) a kontrola slovníka logopédom (niektoré priradenia hlások).
-4. **Minihry úrovne 1 (fáza 4)** – Kto to robí?, Zvukové pexeso, Zvončeky v bani; viac dvojíc
-   zvukov (cieľ 50+) – teraz je len 15.
+4. **Minihry úrovne 1 (fáza 4)** 🔄 – Čo počuješ?, Zvukové pexeso a Zvončeky hotové;
+   zostáva Kto to robí? (zvuky), Hláskový vláčik, viac dvojíc pre Rovnaké alebo iné?
 5. **Obťažnosť podľa veku** naprieč hrami (Super Jožino, Baňa, Pexeso).
 6. **Ikona appky a úvodná obrazovka**, potom **fáza 7** (rodičovská brána, licencia hlasu,
    zásady súkromia, uzavreté testovanie na Google Play).

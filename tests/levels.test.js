@@ -46,7 +46,7 @@ test('každý svet vie vygenerovať 16 levelov s 5 slovami', () => {
 
 test('minihry podľa veku a úrovne', () => {
     const young = minigamesFor({ ageGroup: '3-4', tier: 3 }).map((g) => g.id);
-    assert.deepEqual(young, []); // existujúce hry sú pre 5+
+    assert.deepEqual(young, ['banik']); // pôvodná Baňa je aj pre 3–4 roky (game.html)
     const older = minigamesFor({ ageGroup: '7-8', tier: 3 }).map((g) => g.id);
     assert.deepEqual(older, ['banik', 'pexeso', 'mario']);
     assert.ok(minigamesFor({ ageGroup: '3-4', tier: 1, includePlanned: true }).length >= 2);

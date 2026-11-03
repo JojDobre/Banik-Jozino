@@ -17,6 +17,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { LINES } from '../src/content/voiceLines.js';
+import { lineId } from './lib/line-id.mjs';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const OUT = path.join(ROOT, 'public', 'hlas');
@@ -29,17 +30,7 @@ const ALL = process.argv.includes('--all');
 // Tempo (vyššie = pomalšie) – pre deti trochu pomalšie ako normálna reč.
 const LENGTH_SCALE = '1.12';
 
-export function lineId(text) {
-    const slug = text
-        .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '')
-        .slice(0, 40);
-    const hash = createHash('sha1').update(text).digest('hex').slice(0, 6);
-    return `${slug}-${hash}`;
-}
+export { lineId };
 
 async function ensureModel() {
     mkdirSync(CACHE, { recursive: true });

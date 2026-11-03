@@ -4,11 +4,17 @@
  */
 import generated from './words.generated.js';
 import overrides from './word-overrides.js';
+import wordAudio from './wordAudio.generated.js';
 
+/**
+ * Nahrávka slova: ľudská (public/zvuky/<slovo>.wav) má prednosť, inak hlas
+ * Piper (public/hlas/slova/, npm run build:word-audio).
+ */
 function merge(entry) {
     const o = overrides[entry.word];
-    if (!o) return entry;
-    return { ...entry, ...o, phonemes: { ...entry.phonemes, ...(o.phonemes || {}) } };
+    const withAudio = entry.audio ? entry : { ...entry, audio: wordAudio[entry.word] || null };
+    if (!o) return withAudio;
+    return { ...withAudio, ...o, phonemes: { ...entry.phonemes, ...(o.phonemes || {}) } };
 }
 
 export const WORDS = generated.map(merge).filter((w) => !w.exclude);

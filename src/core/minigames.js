@@ -13,15 +13,16 @@ export const TIERS = [
 
 export const MINIGAMES = [
     // existujúce hry
-    { id: 'banik', title: 'Baňa', tiers: [3], ages: ['5-6', '7-8'], exercise: ['speech', 'listening'], page: 'game.html', status: 'ready' },
+    { id: 'banik', title: 'Baňa', tiers: [3], ages: ['3-4', '5-6', '7-8'], exercise: ['speech', 'listening'], page: 'game.html', status: 'ready' },
     { id: 'pexeso', title: 'Pexeso', tiers: [3], ages: ['5-6', '7-8'], exercise: ['speech'], page: 'pexeso.html', status: 'ready' },
     { id: 'mario', title: 'Super Jožino', tiers: [3], ages: ['7-8'], exercise: ['speech', 'listening'], page: 'superjozino.html', status: 'ready' },
 
     // úroveň 1 – Počúvam
     { id: 'same-different', title: 'Rovnaké alebo iné?', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], page: 'pocuvaj.html', status: 'ready' },
-    { id: 'who-makes-it', title: 'Kto to robí?', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], status: 'planned' },
-    { id: 'sound-pexeso', title: 'Zvukové pexeso', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], status: 'planned' },
-    { id: 'mine-bells', title: 'Zvončeky v bani', tiers: [1], ages: ['5-6', '7-8'], exercise: ['listening'], status: 'planned' },
+    { id: 'find-picture', title: 'Čo počuješ?', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], page: 'obrazky.html', status: 'ready' },
+    { id: 'who-makes-it', title: 'Kto to robí?', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], status: 'planned' }, // chýbajú zvuky zvierat/predmetov
+    { id: 'sound-pexeso', title: 'Zvukové pexeso', tiers: [1], ages: ['3-4', '5-6', '7-8'], exercise: ['listening'], page: 'zvpexeso.html', status: 'ready' },
+    { id: 'mine-bells', title: 'Zvončeky v bani', tiers: [1], ages: ['5-6', '7-8'], exercise: ['listening'], page: 'zvoncky.html', status: 'ready' },
     { id: 'phoneme-train', title: 'Hláskový vláčik', tiers: [1], ages: ['5-6', '7-8'], exercise: ['listening'], status: 'planned' },
 
     // úroveň 2 – Zvuky a hlásky

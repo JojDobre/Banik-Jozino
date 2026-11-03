@@ -1,0 +1,161 @@
+/* Minihry úrovne 1: Čo počuješ?, Zvukové pexeso, Zvončeky v bani
+   (spoločné s „Rovnaké alebo iné?“ – css/pocuvaj.css: tabuľa, bodky kôl, spätná väzba) */
+
+.t1-stage {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding-bottom: 20px;
+}
+
+/* veľký reproduktor */
+.t1-speaker {
+    width: 170px;
+    height: 170px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 7px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    color: #FFD900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 12px 22px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+.t1-speaker svg { width: 58%; height: 58%; }
+.t1-speaker--small { width: 120px; height: 120px; border-width: 6px; }
+.t1-speaker.is-speaking { animation: t1-ring 0.9s ease-out infinite; }
+@keyframes t1-ring {
+    0% { box-shadow: 0 0 0 0 rgba(255, 217, 0, 0.7), 0 12px 22px rgba(0, 0, 0, 0.5); }
+    100% { box-shadow: 0 0 0 34px rgba(255, 217, 0, 0), 0 12px 22px rgba(0, 0, 0, 0.5); }
+}
+
+/* ===== Čo počuješ? – obrázky ===== */
+.t1-cards { display: flex; gap: 54px; align-items: center; justify-content: center; }
+.t1-card {
+    width: 330px;
+    height: 330px;
+    padding: 18px;
+    border-radius: 36px;
+    border: 7px solid #AC3F0B;
+    background: radial-gradient(circle at 50% 40%, #fff7e0 0%, #f1d9a6 100%);
+    box-shadow: 0 14px 26px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.2s ease, border-color 0.2s ease;
+}
+.t1-cards--4 .t1-card { width: 290px; height: 290px; }
+.t1-card img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; }
+.t1-card:active { transform: scale(0.95); }
+.t1-card.is-right { border-color: #2fe03a; box-shadow: 0 0 0 10px rgba(47, 224, 58, 0.35), 0 14px 26px rgba(0, 0, 0, 0.5); transform: scale(1.06); }
+.t1-card.is-wrong { border-color: #ff5a4e; animation: t1-shake 0.45s ease; }
+.t1-card.is-off { filter: grayscale(0.8) brightness(0.6); }
+@keyframes t1-shake {
+    0%, 100% { translate: 0; }
+    25% { translate: -14px; }
+    75% { translate: 14px; }
+}
+
+/* ===== Zvukové pexeso – karty, ktoré hrajú ===== */
+.t1-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 4), 220px);
+    gap: 28px;
+}
+.t1-flip {
+    width: 220px;
+    height: 220px;
+    padding: 0;
+    border: 0;
+    background: none;
+    perspective: 900px;
+    cursor: pointer;
+}
+.t1-flip__inner {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.3, 1.3, 0.5, 1);
+    transform-style: preserve-3d;
+}
+.t1-flip__back, .t1-flip__front {
+    position: absolute;
+    inset: 0;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
+}
+.t1-flip__back {
+    border: 6px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    color: #FFD900;
+}
+.t1-flip__back svg { width: 46%; height: 46%; }
+.t1-flip__front {
+    transform: rotateY(180deg);
+    border: 6px solid #2fe03a;
+    background: radial-gradient(circle at 50% 40%, #fff7e0 0%, #f1d9a6 100%);
+    padding: 14px;
+}
+.t1-flip__front img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.t1-flip.is-playing .t1-flip__back { animation: t1-ring 0.8s ease-out infinite; filter: brightness(1.2); }
+.t1-flip.is-heard .t1-flip__back { border-color: #4fc3f7; }
+.t1-flip.is-wrong .t1-flip__back { border-color: #ff5a4e; animation: t1-shake 0.45s ease; }
+.t1-flip.is-matched .t1-flip__inner { transform: rotateY(180deg); }
+.t1-flip.is-matched { cursor: default; }
+
+/* ===== Zvončeky v bani ===== */
+.t1-stage--bells { gap: 30px; }
+.t1-bells { display: flex; gap: 70px; align-items: flex-start; justify-content: center; }
+.t1-bell {
+    width: 230px;
+    height: 280px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transform-origin: 50% 0;
+    touch-action: none;
+    filter: drop-shadow(0 12px 12px rgba(0, 0, 0, 0.5));
+}
+.t1-bell svg { width: 100%; height: 100%; }
+.t1-bell.is-ringing {
+    animation: t1-swing 0.5s ease-in-out;
+    filter: drop-shadow(0 0 30px var(--glow)) drop-shadow(0 0 60px var(--glow)) brightness(1.15);
+}
+.t1-bell.is-listen { pointer-events: none; }
+@keyframes t1-swing {
+    0% { rotate: 0deg; }
+    25% { rotate: 12deg; }
+    50% { rotate: -10deg; }
+    75% { rotate: 6deg; }
+    100% { rotate: 0deg; }
+}
+.t1-bells__bar { display: flex; align-items: center; gap: 30px; }
+.t1-hint {
+    min-width: 360px;
+    padding: 22px 40px 16px;
+    border-radius: 40px;
+    border: 5px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 48px;
+    line-height: 1;
+    color: #FFD900;
+    -webkit-text-stroke: 1px #000;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.45);
+}

@@ -9,4 +9,5 @@
 export default {
     rocket: { exclude: true }, // anglické slovo (obrázok rakety) – po slovensky „raketa“
     facka: { exclude: true }, // nevhodné pre deti
+    donut: { exclude: true }, // anglické slovo
 };

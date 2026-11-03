@@ -18,7 +18,8 @@ test('cesta úrovne 1: kapitoly, míľniky, jedinečné id', () => {
     assert.deepEqual(path.filter((l) => l.milestone).map((l) => l.number), [4, 8, 12, 16, 20, 24, 28]);
     assert.equal(path[0].chapter, 1);
     assert.equal(path[10].chapter, 2);
-    assert.equal(levelUrl(path[2]), 'pocuvaj.html?level=t1_03');
+    assert.equal(levelUrl(path[0]), 'pocuvaj.html?level=t1_01');
+    assert.equal(levelUrl(path[2]), 'zvpexeso.html?level=t1_03'); // minihry sa striedajú
 });
 
 test('mladšie deti majú kratšie levely, obťažnosť stúpa s kapitolou', () => {

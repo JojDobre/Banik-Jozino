@@ -19,7 +19,8 @@
     "build:voice": "node scripts/build-voice.mjs",
     "check:center": "node scripts/check-centering.cjs",
     "audit:ui": "node scripts/audit-ui.cjs",
-    "build:levels": "node scripts/build-levels.mjs"
+    "build:levels": "node scripts/build-levels.mjs",
+    "build:word-audio": "node scripts/build-word-audio.mjs"
   },
   "devDependencies": {
     "@capacitor/android": "^8.6.0",

@@ -7,7 +7,7 @@
  */
 import '../bridge.js';
 import { h, centeredGlyph, topbar, requireProfile, say, ICONS, stars, pause } from '../ui/kit.js';
-import { buildTier1Path, TIER1_SET, CHAPTERS } from '../content/tier1.js';
+import { buildTier1Path, TIER1_SET, CHAPTERS, levelUrl } from '../content/tier1.js';
 import { avatarById } from '../core/profiles.js';
 import { makeRounds, starsForScore } from '../games/sameDifferent.js';
 
@@ -190,7 +190,7 @@ function start(level, path) {
                 h('div.bj-row', {}, [
                     h('a.bj-btn', { href: location.href, text: 'Znova' }),
                     nextUnlocked
-                        ? h('a.bj-btn.bj-btn--primary', { href: `pocuvaj.html?level=${nextLevel.id}`, text: 'Ďalej' })
+                        ? h('a.bj-btn.bj-btn--primary', { href: levelUrl(nextLevel), text: 'Ďalej' })
                         : h('a.bj-btn.bj-btn--primary', { href: backHref, text: 'Mapa' }),
                 ]),
             ]),
