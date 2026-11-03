@@ -90,7 +90,7 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 |---|---|---|---|
 | Baňa | 3 (1) | 5+ | existuje |
 | Pexeso | 3 | 5+ | existuje |
-| Super Jožino | 3 | 7+ | existuje, treba zaradiť medzi levely |
+| Super Jožino | 3 | 5+ | hotové v štýle Pixel Adventure, zaradené ako typ levelu `mario` (R-3), builder levelov |
 | Kto to robí? | 1 | 3+ | zvuk → ťukni na zviera/predmet |
 | Zvukové pexeso | 1 | 4+ | karty hrajú slovo; pri dvojici dieťa odpovie rovnaké/iné; rovnaké + správne = pár a bod; v balíčku aj podobné slová (rak/lak) |
 | Zvončeky v bani | 1 | 5+ | zopakuj poradie zvukov; vyššia obťažnosť: nájdi dvojice pred zhasnutím lampy |
@@ -184,8 +184,39 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
     (zatrasenie, roztrhnutie, karty vyletia a otočia sa, iskry/konfety podľa vzácnosti)
   - nový vzhľad minihry „Rovnaké alebo iné?“ – tabuľa, animovaní baníci na podstavcoch
     s reflektorom, okrúhle drevené tlačidlá
+- ✅ jednotný dizajn pre mobil: rovnaká mierka plátna na všetkých stránkach, dizajnové
+  premenné (okrúhle tlačidlá, lišty, čipy, nadpisy), čitateľné texty, kontrola
+  `npm run audit:ui` (mierka, tlačidlá, najmenší text, prvky mimo obrazovky)
+- ✅ bez preblikávania: písma vopred (`preload`, `font-display: block`), obrazovka sa ukáže
+  až keď sú písma a obrázky pripravené, „Načítavam…“ len pri prvom spustení
 - ⬜ svety písmen (úroveň 3) s levelmi z generátora slov – zatiaľ ostávajú pôvodné levely
 - ⬜ ikona a úvodná obrazovka appky
+
+### Fáza 3b – Super Jožino ✅
+- ✅ mobilné ovládanie: ľavá polovica = pohyb (šípky, prst sa dá posúvať), pravá = skok,
+  viac prstov naraz; plynulé zrýchľovanie, tolerantný skok (coyote time, jump buffer)
+- ✅ výkon: odstránené umelé spomalenie, pevný krok fyziky 60×/s, kreslí sa len viditeľné,
+  terén v cache; svet priblížený, kamera aj zvislo
+- ✅ grafika **Pixel Adventure 1 a 2** (Pixel Frog, CC0 – `public/images/superjozino/pa/CREDITS.md`),
+  postava ostáva baník Jožino, pozadie svetov ostáva
+- ✅ baník: dvojitý skok so saltom, šmýkanie po stene a odraz, šmyk po ľade, zásah, pád,
+  objavenie sa; po oživení sa neovláda, kým nedopadne
+- ✅ ovocie, krabice, rozbitné bloky, trampolína, plošiny na reťazi, padajúce plošiny,
+  ostne, píla, oheň, ventilátor, šípka; 11 nepriateľov z PA2; checkpointy, trofej, konfety
+- ✅ drahokamy: modrý = rečové cvičenie (3 pokusy, reproduktor, Preskočiť),
+  zelený = super skok, červený = +1 život; strieborná minca = „Rovnaké alebo iné?“
+- ✅ efekty a zvuky, spätná väzba Správne / Skús znova ako v ostatných cvičeniach
+- ✅ napojenie na svety: `gameType: 'mario'` + `gameConfig.sjLevel`, slová z levelu,
+  hviezdy do postupu, odmena (karty)
+- ✅ 3 levely z dlaždíc (`sj-levels.js`), pôvodné mapy ako 101 a 102
+- ✅ **builder levelov** (`builder.html`): 3 vrstvy (bloky cez seba), veľké bloky, objekty,
+  pasce, nepriatelia, späť/znova, moje levely, predlohy, export/import JSON, Hrať;
+  „TEST JOZINO“ v menu spúšťa vlastný level
+- ✅ **teleportačné miestnosti**: rámik, vzorované pozadie, portály tam a späť
+- ⬜ test na telefóne: ovládanie, obťažnosť pre 5–6 rokov, výkon
+- ⬜ viac levelov (z buildera) a ich zaradenie do svetov písmen (nielen R-3)
+- ⬜ obťažnosť podľa veku (3–4: viac životov, bez dier, pomalší nepriatelia)
+- ⬜ uloženie levelov z buildera do repa (teraz len v zariadení; export JSON → repo)
 
 ### Fáza 4 – Minihry úrovne 1 ⬜
 - ⬜ Kto to robí?, Zvukové pexeso, Zvončeky v bani, Hláskový vláčik
@@ -213,10 +244,26 @@ Na začiatok stačia obrázky slov v pekných rámikoch (CSS), vlastná grafika 
 
 ## Známe chyby (na opravu neskôr)
 - ~~Baňa padala po zobrazení výsledkov (`showUnlockNotificationsInGame` neexistuje)~~ – opravené vo fáze 3.
-- Super Jožino: netopier (`Bat`) nemá animáciu `walk` (len varovanie v konzole). Pád hry na chýbajúcom obrázku je opravený.
-- Všetkých 260 levelov je typu `banik`; Pexeso a Super Jožino nie sú v postupe.
+- Super Jožino (pôvodné mapy 101/102): netopier (`Bat`) nemá animáciu `walk` (len varovanie v konzole).
+- Levely sú takmer všetky typu `banik`; Super Jožino je len R-3, Pexeso nie je v postupe.
+- Builder: levely sú len v zariadení (localStorage) – pri vymazaní dát appky sa stratia, treba exportovať.
 - Posluchové cvičenie má len 15 dvojíc zvukov.
 - Opakujúce sa názvy levelov (napr. 24× „Prvé Ď-čka“).
 - Všetky svety sú odomknuté, podmienky odomknutia sú zakomentované.
-- Pexeso a Super Jožino stále používajú vlastné zvukové efekty (nie `AudioService`).
+- Pexeso stále používa vlastné zvukové efekty (nie `AudioService`).
 - ~~Pexeso volalo neexistujúcu metódu `saveLevelProgress`, postup sa neukladal~~ – opravené vo fáze 1.
+
+---
+
+## Čo ďalej (poradie)
+
+1. **Test na telefóne (APK)** – Super Jožino (ovládanie, obťažnosť, výkon), rozpoznávanie reči
+   v appke, celý postup profil → úroveň → level → odmena. Bez toho nemá zmysel ladiť ďalej naslepo.
+2. **Svety písmen z generátora (úroveň 3)** – levely z pravidiel slovníka namiesto 260 ručných
+   levelov; striedanie Baňa / Pexeso / Super Jožino v rámci sveta, jedinečné názvy levelov.
+3. **Minihry úrovne 1 (fáza 4)** – Kto to robí?, Zvukové pexeso, Zvončeky v bani; viac dvojíc
+   zvukov (cieľ 50+) – teraz je len 15.
+4. **Obťažnosť podľa veku** naprieč hrami (Super Jožino, Baňa, Pexeso).
+5. **Ikona appky a úvodná obrazovka**, potom **fáza 7** (rodičovská brána, licencia hlasu,
+   zásady súkromia, uzavreté testovanie na Google Play).
+6. **Úroveň 2 (fáza 5)** – najprv prototyp analýzy zvuku a test na deťoch.
