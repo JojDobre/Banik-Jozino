@@ -90,10 +90,12 @@
     function mineSize() {
         const cfg = currentLevelConfig && currentLevelConfig.gameConfig;
         if (cfg && cfg.mineSize && cfg.mineSize.width) return [cfg.mineSize.width, cfg.mineSize.height];
-        const age = window.BJRoute ? BJRoute.ageGroup() : null;
-        if (age === '7-8') return [34, 24];
-        return [28, 19];
+        const a = window.BJAge ? BJAge.get('bana') : null;
+        return (a && a.mine) || [28, 19];
     }
+
+    // dosah lampy (dlaždice) podľa veku – mladší vidia ďalej
+    const LIGHT = (window.BJAge && BJAge.get('bana').light) || 4.4;
 
     const key = (c, r) => c + ',' + r;
     const inside = (c, r) => c >= 0 && r >= 0 && c < S.W && r < S.H;
@@ -513,7 +515,7 @@
         const ly = S.vis.y + 0.4;
         for (let r = 0; r < S.H; r++) for (let c = 0; c < S.W; c++) {
             let a = S.explored.has(key(c, r)) ? 0.7 : 0.985;
-            let light = Math.max(0, 1 - Math.hypot(c + 0.5 - lx, r + 0.5 - ly) / 4.4);
+            let light = Math.max(0, 1 - Math.hypot(c + 0.5 - lx, r + 0.5 - ly) / LIGHT);
             for (const [lc, lr] of S.lamps) light = Math.max(light, 0.9 * Math.max(0, 1 - Math.hypot(c - lc, r - lr) / 3));
             a *= 1 - light;
             const i = (r * S.W + c) * 4;
@@ -657,7 +659,8 @@
             $('bxKov').textContent = k;
         }
         // čas len pri leveloch s časovým limitom (predvolene vypnutý)
-        const limit = currentLevelConfig && (currentLevelConfig.timeLimit || (currentLevelConfig.gameConfig && currentLevelConfig.gameConfig.timeLimit));
+        const ageTimer = !window.BJAge || BJAge.get('bana').timeLimit;
+        const limit = ageTimer && currentLevelConfig && (currentLevelConfig.timeLimit || (currentLevelConfig.gameConfig && currentLevelConfig.gameConfig.timeLimit));
         const chip = $('bxTimeChip');
         if (chip) {
             chip.hidden = !limit;

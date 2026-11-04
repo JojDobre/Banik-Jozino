@@ -35,7 +35,8 @@
             this.kind = k[0];
             this.anim = k[1];
             this.hitAnim = k[2];
-            this.speed = p.speed ?? k[3];
+            // rýchlosť podľa veku dieťaťa (js/age-difficulty.js)
+            this.speed = (p.speed ?? k[3]) * ((window.BJAge && BJAge.get('sj').enemySpeed) || 1);
             this.width = k[4];
             this.height = k[5];
             this.x = cx - this.width / 2;

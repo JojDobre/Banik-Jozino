@@ -111,7 +111,8 @@
                     }
                     break;
                 case 'saw': {
-                    const s = Math.sin(b.t * (b.speed || 0.02));
+                    // píla sa pre mladšie deti pohybuje pomalšie (js/age-difficulty.js)
+                    const s = Math.sin(b.t * (b.speed || 0.02) * ((window.BJAge && BJAge.get('sj').enemySpeed) || 1));
                     b.x = b.x0 + (b.vertical ? 0 : s * b.range);
                     b.y = b.y0 + (b.vertical ? s * b.range : 0);
                     const cx = b.x + 38;

@@ -2031,9 +2031,12 @@ class Game {
         this.currentLevel = SJ.map;
         this.startedAt = Date.now();
         this.gameState = 'playing'; // 'playing', 'paused', 'completed'
-        this.lives = 3;
+        // životy a nezraniteľnosť po zásahu podľa veku (js/age-difficulty.js)
+        const ageSJ = (window.BJAge && BJAge.get('sj')) || {};
+        this.maxLives = ageSJ.lives || 3;
+        this.lives = this.maxLives;
         this.isInvulnerable = false;
-        this.invulnerableTime = 2000; // 2 sekundy nezraniteľnosti po zásahu
+        this.invulnerableTime = ageSJ.invulnerableMs || 2000;
         this.lastCheckpoint = null;
 
         // Mince a diamanty
@@ -2920,7 +2923,7 @@ class Game {
 
     restartLevel() {
         // Reset všetkých potrebných vlastností
-        this.lives = 3;
+        this.lives = this.maxLives || 3;
         this.collectedCoins = 0;
         this.collectedDiamonds = 0;
         this.lastCheckpoint = null;

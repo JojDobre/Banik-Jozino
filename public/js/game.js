@@ -464,6 +464,13 @@ if (levelConfig.gameConfig && levelConfig.gameConfig.crystals) {
     PocetGenKov = levelConfig.gameConfig.crystals;
 }
 
+// obťažnosť podľa veku (js/age-difficulty.js): menej predmetov pre mladších
+if (window.BJAge && !customLevel) {
+    const k = BJAge.get('bana').items;
+    PocetGenDiamant = BJAge.scale(PocetGenDiamant, k);
+    PocetGenGolds = BJAge.scale(PocetGenGolds, k);
+    PocetGenKov = BJAge.scale(PocetGenKov, k);
+}
 console.log(`Aktualizované počty z gameConfig: Diamanty=${PocetGenDiamant}, Zlato=${PocetGenGolds}, Kryštály=${PocetGenKov}`);
 
     // Nastavenie pozície hráča ak je definovaná v levelConfig
@@ -483,7 +490,9 @@ console.log(`Aktualizované počty z gameConfig: Diamanty=${PocetGenDiamant}, Zl
     // Inicializácia sledovania výkonu
     initializePerformanceTracking();
 
-    const timeLimit = levelConfig && levelConfig.timeLimit ? levelConfig.timeLimit : null;
+    // časomiera len pre vek, ktorý ju má povolenú (js/age-difficulty.js)
+    const ageTimer = !window.BJAge || BJAge.get('bana').timeLimit;
+    const timeLimit = ageTimer && levelConfig && levelConfig.timeLimit ? levelConfig.timeLimit : null;
     startTimer(timeLimit);
     
     resetGame();

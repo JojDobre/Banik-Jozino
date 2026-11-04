@@ -670,6 +670,12 @@ function initLevelGame(worldId, levelId) {
     } else {
         totalPairs = 8; // Defaultná hodnota
     }
+    // obťažnosť podľa veku (js/age-difficulty.js): mladší menej kariet, najstarší o 2 páry viac
+    if (window.BJAge) {
+        const max = BJAge.get('pexeso').maxPairs || totalPairs;
+        const bonus = BJAge.group() === '7-8' ? 2 : 0;
+        totalPairs = Math.max(3, Math.min(max, totalPairs + bonus));
+    }
     
     // Inicializácia hry
     initGame();

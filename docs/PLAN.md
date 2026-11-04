@@ -263,6 +263,10 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
 - ✅ viac dvojíc pre „Rovnaké alebo iné?“ – 15 ľudských + 21 minimálnych dvojíc (src/content/pairs.js,
   hlas Piper: rak/lak, kasa/kaša, koza/koža, kúra/túra…)
 
+### Obťažnosť podľa veku ✅
+- ✅ public/js/age-difficulty.js – tabuľka pre 3–4 / 5–6 / 7–8, hry si berú svoje hodnoty
+- ⬜ ladenie čísel podľa testov s deťmi
+
 ### Fáza 5 – Úroveň 2 ⬜
 - ⬜ prototyp analýzy zvuku + kalibrácia, test na deťoch
 - ⬜ Fúkaj na balón, Had Sykáčik, Včielka Bzzz, Slabiková lavína
@@ -305,7 +309,10 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
    (z buildera) a kontrola slovníka logopédom (niektoré priradenia hlások).
 4. **Minihry úrovne 1 (fáza 4)** 🔄 – Čo počuješ?, Zvukové pexeso, Zvončeky, Hláskový vláčik
    a nové dvojice hotové; zostáva len Kto to robí? (chýbajú zvuky zvierat a predmetov)
-5. **Obťažnosť podľa veku** naprieč hrami (Super Jožino, Baňa, Pexeso).
+5. **Obťažnosť podľa veku** ✅ – public/js/age-difficulty.js (jedno miesto pre úroveň 3):
+   Baňa (veľkosť bane, počet predmetov a cvičení, dosah lampy, časomiera len 7–8),
+   Pexeso (3–4: 4 páry, 5–6: max 6, 7–8: +2 páry až 10), Super Jožino (životy 5/5/3,
+   pomalší nepriatelia a píly, dlhšia nezraniteľnosť). Test: ?age=3-4 v adrese hry.
 6. **Ikona appky a úvodná obrazovka**, potom **fáza 7** (rodičovská brána, licencia hlasu,
    zásady súkromia, uzavreté testovanie na Google Play).
 7. **Úroveň 2 (fáza 5)** – najprv prototyp analýzy zvuku a test na deťoch.

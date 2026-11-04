@@ -33,11 +33,14 @@ export const MINIGAMES = [
     { id: 'mirror', title: 'Zrkadielko', tiers: [2], ages: ['3-4', '5-6', '7-8'], exercise: ['oromotor'], status: 'planned' },
 ];
 
-/** Obťažnosť podľa veku – minihry si z toho berú, čo potrebujú. */
+/**
+ * Obťažnosť podľa veku – výber slov a minihry úrovne 1. Hry úrovne 3
+ * (Baňa, Pexeso, Super Jožino) majú nastavenia v public/js/age-difficulty.js.
+ */
 export const AGE_DIFFICULTY = {
-    '3-4': { pexesoCards: 6, maxSyllables: 2, sessionMinutes: 3, allowClusters: false },
+    '3-4': { pexesoCards: 8, maxSyllables: 2, sessionMinutes: 3, allowClusters: false },
     '5-6': { pexesoCards: 12, maxSyllables: 3, sessionMinutes: 5, allowClusters: true },
-    '7-8': { pexesoCards: 16, maxSyllables: 5, sessionMinutes: 8, allowClusters: true },
+    '7-8': { pexesoCards: 20, maxSyllables: 5, sessionMinutes: 8, allowClusters: true },
 };
 
 export function getMinigame(id) {
