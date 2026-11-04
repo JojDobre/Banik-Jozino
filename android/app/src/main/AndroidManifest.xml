@@ -41,6 +41,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Mikrofón pre rečové cvičenia -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Mikrofón v hrách úrovne 2 (getUserMedia vo WebView): Capacitor pýta aj toto povolenie,
+         bez neho Android zamietne celý prístup k mikrofónu -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <!-- Android 11+: prístup k službe rozpoznávania reči a syntéze reči -->
     <queries>

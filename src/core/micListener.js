@@ -52,8 +52,15 @@ export async function listenSounds({ target = null, onUpdate, calib = null, cali
         stream = await navigator.mediaDevices.getUserMedia({
             audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 1 },
         });
-    } catch (e) {
-        throw new MicError(e && e.name === 'NotAllowedError' ? 'not-allowed' : 'audio-capture', e && e.message);
+    } catch (e1) {
+        // niektoré zariadenia nepodporujú vypnutie filtrov – skúsiť bez nastavení
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        } catch (e) {
+            const err = new MicError(e && e.name === 'NotAllowedError' ? 'not-allowed' : 'audio-capture', e && e.message);
+            err.detail = `${(e && e.name) || ''} ${(e && e.message) || ''}`.trim();
+            throw err;
+        }
     }
     const Ctx = window.AudioContext || window.webkitAudioContext;
     const ctx = new Ctx();

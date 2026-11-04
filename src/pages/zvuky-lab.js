@@ -73,6 +73,8 @@ async function toggle() {
         btnStart.textContent = 'Stop';
     } catch (e) {
         big.firstChild.textContent = micErrorText(e);
+        big.lastChild.textContent = '';
+        info.textContent = `Chyba: ${e.code || ''} ${e.detail || e.message || ''}`;
     }
 }
 
