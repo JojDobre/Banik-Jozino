@@ -6,14 +6,14 @@
  * URL: pocuvaj.html?level=t1_03
  */
 import '../bridge.js';
-import { h, centeredGlyph, topbar, requireProfile, say, ICONS, stars, pause } from '../ui/kit.js';
-import { buildTier1Path, TIER1_SET, CHAPTERS, levelUrl } from '../content/tier1.js';
+import { h, centeredGlyph, topbar, say, ICONS, pause } from '../ui/kit.js';
+import { bootTier1, finishLevel } from './tier1-common.js';
 import { avatarById } from '../core/profiles.js';
 import { makeRounds, starsForScore } from '../games/sameDifferent.js';
 
 const BJ = window.BJ;
 const app = document.getElementById('app');
-const profile = requireProfile();
+let profile = null;
 
 const MAX_ATTEMPTS = 2;
 
@@ -42,8 +42,8 @@ function play(src, maxMs = 5000) {
     return Promise.race([BJ.audio.play(src), pause(maxMs)]);
 }
 
-function start(level, path) {
-    const backHref = `cesta.html?chapter=${level.chapter}`;
+function start({ level, path, backHref, profile: p }) {
+    profile = p;
     const rounds = makeRounds(level.rounds);
     const leftAv = avatarById(profile.avatar);
     const rightAv = avatarById(profile.avatar === 'old_miner' ? 'yellow_hat' : 'old_miner');
@@ -176,37 +176,7 @@ function start(level, path) {
 
     function finish() {
         const earned = starsForScore(points / rounds.length);
-        const prog = BJ.tierProgress();
-        const result = prog.record(level.id, earned);
-        const nextLevel = path[path.indexOf(level) + 1];
-        const nextUnlocked = nextLevel && prog.isUnlocked(path, path.indexOf(nextLevel));
-
-        const title = earned === 3 ? 'Výborne!' : earned >= 1 ? 'Dobrá práca!' : 'Skúsime znova?';
-        const end = h('div.bj-modal', {}, [
-            h('div.bj-modal__box.bj-panel.end-box', { 'data-reward-slot': '' }, [
-                h('h2.bj-title.bj-title--yellow', { text: title }),
-                h('div.end-stars', {}, [stars(earned)]),
-                h('div.bj-text', { text: `Správne: ${Math.round(points * 10) / 10} z ${rounds.length}` }),
-                h('div.bj-row', {}, [
-                    h('a.bj-btn', { href: location.href, text: 'Znova' }),
-                    nextUnlocked
-                        ? h('a.bj-btn.bj-btn--primary', { href: levelUrl(nextLevel), text: 'Ďalej' })
-                        : h('a.bj-btn.bj-btn--primary', { href: backHref, text: 'Mapa' }),
-                ]),
-            ]),
-        ]);
-        (document.getElementById('bj-stage') || document.body).append(end);
-        if (earned >= 1) BJ.audio.playEffect('win');
-        say(title);
-
-        // karty za level (okno s odmenou sa zobrazí samo – viď ui/cards.js)
-        BJ.rewards.rewardLevel({
-            worldId: TIER1_SET,
-            levelNumber: level.number,
-            stars: earned,
-            previousStars: result.previousStars,
-            firstCompletion: result.firstCompletion,
-        });
+        finishLevel({ level, path, backHref, earned, summary: `Správne: ${Math.round(points * 10) / 10} z ${rounds.length}` });
     }
 
     app.replaceChildren(
@@ -242,15 +212,4 @@ function start(level, path) {
     })();
 }
 
-if (profile) {
-    const path = buildTier1Path(profile.ageGroup);
-    const id = new URLSearchParams(location.search).get('level');
-    const level = path.find((l) => l.id === id) || path[0];
-    const prog = BJ.tierProgress();
-    if (!prog.isUnlocked(path, path.indexOf(level))) {
-        location.replace(`cesta.html?chapter=${level.chapter}`);
-    } else {
-        document.title = `Level ${level.number} – ${CHAPTERS[level.chapter - 1].title}`;
-        start(level, path);
-    }
-}
+bootTier1(start);

@@ -8,6 +8,10 @@ import { getWord } from '../content/words.js';
 
 const BJ = window.BJ;
 
+/** Voľná hra z menu „Všetky hry“ (?free=1): bez zámkov, postup sa neukladá. */
+const FREE = new URLSearchParams(location.search).get('free') === '1';
+export const FREE_BACK = 'hry.html';
+
 /**
  * Spustí minihru pre level z adresy (?level=t1_05). Zamknutý level vráti na mapu.
  * @param {(ctx) => void} start – ctx: { level, path, profile, backHref }
@@ -17,8 +21,14 @@ export function bootTier1(start) {
     if (!profile) return;
     const path = buildTier1Path(profile.ageGroup);
     const id = new URLSearchParams(location.search).get('level');
-    const level = path.find((l) => l.id === id) || path[0];
+    const page = location.pathname.split('/').pop();
+    const level = path.find((l) => l.id === id) || (FREE && path.find((l) => l.page === page)) || path[0];
     const prog = BJ.tierProgress();
+    if (FREE) {
+        document.title = `${document.title.split(' – ')[0]} – voľná hra`;
+        start({ level, path, profile, backHref: FREE_BACK });
+        return;
+    }
     if (!prog.isUnlocked(path, path.indexOf(level))) {
         location.replace(`cesta.html?chapter=${level.chapter}`);
         return;
@@ -80,6 +90,7 @@ export function playWord(word, maxMs = 3500) {
  * @param {object} o – { level, path, backHref, earned (0–3), summary (text) }
  */
 export function finishLevel({ level, path, backHref, earned, summary }) {
+    if (FREE) return finishFree({ earned, summary });
     const prog = BJ.tierProgress();
     const result = prog.record(level.id, earned);
     const next = path[path.indexOf(level) + 1];
@@ -108,6 +119,25 @@ export function finishLevel({ level, path, backHref, earned, summary }) {
         previousStars: result.previousStars,
         firstCompletion: result.firstCompletion,
     });
+}
+
+/** Koniec voľnej hry: hviezdy bez ukladania, Znova / Hry. */
+function finishFree({ earned, summary }) {
+    const title = earned === 3 ? 'Výborne!' : earned >= 1 ? 'Dobrá práca!' : 'Skúsime znova?';
+    const end = h('div.bj-modal', {}, [
+        h('div.bj-modal__box.bj-panel.end-box', {}, [
+            h('h2.bj-title.bj-title--yellow', { text: title }),
+            h('div.end-stars', {}, [stars(earned)]),
+            summary ? h('div.bj-text', { text: summary }) : null,
+            h('div.bj-row', {}, [
+                h('a.bj-btn', { href: location.href, text: 'Znova' }),
+                h('a.bj-btn.bj-btn--primary', { href: FREE_BACK, text: 'Hry' }),
+            ]),
+        ]),
+    ]);
+    (document.getElementById('bj-stage') || document.body).append(end);
+    if (earned >= 1) BJ.audio.playEffect('win');
+    say(title);
 }
 
 /** Horná lišta minihry (späť na mapu, profil, nastavenia). */
