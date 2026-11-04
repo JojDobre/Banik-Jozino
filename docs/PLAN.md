@@ -313,6 +313,8 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
    Baňa (veľkosť bane, počet predmetov a cvičení, dosah lampy, časomiera len 7–8),
    Pexeso (3–4: 4 páry, 5–6: max 6, 7–8: +2 páry až 10), Super Jožino (životy 5/5/3,
    pomalší nepriatelia a píly, dlhšia nezraniteľnosť). Test: ?age=3-4 v adrese hry.
-6. **Ikona appky a úvodná obrazovka**, potom **fáza 7** (rodičovská brána, licencia hlasu,
+6. **Ikona appky a úvodná obrazovka** ✅ (zlatá ikona s baníkom, úvod s poskakujúcim baníkom,
+   scripts/brand/build-icons.mjs) a **nové pexeso** ✅ (karty rozhádzané na stole, páry na kôpku,
+   cvičenie v štýle appky, viac hráčov). Ďalej **fáza 7** (rodičovská brána, licencia hlasu,
    zásady súkromia, uzavreté testovanie na Google Play).
 7. **Úroveň 2 (fáza 5)** – najprv prototyp analýzy zvuku a test na deťoch.

@@ -12,32 +12,35 @@ const RES = path.join(ROOT, 'android/app/src/main/res');
 const MINER = path.join(ROOT, 'public/images/banik.png');
 const OUT = path.join(ROOT, 'public/images/icons');
 
-// pozadie: zlatá žiara v bani
+// pozadie: zlatá žiara (variant D)
 const bgSvg = (s) => `<svg xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}" viewBox="0 0 100 100">
   <defs>
-    <radialGradient id="g" cx="50%" cy="42%" r="70%">
-      <stop offset="0" stop-color="#ffd84a"/><stop offset=".38" stop-color="#e48a1c"/>
-      <stop offset=".75" stop-color="#7a3510"/><stop offset="1" stop-color="#3a180a"/>
+    <radialGradient id="g" cx="50%" cy="42%" r="68%">
+      <stop offset="0" stop-color="#ffd84a"/><stop offset=".45" stop-color="#e48a1c"/>
+      <stop offset=".85" stop-color="#7a3510"/><stop offset="1" stop-color="#5a260b"/>
     </radialGradient>
   </defs>
   <rect width="100" height="100" fill="url(#g)"/>
-  ${[[16, 20, 2.2], [84, 26, 1.6], [22, 80, 1.4], [80, 78, 2], [50, 10, 1.2], [10, 52, 1.2], [90, 52, 1.4]].map(([x, y, r]) =>
-    `<path d="M${x} ${y - r * 2}L${x + r * .6} ${y - r * .6}L${x + r * 2} ${y}L${x + r * .6} ${y + r * .6}L${x} ${y + r * 2}L${x - r * .6} ${y + r * .6}L${x - r * 2} ${y}L${x - r * .6} ${y - r * .6}z" fill="#fff6c8" opacity=".85"/>`).join('')}
 </svg>`;
 
-// hlava a krompáč baníka (výrez z banik.png 1200×1038)
-async function minerHead(size) {
-    return sharp(MINER).extract({ left: 150, top: 0, width: 840, height: 840 }).resize(size, size).png().toBuffer();
+// celá postavička baníka (banik.png 1200×1038)
+async function minerFull(width) {
+    const fig = await sharp(MINER).resize(width).png().toBuffer();
+    const meta = await sharp(fig).metadata();
+    return { fig, h: meta.height };
 }
 
 // adaptívna ikona: vrstva 108 dp (bezpečná zóna 72 dp v strede) – baník siaha po spodný okraj
 async function layer(size, withBg) {
-    const hs = Math.round(size * 0.8);
-    const head = await minerHead(hs);
+    // postavička v bezpečnej zóne (stred 66 %), aby ju žiadna maska neorezala
+    const w = Math.round(size * 0.64);
+    const { fig, h } = await minerFull(w);
     const base = withBg
         ? sharp(Buffer.from(bgSvg(size)))
         : sharp({ create: { width: size, height: size, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } });
-    return base.composite([{ input: head, left: Math.round(size * 0.1), top: Math.round(size * 0.14) }]).png().toBuffer();
+    const left = Math.round((size - w) / 2);
+    const top = Math.round((size - h) / 2);
+    return base.composite([{ input: fig, left, top }]).png().toBuffer();
 }
 const foreground = (size) => layer(size, false);
 

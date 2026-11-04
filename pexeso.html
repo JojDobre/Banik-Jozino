@@ -4,229 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="Logopedická hra pre najmenších">
-    <meta name="author" content="Adam Reňak">
-    <meta name="keywords" content="Adam Reňak, Joj_Dobre, Diplomová práca, Logopedická hra, TUKE">
-    <title>Baník Jožino: Logopedická hra - Diplomová práca</title>
-    <link rel="stylesheet" type="text/css" href="css/pexeso.css" />
-
-    <!-- Písmo Luckiest Guy (lokálne, funguje offline) -->
-    <link rel="stylesheet" type="text/css" href="css/fonts.css" />
-
+    <title>Pexeso – Baník Jožino</title>
     <link rel="icon" type="image/png" href="images/icons/favicon.png">
+    <link rel="stylesheet" type="text/css" href="css/fonts.css" />
+    <link rel="stylesheet" type="text/css" href="css/ui.css" />
+    <link rel="stylesheet" type="text/css" href="css/cards.css" />
+    <link rel="stylesheet" type="text/css" href="css/settings.css" />
+    <link rel="stylesheet" type="text/css" href="css/pocuvaj.css" />
+    <link rel="stylesheet" type="text/css" href="css/tier1.css" />
+    <link rel="stylesheet" type="text/css" href="css/pexeso.css" />
     <script src="js/vendor/howler.min.js"></script>
-
-    <script src="config/worlds.js"></script>
-    <script src="config/levels.js"></script>
-    <script src="js/age-difficulty.js"></script>
-    <script src="js/pexeso/pexeso.js"></script>
-    <!-- Spoločné služby (reč, zvuk, profily, karty) – window.BJ -->
-    <script type="module" src="src/bridge.js"></script>
     <!-- Herné plátno 1920×1080 – škálovanie na každú obrazovku -->
     <link rel="stylesheet" type="text/css" href="css/stage.css" />
     <link rel="stylesheet" type="text/css" href="css/common.css" />
-    <link rel="stylesheet" type="text/css" href="css/cards.css" />
-    <link rel="stylesheet" type="text/css" href="css/settings.css" />
     <!-- Písma vopred (bez preblikávania) -->
     <link rel="preload" href="fonts/luckiest-guy-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="fonts/luckiest-guy-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="fonts/nunito-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
     <script src="js/stage.js"></script>
-</head>
-
-  <body>
-  <div id="bj-stage">
-    <!-- LOADING -->
-    <div id="loading-screen" class="loading-screen">
-      <div class="loading-content">
-          <!-- Logo -->
-          <div class="loading-logo">
-              <div class="loading-text-jozino">JOŽINO</div>
-              <div class="loading-text-banik">BANÍK</div>
-          </div>
-          
-          <!-- Spinner -->
-          <div class="loading-spinner"></div>
-          
-          <!-- NOVÉ: Progress Bar Container -->
-          <div class="loading-progress-container">
-              <!-- Progress Bar -->
-              <div class="loading-progress-bar">
-                  <div class="loading-progress-fill" id="loading-progress-fill"></div>
-              </div>
-              
-              <!-- Progress Text (percentá a počet zdrojov) -->
-              <div class="loading-progress-text">
-                  <span id="loading-progress-percentage">0%</span>
-                  <span id="loading-progress-details">0/0 zdrojov</span>
-              </div>
-          </div>
-          
-          <!-- Loading Message -->
-          <div class="loading-message" id="loading-message">Načítavam...</div>
-      </div>
+    <script src="config/worlds.js"></script>
+    <script src="config/levels.js"></script>
+    <script src="js/age-difficulty.js"></script>
+    <script src="js/bana-route.js"></script>
+    <script src="js/managers/progressManager.js"></script>
+    <script type="module" src="src/pages/pexeso.js"></script>
+  </head>
+  <body class="bj-ui">
+    <div id="bj-stage">
+      <main id="app" class="bj-screen bj-screen--dim"></main>
     </div>
-
-    <div class="menu-hra">
-      <button onclick="openDialog1()" class="kruhove-tlacidlo" id="menuButton"></button>
-    </div>
-
-    <!-- Hlavný kontainer -->
-    <div class="main-container">
-        
-        <!-- Horný panel s časom, názvom a pokusmi -->
-        <div class="top-panel">
-            <div class="time-display panel-item">
-                <span id="game-time">0:00</span>
-            </div>
-            
-            <div class="game-title panel-item">
-                <span>PEXESO</span>
-            </div>
-            
-            <div class="attempts-display panel-item">
-                <span id="game-attempts">0</span>
-            </div>
-        </div>
-
-        <!-- Obsah hry -->
-        <div class="content-section">
-
-            <!-- Herné okno s kartami -->
-            <div class="game-window">
-                <div id="gameCanvas" width="800" height="800">
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  <div class="card-container" id="cardContainer"><img id="pexeso" src="images/banik.png"><span>PEXESO</span></div>
-                  
-                </div>
-            </div>
-
-            <!-- Bočný panel s hráčmi -->
-            <div class="side-panel">
-                <!-- Panel s hráčmi -->
-                <div class="players-panel">
-                    <div class="player-1">
-                        <div class="name"><h1>Adam</h1></div>
-                        <div class="score"><span>7</span></div>
-                    </div>
-                </div>
-                <div class="players-panel">
-                    <div class="player-2">
-                        <div class="name"><h1>Evka</h1></div>
-                        <div class="score"><span>3</span></div>
-                    </div>
-                </div>
-                <div class="players-panel">
-                    <div class="player-3">
-                        <div class="name"><h1>Zuzka</h1></div>
-                        <div class="score"><span>2</span></div>
-                    </div>
-                </div> 
-                <div class="players-panel">
-                    <div class="player-4">
-                        <div class="name"><h1>Jakub</h1></div>
-                        <div class="score"><span>5</span></div>
-                    </div>
-                </div>                    
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Modálne okná -->
-    
-    <div id="cvicenie" class="modal">
-      <div class="execise-window">
-        <div id="vysledok" class="vysledok"></div>
-        <div class="cvicenie-content">
-          <div class="cvicenie-text"><p id="word-display">TRAKTOR</p></div>
-          <div class="cvicenie-text"><img id="cvicenie-image" src="images/slova/traktor.png"></div>
-          <div class="tlacidlo"><button id="rozpoznanie"><a>HOVORIŤ</a></button></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="zvuky" class="cvicenie">
-      <div class="execise-window">
-        <div class="cvicenie-content-2">
-          <h1>ROZPOZNAJ SLOVÁ</h1>
-          <p>Sú slová rovnaké?</p>
-          <div id="buttonsContainer"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="endgame" class="cvicenie">
-      <div class="execise-window" style="max-height: 550px;">
-        <div class="cvicenie-content-2">
-          <h1>Prešiel si level!</h1>
-          <div class="stats">
-            <div>
-              <a>Čas: </a>
-              <span>02:43</span>
-            </div>
-            <div>
-              <a>Slová: </a>
-              <span>4</span> <img src="images/spravne.png">
-              <span> / </span>
-              <span>4 </span> <img src="images/nespravne.png">
-            </div>
-          </div>
-          <div id="modal-stars" class="modal-stars"></div>
-          <div class="gameend">
-            <nav class="main-menu">
-              <ul>
-                <li><button onclick="restartCurrentLevel()" class="menu-button">Hrať znova</button></li>
-                <li><button onclick="goToNextLevel()" class="menu-button">Ďalší level</button></li>
-                <li><button onclick="returnToMenu()" class="menu-button">Späť do menu</button></li>
-              </ul>
-            </nav>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  <div id="pause-modal" class="pause-modal" style="display: none;">
-      <div class="pause-modal-overlay"></div>
-      <div class="pause-modal-content">
-          <div class="pause-modal-header">
-              <h2>PAUZA</h2>
-              <button class="pause-close-btn" id="pauseCloseBtn">&times;</button>
-          </div>
-          <div class="pause-modal-body">
-              <nav class="pause-menu">
-                  <ul>
-                      <li><button id="pauseResumeBtn" class="pause-button">Pokračovať</button></li>
-                      <li><button id="pauseRestartBtn" class="pause-button">Hrať znova</button></li>
-                      <li><button id="pauseMenuBtn" class="pause-button">Späť do menu</button></li>
-                      <li><button class="pause-button" onclick="window.BJ && window.BJ.openSettings()">Nastavenia</button></li>
-                  </ul>
-              </nav>
-          </div>
-      </div>
-  </div>
-
-
-    <div id="blur-background"></div>
-  </div><!-- /bj-stage -->
-
-  <script src="js/managers/progressManager.js"></script>
-
-
   </body>
 </html>
