@@ -11,6 +11,7 @@
 import '../bridge.js';
 import { h, topbar, ICONS, stars, centeredGlyph, requireProfile, modal, say } from '../ui/kit.js';
 import { avatarById } from '../core/profiles.js';
+import { getWord } from '../content/words.js';
 
 const app = document.getElementById('app');
 const profile = requireProfile();
@@ -163,7 +164,7 @@ function wordsOf(world, onlyOpen) {
     const out = [];
     levels.forEach((l, i) => {
         if (onlyOpen && !isUnlocked(world, levels, i)) return;
-        (l.words || []).forEach((w) => out.includes(w) || out.push(w));
+        (l.words || []).forEach((w) => out.includes(w) || !getWord(w) || out.push(w));
     });
     return out;
 }

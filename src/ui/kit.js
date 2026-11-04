@@ -166,7 +166,7 @@ export function speakerButton(text) {
 }
 
 /** Ikona zatvorenia (X) – rovnaká vo všetkých oknách (css/common.css: .bj-close). */
-export const CLOSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/></svg>';
+export const CLOSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="#000" stroke-width="6" stroke-linecap="round"/><path d="M6 6l12 12M18 6 6 18" stroke="#FFD900" stroke-width="3.4" stroke-linecap="round"/></svg>';
 
 /** Ikony vyhodnotenia (rovnaké aj v js/game.js – END_ICONS). */
 export const END_ICONS = {

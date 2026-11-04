@@ -2,7 +2,7 @@
  * Okno Nastavenia – funguje na každej stránke (aj v pôvodných hrách).
  * Prepínače sa ukladajú do profilu dieťaťa (BJ.setSettings).
  */
-import { h } from './kit.js';
+import { h, closeButton } from './kit.js';
 
 const OPTIONS = [
     { key: 'sound', icon: '🔊', title: 'Zvuky', text: 'Zvukové efekty v hrách' },
@@ -45,7 +45,7 @@ export function openSettings() {
     const profile = BJ.profiles.active();
     const overlay = h('div.bj-settings', { role: 'dialog', 'aria-label': 'Nastavenia' }, [
         h('div.bj-settings__box', {}, [
-            h('button.bj-settings__close', { type: 'button', 'aria-label': 'Zavrieť', text: '×', onclick: close }),
+            closeButton(close),
             h('div.bj-settings__head', { text: 'Nastavenia' }),
             profile?.name && profile.age !== null ? h('div.bj-settings__who', { text: `Hráč: ${profile.name}` }) : null,
             ...rows,
