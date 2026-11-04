@@ -65,9 +65,10 @@ if (profile) {
             tierCard({
                 number: 2,
                 title: 'Zvuky a hlásky',
-                text: 'Fúkanie, syčanie, bzučanie a slabiky.',
+                text: 'Fúkaj, syč ako had a bzuč ako včielka.',
                 image: 'images/worlds/world_s.png',
-                locked: true,
+                href: 'zvuky.html',
+                starsText: `${['balon', 'had', 'vcielka'].reduce((s, id) => s + prog.stars(`t2_${id}`), 0)} / 9`,
             }),
             tierCard({
                 number: 3,

@@ -267,9 +267,17 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
 - ✅ public/js/age-difficulty.js – tabuľka pre 3–4 / 5–6 / 7–8, hry si berú svoje hodnoty
 - ⬜ ladenie čísel podľa testov s deťmi
 
-### Fáza 5 – Úroveň 2 ⬜
-- ⬜ prototyp analýzy zvuku + kalibrácia, test na deťoch
-- ⬜ Fúkaj na balón, Had Sykáčik, Včielka Bzzz, Slabiková lavína
+### Fáza 5 – Úroveň 2 🔄
+- ✅ model rozpoznávania zvukov v zariadení (bez internetu): src/core/soundFeatures.js –
+  pásma energie, ťažisko spektra nad 1 kHz (S ~6,5–9 kHz, Š ~3,5–5,3 kHz), podiel energie
+  nad 2,5 kHz (syčanie), znelosť na nízkom pásme; triedy ticho / fúkanie / S / Š / Z / Ž /
+  hlas / iný zvuk; vyhladenie a meranie výdrže (tests/soundFeatures.test.js – umelé zvuky
+  a nahrávky hlások)
+- ✅ mikrofón bez potlačenia šumu + kalibrácia ticha (src/core/micListener.js)
+- ✅ laboratórium zvukov (zvuky-lab.html, menu Hry → Zvuky) – živý pohľad a nahrávanie vzoriek
+- ✅ Fúkaj na balón, Had Sykáčik (sss), Včielka Bzzz (zzz) – zvuky.html, úroveň 2 odomknutá
+- ⬜ **test na deťoch** v laboratóriu, doladenie hraníc podľa vzoriek (JSON z laboratória)
+- ⬜ ďalšie hry: Š (vláčik), Ž (chrobák), Slabiková lavína
 - ⬜ Zrkadielko (experiment)
 
 ### Fáza 6 – Android appka ⬜

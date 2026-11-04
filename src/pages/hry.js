@@ -113,8 +113,20 @@ function makerTiles() {
     ];
 }
 
+/** Hry úrovne 2 (zvuky z mikrofónu) a laboratórium na skúšku rozpoznávania. */
+function soundTiles() {
+    const bg = 'images/worlds/world_s.png';
+    return [
+        tile({ title: 'Fúkaj na balón', note: 'fúkanie', href: 'zvuky.html?hra=balon', svg: '<svg viewBox="0 0 100 120"><path d="M50 8c-20 0-32 16-32 34 0 22 18 38 32 42 14-4 32-20 32-42C82 24 70 8 50 8z" fill="#ff5a4e" stroke="#000" stroke-width="4"/><path d="M50 90c-6 10 6 16 0 26" fill="none" stroke="#000" stroke-width="2.5"/></svg>', bg }),
+        tile({ title: 'Had Sykáčik', note: 'sss', href: 'zvuky.html?hra=had', svg: '<svg viewBox="0 0 120 80"><path d="M10 60c10-20 25-20 35 0s25 20 35 0 20-25 30-20" fill="none" stroke="#000" stroke-width="16" stroke-linecap="round"/><path d="M10 60c10-20 25-20 35 0s25 20 35 0 20-25 30-20" fill="none" stroke="#4caf50" stroke-width="10" stroke-linecap="round"/><circle cx="108" cy="40" r="12" fill="#4caf50" stroke="#000" stroke-width="4"/></svg>', bg }),
+        tile({ title: 'Včielka Bzzz', note: 'zzz', href: 'zvuky.html?hra=vcielka', svg: '<svg viewBox="0 0 100 80"><ellipse cx="50" cy="50" rx="30" ry="22" fill="#ffd34d" stroke="#000" stroke-width="4"/><path d="M42 30v40M58 30v40" stroke="#000" stroke-width="7"/><circle cx="78" cy="46" r="4" fill="#000"/></svg>', bg }),
+        tile({ title: 'Laboratórium zvukov', note: 'čo počuje mikrofón', href: 'zvuky-lab.html', svg: '<svg viewBox="0 0 24 24"><rect x="8.5" y="3" width="7" height="12" rx="3.5" fill="#FFD900" stroke="#000"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3" fill="none" stroke="#FFD900" stroke-width="2.4" stroke-linecap="round"/></svg>', bg: 'images/worlds/world_k.png' }),
+    ];
+}
+
 const TABS = [
     { id: 'listen', title: 'Počúvam' },
+    { id: 'sounds', title: 'Zvuky' },
     { id: 'words', title: 'Slová' },
     { id: 'make', title: 'Tvorím' },
 ];
@@ -149,7 +161,7 @@ if (profile) {
             })));
         }
         const world = worlds.find((w) => w.id === state.world);
-        const tiles = state.tab === 'listen' ? tier1Tiles() : state.tab === 'words' ? (world ? wordTiles(world) : []) : makerTiles();
+        const tiles = state.tab === 'listen' ? tier1Tiles() : state.tab === 'sounds' ? soundTiles() : state.tab === 'words' ? (world ? wordTiles(world) : []) : makerTiles();
         grid.className = `hry-grid hry-grid--${tiles.length}`;
         grid.replaceChildren(...tiles);
     }

@@ -26,9 +26,9 @@ export const MINIGAMES = [
     { id: 'phoneme-train', title: 'Hláskový vláčik', tiers: [1], ages: ['5-6', '7-8'], exercise: ['listening'], page: 'vlacik.html', status: 'ready' },
 
     // úroveň 2 – Zvuky a hlásky
-    { id: 'blow-balloon', title: 'Fúkaj na balón', tiers: [2], ages: ['3-4', '5-6', '7-8'], exercise: ['breath'], status: 'planned' },
-    { id: 'hissing-snake', title: 'Had Sykáčik', tiers: [2], ages: ['3-4', '5-6', '7-8'], exercise: ['sound'], status: 'planned' },
-    { id: 'buzzing-bee', title: 'Včielka Bzzz', tiers: [2], ages: ['3-4', '5-6', '7-8'], exercise: ['sound'], status: 'planned' },
+    { id: 'blow-balloon', title: 'Fúkaj na balón', tiers: [2], ages: ['3-4', '5-6', '7-8'], exercise: ['breath'], page: 'zvuky.html?hra=balon', status: 'ready' },
+    { id: 'hissing-snake', title: 'Had Sykáčik', tiers: [2], ages: ['3-4', '5-6', '7-8'], exercise: ['sound'], page: 'zvuky.html?hra=had', status: 'ready' },
+    { id: 'buzzing-bee', title: 'Včielka Bzzz', tiers: [2], ages: ['3-4', '5-6', '7-8'], exercise: ['sound'], page: 'zvuky.html?hra=vcielka', status: 'ready' },
     { id: 'syllable-avalanche', title: 'Slabiková lavína', tiers: [2], ages: ['5-6', '7-8'], exercise: ['syllables'], status: 'planned' },
     { id: 'mirror', title: 'Zrkadielko', tiers: [2], ages: ['3-4', '5-6', '7-8'], exercise: ['oromotor'], status: 'planned' },
 ];
