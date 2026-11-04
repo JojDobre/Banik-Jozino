@@ -122,7 +122,7 @@ function start({ level, path, profile, backHref }) {
         head.update(level.number, index);
         if (index >= plan.rounds.length) {
             const earned = starsForScore(points / plan.rounds.length);
-            return finishLevel({ level, path, backHref, earned, summary: `Správne: ${Math.round(points * 10) / 10} z ${plan.rounds.length}` });
+            return finishLevel({ level, path, backHref, earned, stats: [{ icon: 'tries', value: `${Math.round(points * 10) / 10} / ${plan.rounds.length}`, label: 'správne' }] });
         }
         await pause(300);
         return playSeq();

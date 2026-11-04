@@ -1039,3 +1039,56 @@ html.bj-staged .execise-window > .close {
 }
 .bj-close svg { width: 46%; height: 46%; filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 1px #000); }
 .bj-close:active { transform: scale(0.92); }
+
+/* ===== Vyhodnotenie levelu – okienka so štatistikami a ikonové tlačidlá =====
+ * Rovnaké vo všetkých hrách (kit.endStats / kit.endActions, js/game.js). */
+.bj-end-stats { display: flex; justify-content: center; gap: 22px; margin: 4px 0 6px; }
+.bj-stat {
+    width: 210px;
+    padding: 16px 10px 14px;
+    box-sizing: border-box;
+    border-radius: 26px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 4px solid #ECCF17;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.bj-stat__icon { width: 66px; height: 66px; }
+.bj-stat__icon svg { width: 100%; height: 100%; }
+.bj-stat__value {
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 54px;
+    line-height: 1;
+    padding-top: 0.15em;
+    color: #fff;
+    -webkit-text-stroke: 1.5px #000;
+    white-space: nowrap;
+}
+.bj-stat__label { font-family: "Nunito", sans-serif; font-weight: 900; font-size: 26px; color: #FFD900; }
+.bj-end-actions { display: flex; justify-content: center; align-items: center; gap: 34px; margin-top: 10px; }
+.bj-ibtn {
+    width: 120px;
+    height: 120px;
+    padding: 0;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 6px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    text-decoration: none;
+}
+.bj-ibtn svg { width: 56%; height: 56%; }
+.bj-ibtn:active { transform: scale(0.93); }
+.bj-ibtn--go { border-color: #1A511D; background: linear-gradient(0deg, #1fa52a 0%, #3fe04a 100%); color: #FFD900; }
+.bj-ibtn--go svg { margin-left: 8%; }
+.end-box { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.bj-staged #endgame .bj-end-stats { order: 2; }
+.bj-staged #endgame .bj-end-actions { order: 3; }
+.bj-staged #endgame .execise-window { width: auto !important; min-width: 760px; }

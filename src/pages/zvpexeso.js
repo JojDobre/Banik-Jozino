@@ -72,7 +72,7 @@ function start({ level, path, profile, backHref }) {
 
     function finish() {
         const earned = soundPexesoStars(board.pairs, moves);
-        finishLevel({ level, path, backHref, earned, summary: `Dvojice: ${board.pairs} · pokusy: ${moves}` });
+        finishLevel({ level, path, backHref, earned, stats: [{ icon: 'pairs', value: String(board.pairs), label: 'dvojice' }, { icon: 'tries', value: String(moves), label: 'pokusy' }] });
     }
 
     document.getElementById('app').replaceChildren(gameTopbar(backHref, profile), head.el, h('div.t1-stage', {}, [grid]), fb.el);

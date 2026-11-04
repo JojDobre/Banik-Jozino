@@ -168,6 +168,41 @@ export function speakerButton(text) {
 /** Ikona zatvorenia (X) – rovnaká vo všetkých oknách (css/common.css: .bj-close). */
 export const CLOSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/></svg>';
 
+/** Ikony vyhodnotenia (rovnaké aj v js/game.js – END_ICONS). */
+export const END_ICONS = {
+    replay: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.05-4.95" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M18.5 3.5v4.5H14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    map: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z" fill="currentColor" stroke="#000" stroke-width="1.3" stroke-linejoin="round"/><path d="M9 4v13.5M15 6.5V20" stroke="#000" stroke-width="1.3"/></svg>',
+    next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg>',
+    mic: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="3" width="7" height="12" rx="3.5" fill="#FFD900" stroke="#000"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3" fill="none" stroke="#FFD900" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    ear: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="#FFD900" stroke="#000" stroke-width="1"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="#FFD900" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    time: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8" fill="#fff7e0" stroke="#000" stroke-width="1.6"/><path d="M12 9v4.5l3 2" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><rect x="10" y="2.5" width="4" height="3" rx="1" fill="#ECCF17" stroke="#000"/></svg>',
+    pairs: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="11" height="15" rx="2" fill="#4FC3F7" stroke="#000" stroke-width="1.2" transform="rotate(-10 8.5 12.5)"/><rect x="9" y="3.5" width="11" height="15" rx="2" fill="#FFD54F" stroke="#000" stroke-width="1.2" transform="rotate(8 14.5 11)"/></svg>',
+    tries: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z" fill="#fff7e0" stroke="#000" stroke-width="1.6"/><path d="M8 12.5l2.6 2.6L16 9.5" fill="none" stroke="#1fa52a" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+};
+
+/** Okienka so štatistikami na konci levelu: [{ icon, value, label }]. */
+export function endStats(items) {
+    return h('div.bj-end-stats', {}, items.filter(Boolean).map((it) =>
+        h('div.bj-stat', {}, [
+            h('div.bj-stat__icon', { html: END_ICONS[it.icon] || it.icon }),
+            h('div.bj-stat__value', { text: it.value }),
+            h('div.bj-stat__label', { text: it.label }),
+        ]),
+    ));
+}
+
+/** Tlačidlá na konci levelu (ikony): znova, mapa, ďalej. Hodnota = odkaz alebo funkcia. */
+export function endActions({ replay, map, next } = {}) {
+    const btn = (kind, target, label) => {
+        if (!target) return null;
+        const cls = `.bj-ibtn${kind === 'next' ? '.bj-ibtn--go' : ''}`;
+        return typeof target === 'function'
+            ? h(`button${cls}`, { type: 'button', 'aria-label': label, title: label, html: END_ICONS[kind], onclick: target })
+            : h(`a${cls}`, { href: target, 'aria-label': label, title: label, html: END_ICONS[kind] });
+    };
+    return h('div.bj-end-actions', {}, [btn('replay', replay, 'Znova'), btn('map', map, 'Mapa'), btn('next', next, 'Ďalej')]);
+}
+
 /** Okrúhle tlačidlo zatvorenia na pravom hornom rohu okna. */
 export function closeButton(onclick) {
     return h('button.bj-close', { type: 'button', 'aria-label': 'Zavrieť', html: CLOSE_ICON, onclick });

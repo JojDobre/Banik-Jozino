@@ -176,7 +176,7 @@ function start({ level, path, backHref, profile: p }) {
 
     function finish() {
         const earned = starsForScore(points / rounds.length);
-        finishLevel({ level, path, backHref, earned, summary: `Správne: ${Math.round(points * 10) / 10} z ${rounds.length}` });
+        finishLevel({ level, path, backHref, earned, stats: [{ icon: 'tries', value: `${Math.round(points * 10) / 10} / ${rounds.length}`, label: 'správne' }] });
     }
 
     app.replaceChildren(

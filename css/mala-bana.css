@@ -37,10 +37,29 @@
 @keyframes bx-bump { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
 .bj-staged .bx-chip.is-bump { animation: bx-bump 0.28s ease-out; }
 
-/* hracia plocha v strede pod počítadlami (bočný panel nahradili počítadlá hore) */
-.bj-staged .hra { grid-template-columns: 800px; padding-top: calc(var(--bj-edge, 24px) + var(--bj-round, 88px) + 12px); box-sizing: border-box; }
-.bj-compact .hra .game-window { zoom: 0.9; }
+/* hracia plocha v strede v zlatom ráme (na celú výšku), počítadlá vpravo
+   hore pod sebou, ovládanie v dolných rohoch – nič sa neprekrýva */
+.bj-staged .hra { grid-template-columns: 800px; justify-items: center; padding-top: 0; }
 .bj-staged .hra .stats-menu { display: none !important; }
+.bj-staged .hra .game-window {
+    width: fit-content !important;
+    height: fit-content !important;
+    line-height: 0;
+    margin-top: 24px;
+    border-radius: 34px;
+    overflow: hidden;
+    border: 6px solid #ECCF17;
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.6);
+}
+.bj-compact .hra .game-window { zoom: 0.86; margin-top: 30px; }
+.bj-staged .bx-hud {
+    left: auto;
+    right: var(--bj-edge, 24px);
+    transform: none;
+    flex-direction: column;
+    gap: 16px;
+}
+.bj-staged .bx-chip { min-width: 230px; }
 
 /* krompáč ako v novej Bani */
 .bj-staged .action-button {

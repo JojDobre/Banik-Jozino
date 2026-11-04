@@ -2,7 +2,7 @@
  * Spoločné časti minihier úrovne 1 (Počúvam): spustenie levelu z cesty,
  * hlavička s kolami, spätná väzba, koniec levelu (hviezdy, postup, karty).
  */
-import { h, topbar, requireProfile, say, stars, pause } from '../ui/kit.js';
+import { h, topbar, requireProfile, say, stars, pause, endStats, endActions } from '../ui/kit.js';
 import { buildTier1Path, TIER1_SET, CHAPTERS, levelUrl } from '../content/tier1.js';
 import { getWord } from '../content/words.js';
 
@@ -89,8 +89,8 @@ export function playWord(word, maxMs = 3500) {
  * Koniec levelu: uloží hviezdy, ukáže výsledok (Znova / Ďalej) a udelí karty.
  * @param {object} o – { level, path, backHref, earned (0–3), summary (text) }
  */
-export function finishLevel({ level, path, backHref, earned, summary }) {
-    if (FREE) return finishFree({ earned, summary });
+export function finishLevel({ level, path, backHref, earned, summary, stats: statList }) {
+    if (FREE) return finishFree({ earned, summary, statList });
     const prog = BJ.tierProgress();
     const result = prog.record(level.id, earned);
     const next = path[path.indexOf(level) + 1];
@@ -100,13 +100,8 @@ export function finishLevel({ level, path, backHref, earned, summary }) {
         h('div.bj-modal__box.bj-panel.end-box', { 'data-reward-slot': '' }, [
             h('h2.bj-title.bj-title--yellow', { text: title }),
             h('div.end-stars', {}, [stars(earned)]),
-            summary ? h('div.bj-text', { text: summary }) : null,
-            h('div.bj-row', {}, [
-                h('a.bj-btn', { href: location.href, text: 'Znova' }),
-                nextUnlocked
-                    ? h('a.bj-btn.bj-btn--primary', { href: levelUrl(next), text: 'Ďalej' })
-                    : h('a.bj-btn.bj-btn--primary', { href: backHref, text: 'Mapa' }),
-            ]),
+            statList ? endStats(statList) : summary ? h('div.bj-text', { text: summary }) : null,
+            endActions({ replay: location.href, map: backHref, next: nextUnlocked ? levelUrl(next) : null }),
         ]),
     ]);
     (document.getElementById('bj-stage') || document.body).append(end);
@@ -122,17 +117,14 @@ export function finishLevel({ level, path, backHref, earned, summary }) {
 }
 
 /** Koniec voľnej hry: hviezdy bez ukladania, Znova / Hry. */
-function finishFree({ earned, summary }) {
+function finishFree({ earned, summary, statList }) {
     const title = earned === 3 ? 'Výborne!' : earned >= 1 ? 'Dobrá práca!' : 'Skúsime znova?';
     const end = h('div.bj-modal', {}, [
         h('div.bj-modal__box.bj-panel.end-box', {}, [
             h('h2.bj-title.bj-title--yellow', { text: title }),
             h('div.end-stars', {}, [stars(earned)]),
-            summary ? h('div.bj-text', { text: summary }) : null,
-            h('div.bj-row', {}, [
-                h('a.bj-btn', { href: location.href, text: 'Znova' }),
-                h('a.bj-btn.bj-btn--primary', { href: FREE_BACK, text: 'Hry' }),
-            ]),
+            statList ? endStats(statList) : summary ? h('div.bj-text', { text: summary }) : null,
+            endActions({ replay: location.href, map: FREE_BACK }),
         ]),
     ]);
     (document.getElementById('bj-stage') || document.body).append(end);

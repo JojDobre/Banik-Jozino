@@ -632,13 +632,11 @@ function handleTimeUp() {
         document.getElementById("blur-background").style.display = "block";
         document.body.style.overflow = "hidden";
         
-        // Pridaj informáciu o vypršaní času do konečného dialógu
-        const endGameContent = document.querySelector('#endgame .execise-window');
-        if (endGameContent && !endGameContent.querySelector('.time-up-message')) {
-            const timeUpMessage = document.createElement('div');
-            timeUpMessage.className = 'time-up-message';
-            timeUpMessage.innerHTML = '<h3 style="color: #ff4444;">⏰ Čas vypršal!</h3>';
-            endGameContent.insertBefore(timeUpMessage, endGameContent.querySelector('nav'));
+        // vyhodnotenie s nadpisom „Čas vypršal!“
+        try {
+            renderEndDialog(calculateFinalRating(), true);
+        } catch (e) {
+            console.error('Vyhodnotenie po vypršaní času zlyhalo', e);
         }
     }, 100);
 }
@@ -1865,73 +1863,46 @@ function updateAnswerCounters() {
  */                                                                                //
 /////////////////////////////////////////////////////////////////////////////////////
 function displayResultsInWinDialog(rating, saveResult) {
-    console.log('📋 Zobrazujem výsledky v existujúcom win dialógu...', rating);
-    
-    // Nájdi win dialóg
-    const endGameDialog = document.querySelector('#endgame');
-    if (!endGameDialog) {
-        console.warn('⚠️ Win dialóg nebol nájdený');
-        return;
-    }
-    
-    // OPRAVA: Aktualizuj existujúce HTML elementy namiesto pridávania nových
-    
-    // 1. Aktualizuj čas
-    const timeSpan = endGameDialog.querySelector('.stats div:first-child span');
-    if (timeSpan) {
-        timeSpan.textContent = formatTime(rating.gameTime);
-        console.log('✅ Čas aktualizovaný:', formatTime(rating.gameTime));
-    }
-    
-    // 2. Aktualizuj slová - nájdi správny div (druhý div v stats)
-    const wordsDiv = endGameDialog.querySelector('.stats div:nth-child(2)');
-    if (wordsDiv) {
-        // Vypočítaj nesprávne pokusy
-        const speechIncorrect = rating.speechTotal - rating.speechSuccess;
-        
-        // Aktualizuj HTML obsah celého div-u
-        wordsDiv.innerHTML = `
-            <a>Slová: </a>
-            <span>${rating.speechSuccess}</span> <img src="images/spravne.png">
-            <span> / </span>
-            <span>${speechIncorrect}</span> <img src="images/nespravne.png">
-        `;
-        console.log(`✅ Slová aktualizované: ${rating.speechSuccess} správne, ${speechIncorrect} nesprávne`);
-    }
-    
-    // 3. Pridaj nové štatistiky pod existujúce (ak nie sú už tam)
-    const statsDiv = endGameDialog.querySelector('.stats');
-    if (statsDiv && !statsDiv.querySelector('.additional-stats')) {
-        // Vytvor div pre dodatočné štatistiky
-        const additionalStatsDiv = document.createElement('div');
-        additionalStatsDiv.className = 'additional-stats';
-        additionalStatsDiv.innerHTML = `
-            <div style="margin-top: 10px;">
-                <a>Body: </a>
-                <span>${rating.totalPoints}/${rating.maxPossiblePoints}</span>
-            </div>
-            <div>
-                <a>Úspešnosť: </a>
-                <span>${rating.percentage}%</span>
-            </div>
-        `;
-        
-        statsDiv.appendChild(additionalStatsDiv);
-        console.log('✅ Dodatočné štatistiky pridané');
-    }
-    
-    // 4. Nadpis podľa hviezd (rovnako ako v ostatných hrách)
-    const title = endGameDialog.querySelector('.cvicenie-content-2 h1');
-    if (title) title.textContent = rating.stars === 3 ? 'Výborne!' : rating.stars >= 1 ? 'Dobrá práca!' : 'Skúsime znova?';
+    renderEndDialog(rating, false);
+}
 
-    // 5. Aktualizuj hviezdy v existujúcom modal-stars div
-    const starsDiv = endGameDialog.querySelector('#modal-stars');
-    if (starsDiv) {
-        starsDiv.innerHTML = generateStarsHTML(rating.stars);
-        console.log(`✅ Hviezdy aktualizované: ${rating.stars}/3`);
-    }
-    
-    console.log('🎉 Win dialóg úspešne aktualizovaný!');
+// Ikony vyhodnotenia – rovnaké ako v src/ui/kit.js (END_ICONS)
+const END_ICONS = {
+    replay: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.05-4.95" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M18.5 3.5v4.5H14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    map: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z" fill="currentColor" stroke="#000" stroke-width="1.3" stroke-linejoin="round"/><path d="M9 4v13.5M15 6.5V20" stroke="#000" stroke-width="1.3"/></svg>',
+    next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg>',
+    mic: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="3" width="7" height="12" rx="3.5" fill="#FFD900" stroke="#000"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3" fill="none" stroke="#FFD900" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    ear: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="#FFD900" stroke="#000" stroke-width="1"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="#FFD900" stroke-width="2.4" stroke-linecap="round"/></svg>',
+    time: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8" fill="#fff7e0" stroke="#000" stroke-width="1.6"/><path d="M12 9v4.5l3 2" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><rect x="10" y="2.5" width="4" height="3" rx="1" fill="#ECCF17" stroke="#000"/></svg>',
+};
+
+/**
+ * Vyhodnotenie levelu (rovnaké ako v ostatných hrách): nadpis, hviezdy,
+ * okienka so štatistikami (slová, počúvanie, čas) a ikonové tlačidlá.
+ */
+function renderEndDialog(rating, timeUp) {
+    const content = document.querySelector('#endgame .cvicenie-content-2');
+    if (!content) return;
+    const stars = timeUp ? 0 : rating.stars;
+    const title = timeUp ? 'Čas vypršal!' : stars === 3 ? 'Výborne!' : stars >= 1 ? 'Dobrá práca!' : 'Skúsime znova?';
+    const tile = (icon, value, label) => `<div class="bj-stat"><div class="bj-stat__icon">${END_ICONS[icon]}</div><div class="bj-stat__value">${value}</div><div class="bj-stat__label">${label}</div></div>`;
+    const tiles = [
+        rating.speechTotal ? tile('mic', `${rating.speechSuccess} / ${rating.speechTotal}`, 'slová') : '',
+        rating.listeningTotal ? tile('ear', `${rating.listeningSuccess} / ${rating.listeningTotal}`, 'počúvanie') : '',
+        tile('time', formatTime(rating.gameTime), 'čas'),
+    ].join('');
+    const isTraining = currentLevelConfig && (currentLevelConfig.isTraining || currentLevelConfig.id === 'training');
+    const canNext = !timeUp && stars >= 1 && !isTraining;
+    content.innerHTML = `
+        <h1 class="bj-end-title">${title}</h1>
+        <div id="modal-stars" class="modal-stars">${generateStarsHTML(stars)}</div>
+        <div class="bj-end-stats">${tiles}</div>
+        <div class="bj-end-actions">
+            <button class="bj-ibtn" type="button" aria-label="Znova" title="Znova" onclick="restartCurrentLevel()">${END_ICONS.replay}</button>
+            <button class="bj-ibtn" type="button" aria-label="Mapa" title="Mapa" onclick="returnToMenu()">${END_ICONS.map}</button>
+            ${canNext ? `<button class="bj-ibtn bj-ibtn--go" type="button" aria-label="Ďalej" title="Ďalej" onclick="goToNextLevel()">${END_ICONS.next}</button>` : ''}
+        </div>`;
+    if (window.BJ && window.BJ.say) window.BJ.say(title);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

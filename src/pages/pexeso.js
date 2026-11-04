@@ -10,7 +10,7 @@
  *      pexeso.html?custom=true&words=["rak","ryba",…]&players=[{"name":"Adam"},…]&timeLimit=0
  */
 import '../bridge.js';
-import { h, topbar, ICONS, stars, say, pause } from '../ui/kit.js';
+import { h, topbar, ICONS, stars, say, pause, endStats, endActions } from '../ui/kit.js';
 import { getWord } from '../content/words.js';
 import { avatarById, AVATARS } from '../core/profiles.js';
 import { scatterLayout } from '../games/pexesoLayout.js';
@@ -358,11 +358,12 @@ function finish(timeout) {
                 else delete el.dataset.tag;
                 return el;
             })),
-            h('div.bj-text', { text: `Pokusy: ${attempts} · Slová: ${correct} z ${found} · Čas: ${time}` }),
-            h('div.bj-row', {}, [
-                h('a.bj-btn', { href: location.href, text: 'Znova' }),
-                h('a.bj-btn.bj-btn--primary', { href: backHref, text: 'Mapa' }),
+            endStats([
+                { icon: 'mic', value: `${correct} / ${found}`, label: 'slová' },
+                { icon: 'tries', value: String(attempts), label: 'pokusy' },
+                { icon: 'time', value: time, label: 'čas' },
             ]),
+            endActions({ replay: location.href, map: backHref }),
         ]);
         say(winners.length > 1 ? 'Remíza!' : 'Máme víťaza!');
     } else {
@@ -372,12 +373,13 @@ function finish(timeout) {
         box = h('div.bj-modal__box.bj-panel.end-box', { 'data-reward-slot': '' }, [
             h('h2.bj-title.bj-title--yellow', { text: title }),
             h('div.end-stars', {}, [stars(earned)]),
-            h('div.bj-text', { text: `Páry: ${found} · Pokusy: ${attempts} · Slová: ${correct} z ${found} · Čas: ${time}` }),
-            h('div.bj-row', {}, [
-                h('a.bj-btn', { href: location.href, text: 'Znova' }),
-                h(nextUrl ? 'a.bj-btn' : 'a.bj-btn.bj-btn--primary', { href: backHref, text: 'Mapa' }),
-                nextUrl ? h('a.bj-btn.bj-btn--primary', { href: nextUrl, text: 'Ďalej' }) : null,
+            endStats([
+                { icon: 'mic', value: `${correct} / ${found}`, label: 'slová' },
+                { icon: 'pairs', value: `${found} / ${cards.length / 2}`, label: 'páry' },
+                { icon: 'tries', value: String(attempts), label: 'pokusy' },
+                { icon: 'time', value: time, label: 'čas' },
             ]),
+            endActions({ replay: location.href, map: backHref, next: nextUrl }),
         ]);
         say(title);
     }

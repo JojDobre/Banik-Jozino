@@ -22,6 +22,27 @@ function hideLoadingScreen() {
 }
 
 /**
+ * Vyhodnotenie levelu – okienka so štatistikami a ikonové tlačidlá
+ * (rovnaké ako kit.endStats / kit.endActions v ostatných hrách, css/common.css).
+ */
+const SJEnd = {
+    icons: {
+        replay: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.05-4.95" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M18.5 3.5v4.5H14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        map: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z" fill="currentColor" stroke="#000" stroke-width="1.3" stroke-linejoin="round"/><path d="M9 4v13.5M15 6.5V20" stroke="#000" stroke-width="1.3"/></svg>',
+        next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg>',
+        mic: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.5" y="3" width="7" height="12" rx="3.5" fill="#FFD900" stroke="#000"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3" fill="none" stroke="#FFD900" stroke-width="2.4" stroke-linecap="round"/></svg>',
+        time: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8" fill="#fff7e0" stroke="#000" stroke-width="1.6"/><path d="M12 9v4.5l3 2" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/><rect x="10" y="2.5" width="4" height="3" rx="1" fill="#ECCF17" stroke="#000"/></svg>',
+    },
+    stats(items) {
+        return `<div class="bj-end-stats">${items.filter(Boolean).map((it) => `<div class="bj-stat"><div class="bj-stat__icon">${it.icon}</div><div class="bj-stat__value">${it.value}</div><div class="bj-stat__label">${it.label}</div></div>`).join('')}</div>`;
+    },
+    actions({ replay, map, next }) {
+        const b = (id, icon, label, go) => (id ? `<button class="bj-ibtn${go ? ' bj-ibtn--go' : ''}" type="button" id="${id}" aria-label="${label}" title="${label}">${this.icons[icon]}</button>` : '');
+        return `<div class="bj-end-actions">${b(replay, 'replay', 'Znova')}${b(map, 'map', 'Mapa')}${b(next, 'next', 'Ďalej', true)}</div>`;
+    },
+};
+
+/**
  * Kontext hry: ak sa spustí zo sveta (superjozino.html?worldId=…&levelId=…),
  * slová pre rečové cvičenia sú z levelu (config/levels.js, gameType 'mario')
  * a výsledok sa uloží do postupu sveta. Bez parametrov = skúšobná hra.
@@ -2723,25 +2744,32 @@ class Game {
         if (coinShare >= 0.85 && speechShare >= 0.99) stars = 3;
         const time = Math.round((Date.now() - this.startedAt) / 1000);
 
+        // vyhodnotenie ako v ostatných hrách: okienka so štatistikami a ikonové tlačidlá
+        const next = SJ.inWorld && typeof getNextLevel === 'function' ? getNextLevel(SJ.levelId) : null;
+        const nextUrl = next ? (window.BJRoute ? BJRoute.levelUrl(next.worldId, next.id) : `superjozino.html?worldId=${next.worldId}&levelId=${next.id}`) : null;
+        const E = SJEnd;
+        const mm = Math.floor(time / 60);
         this.speechModal.innerHTML = `
-            <div class="level-complete-content">
-                <h2>Výborne!</h2>
+            <div class="level-complete-content bj-modal__box bj-panel end-box">
+                <h2 class="bj-title bj-title--yellow">${stars === 3 ? 'Výborne!' : 'Dobrá práca!'}</h2>
                 <div class="stars">
                     ${[0, 1, 2].map((i) => `<img src="images/star_active.png" alt="" class="${i < stars ? '' : 'off'}">`).join('')}
                 </div>
-                <p>Ovocie: ${this.collectedCoins} / ${this.totalCoins}</p>
-                <p>Slová: ${spokenOk} / ${speech.length}</p>
+                ${E.stats([
+                    speech.length ? { icon: E.icons.mic, value: `${spokenOk} / ${speech.length}`, label: 'slová' } : null,
+                    { icon: '<span style="display:block;width:100%;height:100%;background:url(images/superjozino/pa/items/fruits/strawberry.png) 0 0 / auto 100% no-repeat;image-rendering:pixelated"></span>', value: `${this.collectedCoins} / ${this.totalCoins}`, label: 'ovocie' },
+                    { icon: E.icons.time, value: `${mm}:${String(time % 60).padStart(2, '0')}`, label: 'čas' },
+                ])}
                 <div data-reward-slot></div>
-                <div class="game-over-buttons">
-                    <button class="button" id="sjAgain">Znova</button>
-                    <button class="button button--primary" id="sjNext">${SJ.inWorld ? 'Ďalej' : 'Späť'}</button>
-                </div>
+                ${E.actions({ replay: 'sjAgain', map: 'sjMap', next: nextUrl ? 'sjNext' : null })}
             </div>
         `;
         this.speechModal.className = 'speech-modal modal level-complete-modal';
         this.speechModal.style.display = 'flex';
         document.getElementById('sjAgain').onclick = () => location.reload();
-        document.getElementById('sjNext').onclick = () => { location.href = SJ.backUrl; };
+        document.getElementById('sjMap').onclick = () => { location.href = SJ.backUrl; };
+        const nb = document.getElementById('sjNext');
+        if (nb) nb.onclick = () => { location.href = nextUrl; };
         if (window.SJSound) window.SJSound('win');
         try { window.BJ && window.BJ.say('Výborne! Level je hotový.'); } catch (e) { /* bez hlasu */ }
 
@@ -2902,15 +2930,14 @@ class Game {
         this.gameState = 'gameOver';
         
         // Vytvorenie game over obrazovky
+        const E = SJEnd;
         const modalContent = `
-            <div class="game-over-content">
-                <h2>Koniec hry</h2>
-                <p>Mince: ${this.collectedCoins}/${this.totalCoins}</p>
-                <p>Diamanty: ${this.collectedDiamonds}/${this.requiredDiamonds}</p>
-                <div class="game-over-buttons">
-                    <button class="button" onclick="location.href=SJ.backUrl">Späť</button>
-                    <button class="button button--primary" id="restartLevel">Znova</button>
-                </div>
+            <div class="game-over-content bj-modal__box bj-panel end-box">
+                <h2 class="bj-title bj-title--yellow">Skúsime znova?</h2>
+                ${E.stats([
+                    { icon: '<span style="display:block;width:100%;height:100%;background:url(images/superjozino/pa/items/fruits/strawberry.png) 0 0 / auto 100% no-repeat;image-rendering:pixelated"></span>', value: `${this.collectedCoins} / ${this.totalCoins}`, label: 'ovocie' },
+                ])}
+                ${E.actions({ replay: 'restartLevel', map: 'sjMap' })}
             </div>
         `;
         
@@ -2919,6 +2946,7 @@ class Game {
 
         // Pridanie event listenera pre reštart levelu
         document.getElementById('restartLevel').addEventListener('click', () => location.reload());
+        document.getElementById('sjMap').addEventListener('click', () => { location.href = SJ.backUrl; });
     }
 
     restartLevel() {
