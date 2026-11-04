@@ -1,0 +1,230 @@
+/* Úroveň 3 – svety písmen (worldsmenu.html): písmená vľavo, mapa s cestou
+   (zastávky a chodník: css/cesta.css) */
+
+/* hviezdy sveta a tréningy vľavo hore, vedľa tlačidla späť */
+.sv-topleft {
+    position: absolute;
+    left: calc(var(--bj-edge, 24px) + var(--bj-round, 96px) + 18px);
+    top: var(--bj-edge, 24px);
+    display: flex;
+    gap: 14px;
+    z-index: 60;
+}
+.sv-starchip {
+    height: var(--bj-round, 96px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 26px;
+    box-sizing: border-box;
+    border-radius: 60px;
+    border: var(--bj-border, 5px) solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover;
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 38px;
+    color: #fff;
+    -webkit-text-stroke: 1px #000;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.45);
+}
+.sv-starchip img { width: 46px; height: 46px; }
+.sv-starchip > span:last-child { padding-top: 0.15em; }
+.sv-round {
+    width: var(--bj-round, 96px);
+    height: var(--bj-round, 96px);
+    padding: 0;
+    border-radius: 50%;
+    border: var(--bj-border, 5px) solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+}
+.sv-round svg { width: 64%; height: 64%; }
+.sv-round:active { transform: scale(0.94); }
+
+/* nadpis v strede hore */
+.sv-title {
+    position: absolute;
+    top: var(--bj-edge, 24px);
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0 !important;
+    z-index: 55;
+}
+
+/* telo: pás písmen + mapa */
+.sv-body {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+    margin-top: 6px;
+}
+
+/* ===== pás písmen ===== */
+.sv-rail {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 60px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 3px solid rgba(236, 207, 23, 0.55);
+}
+.sv-rail__arrow {
+    width: 70px;
+    height: 46px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #FFD900;
+    filter: drop-shadow(0 2px 0 #000);
+    cursor: pointer;
+}
+.sv-rail__arrow svg { width: 46px; height: 46px; }
+.sv-rail__arrow--down svg { transform: rotate(180deg); }
+.sv-rail__arrow[disabled] { opacity: 0.25; cursor: default; }
+.sv-letter {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    padding: 0;
+    border-radius: 50%;
+    border: 5px solid #AC3F0B;
+    background: #5a2a0e center / cover no-repeat;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+.sv-letter::before { content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); }
+.sv-letter span {
+    position: relative;
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 46px;
+    line-height: 1;
+    padding-top: 0.18em;
+    color: #fff;
+    -webkit-text-stroke: 1.5px #000;
+}
+.sv-letter.is-active {
+    border-color: #ECCF17;
+    transform: scale(1.12);
+    box-shadow: 0 0 0 6px rgba(255, 217, 0, 0.35), 0 6px 12px rgba(0, 0, 0, 0.45);
+}
+.sv-letter.is-active::before { background: rgba(0, 0, 0, 0.1); }
+.sv-letter.is-active span { color: #FFD900; }
+
+/* ===== mapa ===== */
+.sv-map {
+    flex: 1;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0;
+    margin-top: 0 !important;
+}
+.sv-map .path-node__btn { width: 124px; height: 124px; left: -62px; top: -62px; font-size: 60px; }
+.sv-map .path-node.is-locked .path-node__btn { width: 104px; height: 104px; left: -52px; top: -52px; }
+.sv-map .path-node .bj-stars { top: 64px; }
+.sv-map .path-node .bj-stars img { width: 32px; height: 32px; }
+.sv-map .path-node__hero { left: -178px; top: -112px; width: 120px; height: 120px; }
+.sv-type {
+    position: absolute;
+    left: 30px;
+    top: 18px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #fff7e0;
+    border: 4px solid #AC3F0B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+}
+.sv-type img { width: 80%; height: 80%; object-fit: contain; }
+.sv-play {
+    position: absolute;
+    right: -14px;
+    bottom: -14px;
+    z-index: 3;
+    width: 150px;
+    height: 150px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 7px solid #1A511D;
+    background: linear-gradient(0deg, #1fa52a 0%, #3fe04a 100%);
+    color: #FFD900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.55);
+    animation: bj-pulse 1.4s ease-in-out infinite;
+}
+.sv-play svg { width: 60%; height: 60%; margin-left: 8%; }
+
+/* ===== tréningy ===== */
+.sv-train { width: 1100px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.sv-picker { align-self: stretch; display: flex; flex-direction: column; gap: 12px; }
+.sv-words {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 14px;
+    border-radius: 24px;
+    background: rgba(0, 0, 0, 0.35);
+}
+.sv-word {
+    padding: 10px 20px 6px;
+    border-radius: 30px;
+    border: 4px solid #AC3F0B;
+    background: rgba(0, 0, 0, 0.35);
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 30px;
+    color: #fff;
+    -webkit-text-stroke: 1px #000;
+    cursor: pointer;
+}
+.sv-word.is-on { border-color: #2fe03a; background: rgba(47, 224, 58, 0.3); color: #FFD900; }
+.sv-check { display: flex; align-items: center; justify-content: center; gap: 12px; font-family: "Nunito", sans-serif; font-weight: 800; font-size: 26px; color: #fff; }
+.sv-check input { width: 34px; height: 34px; accent-color: #2fe03a; }
+.sv-players { display: flex; align-items: center; gap: 14px; }
+.sv-label { font-family: "Luckiest Guy", sans-serif; font-size: 34px; color: #FFD900; -webkit-text-stroke: 1px #000; padding-top: 0.15em; margin-right: 8px; }
+.sv-count {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: 5px solid #AC3F0B;
+    background: rgba(0, 0, 0, 0.35);
+    font-family: "Luckiest Guy", sans-serif;
+    font-size: 40px;
+    padding-top: 0.15em;
+    color: #fff;
+    -webkit-text-stroke: 1px #000;
+    cursor: pointer;
+}
+.sv-count.is-on { border-color: #ECCF17; background: rgba(255, 217, 0, 0.25); color: #FFD900; }
+.sv-names { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.sv-names:empty { display: none; }
+.sv-name {
+    width: 220px;
+    padding: 12px 16px;
+    border-radius: 20px;
+    border: 4px solid #AC3F0B;
+    background: #fff7e0;
+    font-family: "Nunito", sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    color: #3a1a06;
+}
+.sv-map .path-node__hero.is-right { left: 58px; }

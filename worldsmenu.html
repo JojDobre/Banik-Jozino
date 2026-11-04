@@ -1,258 +1,36 @@
-<!-- worldsmenu.html - Aktualizovaný s integráciou config súborov -->
 <!DOCTYPE html>
 <html lang="sk">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="description" content="Logopedická hra pre najmenších">
-    <meta name="author" content="Adam Reňak">
-    <meta name="keywords" content="Adam Reňak, Joj_Dobre, Diplomová práca, Logopedická hra, TUKE">
-    <title>Baník Jožino: Logopedická hra - Diplomová práca</title>
-    <link rel="stylesheet" type="text/css" href="css/worldsmenu.css" />
-
-    <!-- Písmo Luckiest Guy (lokálne, funguje offline) -->
-    <link rel="stylesheet" type="text/css" href="css/fonts.css" />
-    
+    <title>Svety písmen – Baník Jožino</title>
     <link rel="icon" type="image/png" href="images/icons/favicon.png">
-    <!-- Spoločné služby (reč, zvuk, profily, karty) – window.BJ -->
-    <script type="module" src="src/bridge.js"></script>
-    <script type="module" src="src/pages/worlds-topbar.js"></script>
-    <!-- Herné plátno 1920×1080 – škálovanie na každú obrazovku -->
-    <link rel="stylesheet" type="text/css" href="css/stage.css" />
-    <link rel="stylesheet" type="text/css" href="css/common.css" />
+    <link rel="stylesheet" type="text/css" href="css/fonts.css" />
     <link rel="stylesheet" type="text/css" href="css/ui.css" />
     <link rel="stylesheet" type="text/css" href="css/cards.css" />
     <link rel="stylesheet" type="text/css" href="css/settings.css" />
+    <link rel="stylesheet" type="text/css" href="css/cesta.css" />
+    <link rel="stylesheet" type="text/css" href="css/svety.css" />
+    <script src="js/vendor/howler.min.js"></script>
+    <!-- Herné plátno 1920×1080 – škálovanie na každú obrazovku -->
+    <link rel="stylesheet" type="text/css" href="css/stage.css" />
+    <link rel="stylesheet" type="text/css" href="css/common.css" />
     <!-- Písma vopred (bez preblikávania) -->
     <link rel="preload" href="fonts/luckiest-guy-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="fonts/luckiest-guy-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="fonts/nunito-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
     <script src="js/stage.js"></script>
-</head>
-
-  <body>
-  <div id="bj-stage">
-    <!-- LOADING -->
-    <div id="loading-screen" class="loading-screen">
-        <div class="loading-content">
-            <div class="loading-logo">
-                <div class="loading-text-jozino">JOŽINO</div>
-                <div class="loading-text-banik">BANÍK</div>
-            </div>
-            <div class="loading-spinner"></div>
-            <div class="loading-message">Načítavam...</div>
-        </div>
-    </div>
-
-    <!-- horná lišta (späť, album, profil, nastavenia) – src/pages/worlds-topbar.js -->
-
-    <!-- MAIN CONTAINER - Hlavný kontainer pre celú stránku -->
-    <div class="main-container">
-
-      <!-- WORLDS NAVIGATION SECTION - Horná sekcia s navigáciou svetov -->
-      <section class="worlds-navigation">
-        <!-- Ľavá šípka pre prechádzanie svetov -->
-        <button class="nav-arrow nav-arrow-left" id="prev-world">
-            <div class="arrow-icon arrow-left"></div>
-        </button>
-        
-        <!-- Kontainer pre tlačidlá svetov - dynamicky generované -->
-        <div class="worlds-buttons-container" id="worlds-buttons-container">
-            <!-- Tlačidlá svetov sa generujú JavaScriptom -->
-        </div>
-        
-        <!-- Pravá šípka pre prechádzanie svetov -->
-        <button class="nav-arrow nav-arrow-right" id="next-world">
-          <div class="arrow-icon arrow-right"></div>
-        </button>
-      </section>
-      
-      <!-- CONTENT SECTION - Dolná sekcia s obsahom -->
-      <section class="content-section">
-            
-        <!-- LEFT PANEL - Ľavý panel s herným oknom/levelmi -->
-        <div class="game-panel" id="game-panel">
-          <!-- Hlavička s názvom aktuálneho sveta -->
-          <div class="game-panel-header">
-              <h2 id="world-title">NAČÍTAVAM...</h2>
-          </div>
-                
-          <!-- Herné okno - rovnaká veľkosť ako canvas v game.html -->
-          <div class="game-window">
-            <!-- Tu sa budú zobrazovať levely pre aktuálny svet -->
-            <div class="levels-grid" id="levels-grid">
-              <!-- Levely sa budú generovať JavaScriptom -->
-              <div style="color: white; text-align: center; width: 100%; padding: 50px;">
-                <p>Načítavam levely...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT PANEL - Pravý panel s 3 oknami -->
-        <div class="side-panel"> 
-
-          <!-- Okno 1: Stav hviezd -->
-          <div class="panel-window stars-window">
-            <div class="window-content">
-              <div class="stars-section">
-                <div class="side-star">
-                  <img src="images/star_active.png" alt="Hviezda">
-                </div>
-                <div class="middle-star">
-                  <img src="images/star_active.png" alt="Hviezda">
-                </div>
-                <div class="side-star">
-                  <img src="images/star_active.png" alt="Hviezda">
-                </div>
-              </div>
-              <div class="stars-display">
-                <span class="stars-count" id="stars-count">0</span>
-                <span class="stars-total">/ 0</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Okno 2: Cvičná hra PEXESO -->
-          <div class="pexeso-window">
-              <button class="practice-button" id="pexeso-button">
-                <h3>PEXESO</h3>
-              </button>
-          </div>
-
-          <!-- Okno 3: Cvičná hra BANÍK -->
-          <div class="miner-window">
-              <button class="practice-button" id="banik-button">
-                <img src="images/banik-icon.png" alt="Baník" class="practice-icon">
-                <h2>BAŇA</h2>
-              </button>
-          </div>
-        </div>
-      </section>
-
-    </div>
-
-    <!-- TRAINING MODAL -->
-    <div id="training-modal" class="level-modal-overlay" style="display: none;">
-        <div class="close" id="training-modal-close">X</div>
-        <div class="level-modal-content">
-            <div class="level-modal-header">
-                <h2>TRÉNOVACIA BAŇA</h2>
-            </div>
-            <div class="level-modal-body">
-                <!-- Scrollovateľný div so slovami -->
-                <div class="words-display-section">
-                    <h2 class="subtitle-modal">Výber slóv pre minihru</h3>
-                    <div id="words-scrollable-container" class="words-scrollable-container">
-                        <h3 id="words-section-title">Naučené slová zo sveta R:</h3>
-                        <div id="words-list" class="words-list">
-                            <!-- Slová sa budú generovať JavaScriptom -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Možnosti zobrazenia slov -->
-                <div class="words-options">
-                    <label class="checkbox-option">
-                        <input type="checkbox" id="show-locked-words">
-                        <span class="checkmark"></span>
-                        Zobraziť aj nenaučené slová z tohto sveta
-                    </label>
-                    
-                    <label class="checkbox-option">
-                        <input type="checkbox" id="show-all-worlds-words">
-                        <span class="checkmark"></span>
-                        Zobraziť slová zo všetkých svetov
-                    </label>
-                </div>
-
-                <!-- Nastavenia počtu itemov -->
-                <div class="items-settings">
-                    <h2 class="subtitle-modal">Nastavenia bane:</h2>
-                    <div class="items-controls">
-                        <div class="item-control">
-                            <label>Diamanty (rečové cvičenia):</label>
-                            <input type="number" id="diamonds-count" min="0" max="10" value="2">
-                        </div>
-                        <div class="item-control">
-                            <label>Goldy (jednoduché):</label>
-                            <input type="number" id="golds-count" min="1" max="10" value="3">
-                        </div>
-                        <div class="item-control">
-                            <label>Kryštály (posluchové cvičenia):</label>
-                            <input type="number" id="crystals-count" min="0" max="5" value="1">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- NOVÁ SEKCIA: Tlačidlo pre rozšírené nastavenia -->
-                <button id="toggle-advanced-settings" class="toggle-advanced-btn">
-                    <span id="toggle-icon">▼</span> Rozšírené nastavenia
-                </button>
-
-                <!-- NOVÁ SEKCIA: Rozšírené nastavenia (skryté defaultne) -->
-                <div id="advanced-settings" class="advanced-settings" style="display: none;">
-                    <div class="item-control">
-                        <label>
-                            Počet slov v rečovom cvičení:
-                            <span class="help-tooltip" title="Koľko slov sa má zobraziť v rámci jedného rečového cvičenia (diamant)"></span>
-                        </label>
-                        <input type="number" id="speech-exercises-count" min="1" max="5" value="2">
-                    </div>
-                    <div class="item-control">
-                        <label>
-                            Počet slov v posluchovom cvičení:
-                            <span class="help-tooltip" title="Koľko slov sa má zobraziť v rámci jedného posluchového cvičenia (kryštál)"></span>
-                        </label>
-                        <input type="number" id="listening-exercises-count" min="1" max="5" value="1">
-                    </div>
-                </div>
-            </div>
-            <div class="level-modal-footer">
-                <button id="start-training-btn" class="btn-primary">
-                    <a>Spustiť minihru</a>
-                </button>
-            </div>
-        </div>
-    </div>
-        
-  </div><!-- /bj-stage -->
-
-    <!-- Načítanie konfiguračných súborov PRED hlavnou logikou -->
     <script src="config/worlds.js"></script>
     <script src="config/levels.js"></script>
-    <!-- výber stránky hry podľa veku (pôvodná / nová Baňa) -->
     <script src="js/bana-route.js"></script>
-    
-    <!-- Načítanie manažérov -->
     <script src="js/managers/progressManager.js"></script>
-    <script src="js/managers/gameRouter.js"></script>
-    
-    <!-- Načítanie preloadera PRED worldsmenu.js -->
-    <script src="js/worldsmenu-preloader.js"></script>
-    
-    <!-- JavaScript pre interaktivitu - načíta sa ako posledný -->
-    <script src="js/basics/worldsmenu.js"></script>
-    
-    <!-- Inicializácia progress managera až po načítaní všetkých scriptov -->
-    <script>
-      // Zabezpeč, že sa progress manager inicializuje
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log('Inicializujem manažérov...');
-        
-        // Inicializuj progress manager ak neexistuje
-        if (!window.progressManager && typeof ProgressManager !== 'undefined') {
-          new ProgressManager();
-          console.log('Progress manager vytvorený');
-        }
-        
-        // Inicializuj game router ak neexistuje  
-        if (!window.gameRouter && typeof GameRouter !== 'undefined') {
-          new GameRouter();
-          console.log('Game router vytvorený');
-        }
-      });
-    </script>
+    <script type="module" src="src/pages/svety.js"></script>
+  </head>
+  <body class="bj-ui">
+    <div id="bj-stage">
+      <main id="app" class="bj-screen bj-screen--dim"></main>
+    </div>
   </body>
 </html>

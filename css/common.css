@@ -1015,3 +1015,27 @@ html.bj-staged .execise-window > .close {
 .bj-staged #endgame .stats br { display: none; }
 .bj-compact #endgame .stats > div > a { flex-basis: auto; }
 .bj-staged #endgame .stats > div { flex-wrap: nowrap !important; }
+
+/* ===== Zatvorenie okna – jedno tlačidlo pre všetky okná =====
+ * Okrúhle drevené tlačidlo s bielym X na pravom hornom rohu okna. */
+.bj-modal__box { position: relative; }
+.bj-close {
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    z-index: 5;
+    width: 84px;
+    height: 84px;
+    padding: 0;
+    border-radius: 50%;
+    border: 5px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+.bj-close svg { width: 46%; height: 46%; filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 1px #000); }
+.bj-close:active { transform: scale(0.92); }
