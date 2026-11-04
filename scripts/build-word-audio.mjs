@@ -2,7 +2,8 @@
 /**
  * Nahrávky slov zo slovníka (src/content/words.js) a minimálnych dvojíc
  * (src/content/pairs.js) slovenským neurónovým hlasom
- * Piper (sk_SK-lili-medium) → public/hlas/slova/<id>.mp3
+ * Microsoft sk-SK-ViktoriaNeural (TTS=edge, predvolené; TTS_PY = python s edge-tts)
+ * alebo Piper sk_SK-lili-medium (TTS=piper, PIPER_PY) → public/hlas/slova/<id>.mp3
  * a zoznam src/content/wordAudio.generated.js (slovo → súbor).
  *
  * Slová s vlastnou (ľudskou) nahrávkou v public/zvuky/ ju majú prednostne –
@@ -26,13 +27,15 @@ const OUT = path.join(ROOT, 'public', 'hlas', 'slova');
 const CACHE = path.join(ROOT, '.cache', 'piper');
 const MODEL = path.join(CACHE, 'sk_SK-lili-medium.onnx');
 const ALL = process.argv.includes('--all');
+const ENGINE = process.env.TTS || 'edge';
+const EDGE_VOICE = 'sk-SK-ViktoriaNeural';
 
 function run(cmd, args, input) {
     const r = spawnSync(cmd, args, { input, encoding: 'utf8' });
     if (r.status !== 0) throw new Error(`${cmd} zlyhal: ${r.stderr || r.error}`);
 }
 
-if (!existsSync(MODEL)) {
+if (ENGINE === 'piper' && !existsSync(MODEL)) {
     console.error('Chýba hlasový model – spusti najprv npm run build:voice');
     process.exit(1);
 }
@@ -46,8 +49,23 @@ for (const word of allWords) {
     manifest[word] = `hlas/slova/${id}.mp3`;
     if (ALL || !existsSync(path.join(OUT, `${id}.mp3`))) todo.push([id, `${word}.`]); // bodka = prirodzená intonácia
 }
-// 1) Piper naraz (python + balík piper-tts; PIPER_PY = cesta k pythonu s piper-tts)
-if (todo.length) {
+// 1a) Microsoft Viktória (edge-tts), slová o niečo pomalšie
+if (todo.length && ENGINE !== 'piper') {
+    const tmp = path.join(CACHE, 'edge-slova');
+    mkdirSync(tmp, { recursive: true });
+    const py = process.env.TTS_PY || 'python3';
+    const r = spawnSync(py, [path.join(ROOT, 'scripts', 'lib', 'edge_batch.py'), tmp, EDGE_VOICE, '-12%'], { input: JSON.stringify(todo), encoding: 'utf8', stdio: ['pipe', 'inherit', 'inherit'] });
+    if (r.status !== 0) throw new Error('edge_batch.py zlyhal');
+    for (const [id] of todo) {
+        const raw = path.join(tmp, `${id}.mp3`);
+        run('ffmpeg', ['-y', '-loglevel', 'error', '-i', raw,
+            '-af', 'silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-60dB:start_silence=0.05,areverse,apad=pad_dur=0.15,loudnorm=I=-16:TP=-1.5',
+            '-ac', '1', '-ar', '24000', '-b:a', '48k', path.join(OUT, `${id}.mp3`)]);
+        rmSync(raw, { force: true });
+    }
+}
+// 1b) Piper naraz (python + balík piper-tts; PIPER_PY = cesta k pythonu s piper-tts)
+if (todo.length && ENGINE === 'piper') {
     const tmp = path.join(CACHE, 'slova');
     mkdirSync(tmp, { recursive: true });
     const py = process.env.PIPER_PY || 'python3';
@@ -66,6 +84,6 @@ const made = todo.length;
 
 writeFileSync(
     path.join(ROOT, 'src', 'content', 'wordAudio.generated.js'),
-    `// VYGENEROVANÉ skriptom scripts/build-word-audio.mjs – neupravovať ručne.\n// Hlas: Piper sk_SK-lili-medium (licencia – viď docs/PLAN.md, fáza 7).\nexport default ${JSON.stringify(manifest, null, 1)};\n`,
+    `// VYGENEROVANÉ skriptom scripts/build-word-audio.mjs – neupravovať ručne.\n// Hlas: ${ENGINE === 'piper' ? 'Piper sk_SK-lili-medium' : `Microsoft ${EDGE_VOICE}`} (licencia – viď docs/PLAN.md, fáza 7).\nexport default ${JSON.stringify(manifest, null, 1)};\n`,
 );
 console.log(`Slov: ${allWords.length}, nových nahrávok: ${made} → public/hlas/slova/`);

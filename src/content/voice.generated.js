@@ -1,5 +1,5 @@
 // VYGENEROVANÉ skriptom scripts/build-voice.mjs – neupravovať ručne.
-// Hlas: Piper sk_SK-lili-medium.
+// Hlas: Microsoft sk-SK-ViktoriaNeural.
 export default {
  "Ahoj! Ako sa voláš? Koľko máš rokov?": "hlas/ahoj-ako-sa-volas-kolko-mas-rokov-863f66.mp3",
  "Kto bude hrať?": "hlas/kto-bude-hrat-15ea11.mp3",

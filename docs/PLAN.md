@@ -278,9 +278,11 @@ a karty sú spoločné (`js/game.js`); nová verzia mení len vzhľad a hranie (
 - ⬜ testy na viacerých telefónoch
 
 ### Fáza 7 – Rodič a Google Play ⬜
-- ⬜ **overiť licenciu hlasu** Piper `sk_SK-lili-medium`: dáta CC0, ale model je dotrénovaný
-  z anglického hlasu lessac (dáta s licenciou možno len na nekomerčné použitie) –
-  pred vydaním potvrdiť, prípadne nahradiť (vlastné nahrávky / komerčný neurónový hlas)
+- ⬜ **licencia hlasu**: vety a slová sú teraz nahraté hlasom Microsoft `sk-SK-ViktoriaNeural`
+  (Piper bol zle zrozumiteľný). Na testovanie vygenerované cez edge-tts; pred vydaním
+  pregenerovať rovnakým hlasom cez **Azure Speech** (oficiálna licencia, bezplatný limit stačí –
+  treba účet a kľúč), prípadne nahradiť ľudskými nahrávkami
+  (`npm run build:voice -- --all`, `npm run build:word-audio -- --all`, TTS_PY = python s edge-tts)
 - ⬜ rodičovská brána, štatistiky pre rodiča
 - ⬜ zásady ochrany súkromia, program Families, Data safety
 - ⬜ uzavreté testovanie (osobný účet: 12 testerov / 14 dní), zverejnenie

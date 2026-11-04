@@ -1,5 +1,5 @@
 // VYGENEROVANÉ skriptom scripts/build-word-audio.mjs – neupravovať ručne.
-// Hlas: Piper sk_SK-lili-medium (licencia – viď docs/PLAN.md, fáza 7).
+// Hlas: Microsoft sk-SK-ViktoriaNeural (licencia – viď docs/PLAN.md, fáza 7).
 export default {
  "ananás": "hlas/slova/ananas-418188.mp3",
  "auto": "hlas/slova/auto-0d612c.mp3",
