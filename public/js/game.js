@@ -1920,7 +1920,11 @@ function displayResultsInWinDialog(rating, saveResult) {
         console.log('✅ Dodatočné štatistiky pridané');
     }
     
-    // 4. Aktualizuj hviezdy v existujúcom modal-stars div
+    // 4. Nadpis podľa hviezd (rovnako ako v ostatných hrách)
+    const title = endGameDialog.querySelector('.cvicenie-content-2 h1');
+    if (title) title.textContent = rating.stars === 3 ? 'Výborne!' : rating.stars >= 1 ? 'Dobrá práca!' : 'Skúsime znova?';
+
+    // 5. Aktualizuj hviezdy v existujúcom modal-stars div
     const starsDiv = endGameDialog.querySelector('#modal-stars');
     if (starsDiv) {
         starsDiv.innerHTML = generateStarsHTML(rating.stars);
@@ -1946,7 +1950,7 @@ function generateStarsHTML(stars) {
             starsHTML += `<img src="images/star_active.png" alt="Hviezda" style="width: 50px; height: 50px;">`;
         } else {
             // Neaktívna hviezda
-            starsHTML += `<img src="images/star_inactive.png" alt="Hviezda" style="width: 50px; height: 5updatePerformanceDisplayupdatePerformanceDisplay0px; opacity: 0.3;">`;
+            starsHTML += `<img src="images/star_inactive.png" alt="Hviezda" style="width: 50px; height: 50px; opacity: 0.3;">`;
         }
     }
     
@@ -2289,39 +2293,25 @@ function displayListeningExercise() {
         // Resetovanie pokusov pre nové cvičenie
         listeningAttempts = 0;
         
+        // vzhľad ako „Rovnaké alebo iné?“ v Super Jožinovi (css/common.css – .bx-listen)
+        const dots = listeningWordPairs.map((_, i) => `<span class="bx-listen__dot${i < listeningCurrentIndex ? ' is-done' : i === listeningCurrentIndex ? ' is-current' : ''}"></span>`).join('');
         dialogContent.innerHTML = `
-            <!-- Hlavička -->
-            <div class="cvicenie-text">
-                <H1 style="font-size: 30px">POSLUCHOVÉ CVIČENIE</h1>
-            </div>
-
-            <div id="listening-word-progress" class="word-progress">
-                <div class="progress-text">Kolo ${listeningCurrentIndex + 1} / ${listeningWordPairs.length}</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${((listeningCurrentIndex + 1) / listeningWordPairs.length) * 100}%"></div>
+            <div class="bx-listen">
+                <h1>Rovnaké alebo iné?</h1>
+                <div class="bx-listen__dots" aria-label="Kolo ${listeningCurrentIndex + 1} z ${listeningWordPairs.length}">${dots}</div>
+                <div class="bx-listen__voices">
+                    <span class="bx-listen__voice" id="listening-voice-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="#000" stroke-width="1"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><b>1</b></span>
+                    <span class="bx-listen__voice" id="listening-voice-2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="#000" stroke-width="1"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><b>2</b></span>
                 </div>
-            </div>
-
-            <!-- Inštrukcie -->
-            <div class="listening-instruction">
-                <p>Počúvaj pozorne a rozhodni, či sú slová rovnaké alebo rôzne</p>
-            </div>
-
-            <!-- Status zvuku -->
-            <div class="sound-status-container">
-                <div id="listening-status" class="sound-status">Pripravujem slová...</div>
-            </div>
-
-            <!-- Tlačidlá pre odpoveď -->
-            <div id="listening-buttons-container" class="listening-buttons-container" style="display: flex;">
-                <button id="listening-same-btn" class="listening-btn listening-btn-same disabled-btn" disabled>
-                    <img src="images/rovnake.png" alt="Rovnaké">
-                    <span>ROVNAKÉ</span>
-                </button>
-                <button id="listening-different-btn" class="listening-btn listening-btn-different disabled-btn" disabled>
-                    <img src="images/rozdielne.png" alt="Rozdielne">  
-                    <span>RÔZNE</span>
-                </button>
+                <div id="listening-status" class="bx-listen__hint">Počúvaj pozorne</div>
+                <div id="listening-buttons-container" class="bx-listen__answers" style="display: flex;">
+                    <button id="listening-same-btn" class="bx-listen__btn bx-listen__btn--same disabled-btn" disabled type="button">
+                        <span class="bx-listen__icon">✔</span><span>Rovnaké</span>
+                    </button>
+                    <button id="listening-different-btn" class="bx-listen__btn bx-listen__btn--diff disabled-btn" disabled type="button">
+                        <span class="bx-listen__icon">✖</span><span>Iné</span>
+                    </button>
+                </div>
             </div>
         `;
         
@@ -2381,8 +2371,15 @@ function playListeningSounds(soundPair) {
     
     // Prehratie prvého zvuku
     if (statusElement) {
-        statusElement.textContent = "Prehráva sa prvý zvuk...";
+        statusElement.textContent = "Prvé slovo…";
     }
+    const voice = (n) => {
+        [1, 2].forEach((k) => {
+            const v = document.getElementById(`listening-voice-${k}`);
+            if (v) v.classList.toggle('is-playing', k === n);
+        });
+    };
+    voice(1);
     
     console.log(`Prehrávam prvý zvuk: ${soundPair.sound1Path}`);
     listeningSound1.play();
@@ -2391,8 +2388,9 @@ function playListeningSounds(soundPair) {
     listeningSound1.on('end', () => {
         setTimeout(() => {
             if (statusElement) {
-                statusElement.textContent = "Prehráva sa druhý zvuk...";
+                statusElement.textContent = "Druhé slovo…";
             }
+            voice(2);
             console.log(`Prehrávam druhý zvuk: ${soundPair.sound2Path}`);
             listeningSound2.play();
             
@@ -2400,8 +2398,9 @@ function playListeningSounds(soundPair) {
             listeningSound2.on('end', () => {
                 setTimeout(() => {
                     if (statusElement) {
-                        statusElement.textContent = "Vyber svoju odpoveď:";
+                        statusElement.textContent = "Boli rovnaké alebo iné?";
                     }
+                    voice(0);
                     
                     // ODBLOKOVAŤ tlačidlá
                     if (sameBtn) {
@@ -3153,6 +3152,22 @@ function displayWord() {
     const imageName = wordList[currentWordIndex] + ".png"; 
     document.getElementById("cvicenie-image").src = "images/slova/" + imageName;
     updateWordProgress();
+    // slovo zaznie hneď (dieťa nemusí vedieť čítať) – rovnako ako v ostatných hrách
+    setTimeout(() => speakExerciseWord(), 350);
+}
+
+/** Prehranie slova z cvičenia (nahrávka zo slovníka, inak syntéza). */
+function speakExerciseWord() {
+    const word = wordList && wordList[currentWordIndex];
+    const BJ = window.BJ;
+    if (!word || !BJ) return;
+    const entry = BJ.content && BJ.content.getWord(word);
+    const btn = document.querySelector('.bx-word__speak');
+    if (btn) btn.classList.add('is-speaking');
+    const done = () => btn && btn.classList.remove('is-speaking');
+    const p = entry && entry.audio ? BJ.audio.play(entry.audio) : BJ.say(word);
+    Promise.resolve(p).then(done, done);
+    setTimeout(done, 3000);
 }
 //////////////////////////////////////////
 // Samotna funckia na rozpoznanie       //
@@ -3324,9 +3339,9 @@ function updateEndGameDialog(worldId, levelId, isTraining) {
     
     // Aktualizuj obsah
     endGameNav.innerHTML = `
-        <li><button onclick="restartCurrentLevel()" class="menu-button">Hrať znova</button></li>
-        <li><button onclick="goToNextLevel()" class="menu-button">Ďalší level</button></li>
-        <li><button onclick="returnToMenu()" class="menu-button">Mapa levelov</button></li>
+        <li><button onclick="restartCurrentLevel()" class="menu-button">Znova</button></li>
+        <li><button onclick="goToNextLevel()" class="menu-button">Ďalej</button></li>
+        <li><button onclick="returnToMenu()" class="menu-button">Mapa</button></li>
     `;
     
     console.log('Endgame dialog aktualizovaný');

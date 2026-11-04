@@ -872,3 +872,146 @@ html.bj-staged .execise-window > .close {
     background-position: 0 0;
     image-rendering: pixelated;
 }
+
+/* ===== Svety písmen – rámy v štýle appky (jednotná grafika) ===== */
+.bj-staged .game-panel {
+    border: var(--bj-border) solid #ECCF17;
+    border-radius: 40px;
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.55);
+}
+.bj-staged .game-panel-header h2 { margin: 0; padding-top: 0.15em; }
+.bj-staged .panel-window,
+.bj-staged .pexeso-window,
+.bj-staged .miner-window {
+    border: var(--bj-border) solid #AC3F0B;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
+}
+.bj-staged .panel-window { border-color: #ECCF17; }
+.bj-staged .pexeso-window:hover,
+.bj-staged .miner-window:hover { border-color: #ECCF17; }
+.bj-staged .practice-button { border-radius: 0; }
+/* lišta svetov medzi tlačidlom späť a čipmi vpravo */
+.bj-staged .worlds-navigation { margin: 0 470px 0 130px; gap: 14px; }
+.bj-staged .worlds-buttons-container { gap: 18px; }
+.bj-staged .world-button { width: 220px; }
+
+/* ===== Baňa a Malá baňa – cvičenia a koniec v štýle ostatných hier ===== */
+/* rečové cvičenie: reproduktor vedľa slova */
+.bj-staged .bx-word { display: flex; align-items: center; justify-content: center; gap: 22px; }
+.bj-staged .bx-word__speak {
+    width: 96px;
+    height: 96px;
+    flex-shrink: 0;
+    padding: 0;
+    border-radius: 50%;
+    border: 5px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    color: #FFD900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+}
+.bj-staged .bx-word__speak svg { width: 58%; height: 58%; }
+.bj-staged .bx-word__speak.is-speaking { animation: bx-ring 0.9s ease-out infinite; }
+@keyframes bx-ring {
+    0% { box-shadow: 0 0 0 0 rgba(255, 217, 0, 0.7); }
+    100% { box-shadow: 0 0 0 26px rgba(255, 217, 0, 0); }
+}
+
+/* posluchové cvičenie (Rovnaké alebo iné?) */
+.bj-staged #zvuky .execise-window {
+    width: 820px !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 34px 44px 38px !important;
+}
+.bj-staged .bx-listen { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.bj-staged .bx-listen h1 { margin: 0; font-size: 60px !important; color: #FFD900; -webkit-text-stroke: 2px #000; }
+.bj-staged .bx-listen__dots { display: flex; gap: 12px; }
+.bj-staged .bx-listen__dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 4px solid #ECCF17; background: rgba(0, 0, 0, 0.45); box-sizing: border-box;
+}
+.bj-staged .bx-listen__dot.is-done { background: #2fe03a; }
+.bj-staged .bx-listen__dot.is-current { background: #FFD900; }
+.bj-staged .bx-listen__voices { display: flex; gap: 90px; }
+.bj-staged .bx-listen__voice {
+    position: relative;
+    width: 150px; height: 150px; border-radius: 50%;
+    border: 6px solid #ECCF17;
+    background: url('../images/pozadie_button_mobile_2.png') #5a2a0e 50% / cover no-repeat;
+    color: #FFD900;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease, filter 0.2s ease;
+    filter: brightness(0.75);
+}
+.bj-staged .bx-listen__voice svg { width: 56%; height: 56%; }
+.bj-staged .bx-listen__voice b {
+    position: absolute; top: -10px; right: -10px;
+    width: 54px; height: 54px; border-radius: 50%;
+    background: #AC3F0B; border: 4px solid #ECCF17;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Luckiest Guy", sans-serif; font-weight: normal; font-size: 32px; padding-top: 0.15em;
+    color: #fff; -webkit-text-stroke: 1px #000;
+}
+.bj-staged .bx-listen__voice.is-playing { filter: none; transform: scale(1.1); animation: bx-ring 0.9s ease-out infinite; }
+.bj-staged .bx-listen__hint { font-family: "Nunito", sans-serif; font-weight: 900; font-size: 32px; color: #fff; min-height: 1.2em; }
+.bj-staged .bx-listen__answers { display: flex; gap: 40px; }
+.bj-staged .bx-listen__btn {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 36px 14px 18px;
+    border-radius: 60px;
+    border: 6px solid #1A511D;
+    background: linear-gradient(0deg, #1fa52a 0%, #3fe04a 100%);
+    font-family: "Luckiest Guy", sans-serif; font-size: 40px; line-height: 1;
+    color: #fff; -webkit-text-stroke: 1px #000;
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+}
+.bj-staged .bx-listen__btn--diff { border-color: #6b0f0a; background: linear-gradient(0deg, #a3160d 0%, #ff4a3d 100%); }
+.bj-staged .bx-listen__btn > span:last-child { padding-top: 0.15em; }
+.bj-staged .bx-listen__icon {
+    width: 64px; height: 64px; border-radius: 50%; background: rgba(0, 0, 0, 0.3);
+    display: flex; align-items: center; justify-content: center; font-family: sans-serif; font-size: 38px;
+}
+.bj-staged .bx-listen__btn.disabled-btn { filter: grayscale(0.8) brightness(0.6); pointer-events: none; }
+.bj-staged .bx-listen__btn:active { transform: scale(0.95); }
+
+/* koniec levelu: nadpis, hviezdy, súhrn v riadku, Ďalší level zelené */
+.bj-staged #endgame .cvicenie-content-2 h1 { order: 0; font-size: 70px !important; color: #FFD900; -webkit-text-stroke: 2px #000; }
+.bj-staged #endgame #modal-stars { order: 1; }
+.bj-staged #endgame .stats {
+    order: 2;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 34px !important;
+    font-family: "Nunito", sans-serif;
+}
+.bj-staged #endgame .additional-stats { display: contents; }
+.bj-staged #endgame .additional-stats > div { margin: 0 !important; }
+.bj-staged #endgame .gameend { order: 3; margin-top: 16px; }
+.bj-staged #endgame .gameend li:nth-child(2) { order: 3; }
+.bj-staged #endgame .gameend li:nth-child(3) { order: 2; }
+.bj-staged #endgame .gameend li:nth-child(2) .menu-button {
+    border-color: var(--bj-green-border, #1A511D);
+    background: linear-gradient(0deg, var(--bj-green-2, #1fa52a) 0%, var(--bj-green-1, #3fe04a) 100%);
+    color: var(--bj-gold, #FFD900);
+}
+.bj-staged .cvicenie-text.bx-word { flex-direction: row !important; }
+.bj-staged #endgame .stats > div,
+.bj-staged #endgame .additional-stats > div {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+}
+.bj-staged #endgame .stats br { display: none; }
+.bj-compact #endgame .stats > div > a { flex-basis: auto; }
+.bj-staged #endgame .stats > div { flex-wrap: nowrap !important; }
