@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync } from 'node:fs';
-import { features, classify, calibrate, createTracker } from '../src/core/soundFeatures.js';
+import { features, classify, calibrate, createTracker, learnPlace, DEFAULT_CALIB } from '../src/core/soundFeatures.js';
 import { readWav, frames } from './helpers/wav.js';
 
 const SR = 48000;
@@ -75,26 +75,67 @@ test('zvuk: S a Š sa nemýlia ani pri tichšom zvuku', () => {
 
 // ---------- nahrávky hlások (hlas Viktória a Lukáš, tests/fixtures/zvuky) ----------
 // Nahrávky obsahujú aj samohlásky medzi hláskami – hodnotíme len syčiace rámce:
-// miesto artikulácie (S/Z oproti Š/Ž) sa musí trafiť aspoň v 80 % (mužský hlas má Š vyššie).
+// miesto artikulácie (S/Z oproti Š/Ž) sa musí trafiť.
+// „Telefón“: mikrofóny v telefónoch oslabujú výšky – simulované dolnou priepusťou.
 const DIR = new URL('./fixtures/zvuky/', import.meta.url).pathname;
 const PLACE = { s: ['S', 'Z'], z: ['S', 'Z'], sh: ['Š', 'Ž'], zh: ['Š', 'Ž'] };
-for (const file of readdirSync(DIR).filter((f) => f.endsWith('.wav'))) {
+function lowpassAt(x, sr, f) {
+    const w = (2 * Math.PI * f) / sr;
+    const al = Math.sin(w) / (2 * 0.707);
+    const c = Math.cos(w);
+    const [b0, b1, b2, a0, a1, a2] = [(1 - c) / 2, 1 - c, (1 - c) / 2, 1 + al, -2 * c, 1 - al];
+    const y = new Float32Array(x.length);
+    let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+    for (let i = 0; i < x.length; i++) {
+        const v = (b0 * x[i] + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2) / a0;
+        x2 = x1; x1 = x[i]; y2 = y1; y1 = v; y[i] = v;
+    }
+    return y;
+}
+function load(file, cut) {
+    const { sampleRate, samples } = readWav(DIR + file);
+    return { sampleRate, samples: cut ? lowpassAt(lowpassAt(samples, sampleRate, cut), sampleRate, cut) : samples };
+}
+function fricLabels(file, cut, calib) {
+    const { sampleRate, samples } = load(file, cut);
+    const out = [];
+    for (const fr of frames(samples, 1024, 512)) out.push(classify(features(fr, sampleRate), calib).label);
+    return out;
+}
+const FILES = readdirSync(DIR).filter((f) => f.endsWith('.wav'));
+for (const file of FILES) {
     const kind = file.split('_')[0];
-    test(`zvuk: nahrávka ${file}`, () => {
-        const { sampleRate, samples } = readWav(DIR + file);
-        const labels = labelsOf(samples, sampleRate, 1024);
+    test(`zvuk: nahrávka ${file} (telefón, predvolená hranica)`, () => {
+        const labels = fricLabels(file, 8000);
         const fric = labels.filter((l) => ['S', 'Z', 'Š', 'Ž'].includes(l));
         if (kind === 'a') {
-            // samohláska: takmer všetko „hlas“, žiadne syčanie
             const loud = labels.filter((l) => l !== 'ticho');
             assert.ok(share(loud, 'hlas') >= 0.8, file);
             assert.ok(fric.length <= 3, file);
             return;
         }
         assert.ok(fric.length >= 15, `${file}: málo syčiacich rámcov (${fric.length})`);
-        assert.ok(share(fric, PLACE[kind]) >= 0.8, `${file}: ${JSON.stringify(fric)}`);
+        assert.ok(share(fric, PLACE[kind]) >= 0.85, `${file}: ${JSON.stringify(fric)}`);
     });
 }
+
+test('zvuk: naučená hranica S/Š pre konkrétny hlas (bez obmedzenia aj „telefón“ 6,5 kHz)', () => {
+    for (const cut of [0, 6500]) {
+        for (const who of ['f', 'm']) {
+            const feats = (file) => {
+                const { sampleRate, samples } = load(file, cut);
+                return [...frames(samples, 1024, 512)].map((fr) => features(fr, sampleRate));
+            };
+            const place = learnPlace(feats(`s_${who}.wav`), feats(`sh_${who}.wav`));
+            assert.ok(place, `hranica sa nenaučila (${who}, ${cut})`);
+            const calib = { ...DEFAULT_CALIB, ...place };
+            for (const kind of ['s', 'z', 'sh', 'zh']) {
+                const fric = fricLabels(`${kind}_${who}.wav`, cut, calib).filter((l) => ['S', 'Z', 'Š', 'Ž'].includes(l));
+                assert.ok(share(fric, PLACE[kind]) >= 0.85, `${kind}_${who} @${cut}: ${share(fric, PLACE[kind]).toFixed(2)}`);
+            }
+        }
+    }
+});
 
 // ---------- kalibrácia a výdrž ----------
 test('zvuk: kalibrácia podľa šumu miestnosti', () => {

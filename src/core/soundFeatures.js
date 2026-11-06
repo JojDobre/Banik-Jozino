@@ -190,6 +190,9 @@ export function features(frame, sampleRate) {
     }
     const flatHigh = hc && hs > 0 ? Math.exp(hl / hc) / (hs / hc) : 0;
     const hissShare = share[3] + share[4] + share[5]; // energia nad 2,5 kHz
+    // S vs. Š: log10(energia nad 5 kHz / energia 2,5–5 kHz). S > 0, Š < 0.
+    // Menej citlivé na mikrofón telefónu (oslabené výšky) než samotné ťažisko.
+    const sRatio = Math.log10((band[4] + band[5] + 1e-12) / (band[3] + 1e-12));
     return {
         db,
         rms,
@@ -203,6 +206,7 @@ export function features(frame, sampleRate) {
         flatness,
         flatHigh,
         hissShare,
+        sRatio,
         voicing: voicing(frame, sampleRate),
     };
 }
@@ -227,6 +231,23 @@ export function calibrate(featureList) {
 }
 
 /**
+ * Naučenie hranice S/Š pre konkrétne dieťa a mikrofón: z rámcov, keď dieťa
+ * hovorí „sss“ a „ššš“, nastaví hranicu do stredu medzi nimi.
+ * @returns {{ sBoundary, sWidth, sMedian, shMedian } | null}
+ */
+export function learnPlace(sFeatures, shFeatures) {
+    const pick = (list) => list.filter((f) => f.hissShare > 0.3).map((f) => f.sRatio).sort((a, b) => a - b);
+    const a = pick(sFeatures);
+    const c = pick(shFeatures);
+    if (a.length < 5 || c.length < 5) return null;
+    const med = (x) => x[Math.floor(x.length / 2)];
+    const sMedian = med(a);
+    const shMedian = med(c);
+    if (sMedian <= shMedian + 0.1) return null; // nerozlíšiteľné – nechať predvolené
+    return { sBoundary: (sMedian + shMedian) / 2, sWidth: Math.max(0.05, Math.min(0.3, (sMedian - shMedian) / 4)), sMedian, shMedian };
+}
+
+/**
  * Skóre tried pre rámec. @returns {{ label, confidence, scores }}
  */
 export function classify(f, calib = DEFAULT_CALIB) {
@@ -238,9 +259,12 @@ export function classify(f, calib = DEFAULT_CALIB) {
     // syčanie = energia nad 2,5 kHz (samohlásky tam majú do ~3 %, S/Š 65–99 %)
     const hiss = above(f.hissShare, 0.3, 0.5);
     const hissVoiced = above(f.hissShare, 0.08, 0.2); // pri Z/Ž časť energie berú hlasivky
-    // S vs. Š podľa ťažiska nad 1 kHz (S ~6,5–9 kHz, Š ~3,5–5,3 kHz)
-    const sLike = above(f.centroidHigh, 5400, 6300);
-    const shLike = below(f.centroidHigh, 5300, 6100) * above(f.centroidHigh, 2300, 2900);
+    // S vs. Š podľa pomeru pásiem (sRatio); hranicu si model vie naučiť pre
+    // konkrétne dieťa a telefón (learnPlace) – inak predvolená 0,2 ± 0,15
+    const b = calib.sBoundary ?? 0.2;
+    const w = calib.sWidth ?? 0.15;
+    const sLike = above(f.sRatio, b - w, b + w);
+    const shLike = (1 - sLike) * above(f.centroidHigh, 2000, 2600);
     const scores = {
         ticho: 1 - loud,
         fukanie: loud * unvoiced * Math.max(above(f.low, 0.45, 0.65), below(f.centroid, 1800, 2600) * above(f.flatness, 0.12, 0.25)),

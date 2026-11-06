@@ -16,6 +16,22 @@ import { Capacitor } from '@capacitor/core';
 import { SpeechRecognition as NativeSpeech } from '@capacitor-community/speech-recognition';
 import { features, classify, calibrate, createTracker, DEFAULT_CALIB } from './soundFeatures.js';
 
+/** Naučená hranica S/Š pre toto zariadenie (laboratórium zvukov) – localStorage. */
+const PLACE_KEY = 'bj.soundPlace';
+export function loadPlace() {
+    try {
+        return JSON.parse(localStorage.getItem(PLACE_KEY) || 'null');
+    } catch {
+        return null;
+    }
+}
+export function savePlace(place) {
+    try {
+        if (place) localStorage.setItem(PLACE_KEY, JSON.stringify({ ...place, updated: new Date().toISOString() }));
+        else localStorage.removeItem(PLACE_KEY);
+    } catch { /* bez pamäte */ }
+}
+
 export class MicError extends Error {
     constructor(code, message) {
         super(message || code);
@@ -75,7 +91,7 @@ export async function listenSounds({ target = null, onUpdate, calib = null, cali
 
     const tracker = createTracker({ target, window: win, gapMs });
     const calibFrames = [];
-    let cal = calib || null;
+    let cal = calib ? { ...calib, ...(loadPlace() || {}) } : null;
     const started = performance.now();
     let last = started;
     let stopped = false;
@@ -89,7 +105,7 @@ export async function listenSounds({ target = null, onUpdate, calib = null, cali
         const f = features(buf, ctx.sampleRate);
         if (!cal) {
             calibFrames.push(f);
-            if (now - started >= calibMs) cal = calibrate(calibFrames);
+            if (now - started >= calibMs) cal = { ...calibrate(calibFrames), ...(loadPlace() || {}) };
             onUpdate && onUpdate({ phase: 'calib', label: 'ticho', confidence: 0, scores: {}, held: 0, best: 0, total: 0, level: 0, f });
             return;
         }
@@ -103,6 +119,8 @@ export async function listenSounds({ target = null, onUpdate, calib = null, cali
     return {
         get calib() { return cal || DEFAULT_CALIB; },
         recalibrate() { cal = null; calibFrames.length = 0; },
+        /** po naučení S/Š – hneď použiť novú hranicu */
+        applyPlace(place) { if (cal) Object.assign(cal, place || { sBoundary: undefined, sWidth: undefined }); },
         resetHold() { tracker.reset(); },
         stop() {
             stopped = true;

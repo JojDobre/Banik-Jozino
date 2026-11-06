@@ -86,3 +86,23 @@
 @keyframes zv-buzz { from { transform: translateY(-3px) rotate(-3deg); } to { transform: translateY(3px) rotate(3deg); } }
 
 .bj-compact .zv-frame { width: 1600px; }
+.zl-learn { width: 100%; padding: 14px; border-radius: 26px; background: rgba(0, 0, 0, 0.35); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.zl-learn__title { font-family: "Luckiest Guy", sans-serif; font-size: 32px; color: #FFD900; -webkit-text-stroke: 1px #000; }
+.zl-learn__info { font-family: "Nunito", sans-serif; font-weight: 800; font-size: 22px; color: #fff; text-align: center; }
+.zl-learn .bj-btn { min-width: 0; padding-left: 22px; padding-right: 22px; font-size: 26px; }
+.zl-left { gap: 16px; }
+.zl-big { width: 280px; height: 280px; }
+/* telefón: laboratórium sa zmestí na výšku */
+.bj-compact .zl-left { width: 520px; padding: 20px; gap: 14px; }
+.bj-compact .zl-right { padding: 14px 26px; gap: 4px; }
+.bj-compact .zl-big { width: 260px; height: 260px; }
+.bj-compact .zl-big__label { font-size: 42px; }
+.bj-compact .zl-bar__name { font-size: 20px; width: 250px; }
+.bj-compact .zl-bar__track { height: 20px; }
+.bj-compact .zl-info { font-size: 18px; margin: 4px 0; }
+.bj-compact .zl-learn { padding: 8px 12px; gap: 6px; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+.bj-compact .zl-learn__title { font-size: 26px; }
+.bj-compact .zl-learn__info { font-size: 18px; width: 100%; }
+.bj-compact .zl-right .bj-btn { font-size: 24px; padding: 10px 20px 6px; min-width: 0; }
+.bj-compact .zl-select { font-size: 22px; padding: 8px 12px; }
+.bj-compact .zl-rec { font-size: 18px; }
